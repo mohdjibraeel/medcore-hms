@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Address {
+  id      String  @id @default(cuid())
+  line1   String
+  line2   String?
+  city    String
+  state   String
+  pincode String
+  country String  @default("India")
+
+  hospitals Hospital[] // ADDED
+  patients  Patient[]  // ADDED
+}
+
+model Hospital {
+  id        String         @id @default(cuid())
+  name      String
+  slug      String         @unique
+  status    HospitalStatus @default(PENDING)
+  addressId String?
+  address   Address?       @relation(fields: [addressId], references: [id])
+  createdAt DateTime       @default(now())
+
+  users        User[]        // ADDED
+  departments  Department[]  // ADDED
+  appointments Appointment[] // ADDED
+}
+
+enum HospitalStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model User {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  password   String
+  role       Role
+  hospitalId String?
+  hospital   Hospital? @relation(fields: [hospitalId], references: [id])
+  createdAt  DateTime  @default(now())
+
+  doctor  Doctor?  // ADDED
+  patient Patient? // ADDED
+}
+
+enum Role {
+  SUPER_ADMIN
+  HOSPITAL_ADMIN
+  DOCTOR
+  NURSE
+  RECEPTIONIST
+  LAB_TECHNICIAN
+  PHARMACIST
+  ACCOUNTANT
+  PATIENT
+}
+
+model Doctor {
+  id             String     @id @default(cuid())
+  userId         String     @unique
+  user           User       @relation(fields: [userId], references: [id])
+  specialization String
+  licenseNumber  String     @unique
+  departmentId   String
+  department     Department @relation(fields: [departmentId], references: [id])
+  createdAt      DateTime   @default(now())
+
+  appointments Appointment[] // ADDED
+}
+
+model Department {
+  id         String   @id @default(cuid())
+  name       String
+  hospitalId String
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  createdAt  DateTime @default(now())
+
+  doctors      Doctor[]      // ADDED
+  appointments Appointment[] // ADDED
+}
+
+model Patient {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  dateOfBirth DateTime
+  bloodGroup  String?
+  addressId   String?
+  address     Address? @relation(fields: [addressId], references: [id])
+  createdAt   DateTime @default(now())
+
+  appointments Appointment[] // ADDED
+}
+
+model Appointment {
+  id           String            @id @default(cuid())
+  patientId    String
+  patient      Patient           @relation(fields: [patientId], references: [id])
+  doctorId     String
+  doctor       Doctor            @relation(fields: [doctorId], references: [id])
+  departmentId String
+  department   Department        @relation(fields: [departmentId], references: [id])
+  hospitalId   String
+  hospital     Hospital          @relation(fields: [hospitalId], references: [id])
+  scheduledAt  DateTime
+  status       AppointmentStatus @default(PENDING)
+  isEmergency  Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+  EMERGENCY
+}
