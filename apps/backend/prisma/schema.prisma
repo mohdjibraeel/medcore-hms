@@ -38,6 +38,7 @@ model Hospital {
   departments  Department[] // ADDED
   labTests     LabTest[]
   appointments Appointment[] // ADDED
+  invoices     Invoice[]
 }
 
 enum HospitalStatus {
@@ -106,6 +107,7 @@ model Patient {
   address        Address?        @relation(fields: [addressId], references: [id])
   createdAt      DateTime        @default(now())
   medicalRecords MedicalRecord[]
+  invoices       Invoice[]
   appointments   Appointment[] // ADDED
 }
 
@@ -123,6 +125,7 @@ model Appointment {
   scheduledAt    DateTime
   status         AppointmentStatus @default(PENDING)
   isEmergency    Boolean           @default(false)
+  invoices       Invoice[]
   createdAt      DateTime          @default(now())
 }
 
@@ -266,4 +269,44 @@ model LabOrderItem {
   resultValue Float?
   isFlagged   Boolean  @default(false)
   reportUrl   String?
+}
+
+model Invoice {
+  id            String      @id @default(cuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  patientId     String
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  hospitalId    String
+  hospital      Hospital    @relation(fields: [hospitalId], references: [id])
+
+  status      InvoiceStatus @default(DRAFT)
+  totalAmount Float         @default(0)
+  createdAt   DateTime      @default(now())
+
+  items InvoiceItem[]
+}
+
+enum InvoiceStatus {
+  DRAFT
+  FINALIZED
+  PAID
+  CANCELLED
+}
+
+model InvoiceItem {
+  id          String              @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice             @relation(fields: [invoiceId], references: [id])
+  description String // e.g. "Consultation Fee", "Blood Test - CBC"
+  category    InvoiceItemCategory
+  amount      Float
+}
+
+enum InvoiceItemCategory {
+  CONSULTATION
+  LAB
+  PHARMACY
+  ROOM
+  OTHER
 }
