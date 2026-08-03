@@ -1,11 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -13,16 +9,15 @@ datasource db {
 }
 
 model Address {
-  id      String  @id @default(cuid())
-  line1   String
-  line2   String?
-  city    String
-  state   String
-  pincode String
-  country String  @default("India")
-
-  hospitals Hospital[] // ADDED
-  patients  Patient[] // ADDED
+  id        String     @id @default(cuid())
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  pincode   String
+  country   String     @default("India")
+  hospitals Hospital[]
+  patients  Patient[]
 }
 
 model Hospital {
@@ -31,34 +26,241 @@ model Hospital {
   slug         String         @unique
   status       HospitalStatus @default(PENDING)
   addressId    String?
-  address      Address?       @relation(fields: [addressId], references: [id])
   createdAt    DateTime       @default(now())
-  medicines    Medicine[]
-  users        User[] // ADDED
-  departments  Department[] // ADDED
-  labTests     LabTest[]
-  appointments Appointment[] // ADDED
+  appointments Appointment[]
+  departments  Department[]
+  address      Address?       @relation(fields: [addressId], references: [id])
   invoices     Invoice[]
+  labTests     LabTest[]
+  medicines    Medicine[]
+  users        User[]
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  role          Role
+  hospitalId    String?
+  createdAt     DateTime       @default(now())
+  doctor        Doctor?
+  notifications Notification[]
+  patient       Patient?
+  hospital      Hospital?      @relation(fields: [hospitalId], references: [id])
+}
+
+model Doctor {
+  id             String          @id @default(cuid())
+  userId         String          @unique
+  specialization String
+  licenseNumber  String          @unique
+  departmentId   String
+  createdAt      DateTime        @default(now())
+  appointments   Appointment[]
+  department     Department      @relation(fields: [departmentId], references: [id])
+  user           User            @relation(fields: [userId], references: [id])
+  medicalRecords MedicalRecord[]
+}
+
+model Department {
+  id           String        @id @default(cuid())
+  name         String
+  hospitalId   String
+  createdAt    DateTime      @default(now())
+  appointments Appointment[]
+  hospital     Hospital      @relation(fields: [hospitalId], references: [id])
+  doctors      Doctor[]
+}
+
+model Patient {
+  id             String          @id @default(cuid())
+  userId         String          @unique
+  dateOfBirth    DateTime
+  bloodGroup     String?
+  addressId      String?
+  createdAt      DateTime        @default(now())
+  appointments   Appointment[]
+  invoices       Invoice[]
+  medicalRecords MedicalRecord[]
+  address        Address?        @relation(fields: [addressId], references: [id])
+  user           User            @relation(fields: [userId], references: [id])
+}
+
+model Appointment {
+  id             String            @id @default(cuid())
+  patientId      String
+  doctorId       String
+  departmentId   String
+  hospitalId     String
+  scheduledAt    DateTime
+  status         AppointmentStatus @default(PENDING)
+  isEmergency    Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+  department     Department        @relation(fields: [departmentId], references: [id])
+  doctor         Doctor            @relation(fields: [doctorId], references: [id])
+  hospital       Hospital          @relation(fields: [hospitalId], references: [id])
+  patient        Patient           @relation(fields: [patientId], references: [id])
+  invoices       Invoice?
+  medicalRecords MedicalRecord?
+}
+
+model MedicalRecord {
+  id             String         @id @default(cuid())
+  appointmentId  String         @unique
+  patientId      String
+  doctorId       String
+  bloodPressure  String?
+  pulse          Int?
+  temperature    Float?
+  spo2           Int?
+  heightCm       Float?
+  weightKg       Float?
+  chiefComplaint String
+  diagnosis      String?
+  treatmentPlan  String?
+  allergies      String?
+  createdAt      DateTime       @default(now())
+  labOrders      LabOrder[]
+  appointment    Appointment    @relation(fields: [appointmentId], references: [id])
+  doctor         Doctor         @relation(fields: [doctorId], references: [id])
+  patient        Patient        @relation(fields: [patientId], references: [id])
+  prescriptions  Prescription[]
+}
+
+model Medicine {
+  id                String             @id @default(cuid())
+  name              String
+  form              MedicineForm
+  hospitalId        String
+  reorderLevel      Int                @default(10)
+  createdAt         DateTime           @default(now())
+  hospital          Hospital           @relation(fields: [hospitalId], references: [id])
+  batches           MedicineBatch[]
+  prescriptionItems PrescriptionItem[]
+}
+
+model Prescription {
+  id              String             @id @default(cuid())
+  medicalRecordId String
+  createdAt       DateTime           @default(now())
+  medicalRecord   MedicalRecord      @relation(fields: [medicalRecordId], references: [id])
+  items           PrescriptionItem[]
+}
+
+model PrescriptionItem {
+  id             String       @id @default(cuid())
+  prescriptionId String
+  medicineId     String
+  dosage         String
+  frequency      Frequency
+  durationDays   Int
+  instructions   String?
+  medicine       Medicine     @relation(fields: [medicineId], references: [id])
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+}
+
+model MedicineBatch {
+  id              String   @id @default(cuid())
+  medicineId      String
+  batchNumber     String
+  manufactureDate DateTime
+  expiryDate      DateTime
+  quantity        Int
+  unitCost        Float
+  mrp             Float
+  isQuarantined   Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  medicine        Medicine @relation(fields: [medicineId], references: [id])
+}
+
+model LabTest {
+  id           String         @id @default(cuid())
+  name         String
+  unit         String
+  refRangeLow  Float?
+  refRangeHigh Float?
+  hospitalId   String
+  labOrders    LabOrderItem[]
+  hospital     Hospital       @relation(fields: [hospitalId], references: [id])
+}
+
+model LabOrder {
+  id              String         @id @default(cuid())
+  medicalRecordId String
+  status          LabOrderStatus @default(ORDERED)
+  createdAt       DateTime       @default(now())
+  medicalRecord   MedicalRecord  @relation(fields: [medicalRecordId], references: [id])
+  items           LabOrderItem[]
+}
+
+model LabOrderItem {
+  id          String   @id @default(cuid())
+  labOrderId  String
+  labTestId   String
+  resultValue Float?
+  isFlagged   Boolean  @default(false)
+  reportUrl   String?
+  labOrder    LabOrder @relation(fields: [labOrderId], references: [id])
+  labTest     LabTest  @relation(fields: [labTestId], references: [id])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  appointmentId String        @unique
+  patientId     String
+  hospitalId    String
+  status        InvoiceStatus @default(DRAFT)
+  totalAmount   Float         @default(0)
+  createdAt     DateTime      @default(now())
+  appointment   Appointment   @relation(fields: [appointmentId], references: [id])
+  hospital      Hospital      @relation(fields: [hospitalId], references: [id])
+  patient       Patient       @relation(fields: [patientId], references: [id])
+  items         InvoiceItem[]
+}
+
+model InvoiceItem {
+  id          String              @id @default(cuid())
+  invoiceId   String
+  description String
+  category    InvoiceItemCategory
+  amount      Float
+  invoice     Invoice             @relation(fields: [invoiceId], references: [id])
+}
+
+model Notification {
+  id               String           @id @default(cuid())
+  userId           String
+  type             NotificationType
+  title            String
+  message          String
+  isRead           Boolean          @default(false)
+  linkedEntityId   String?
+  linkedEntityType String?
+  createdAt        DateTime         @default(now())
+  user             User             @relation(fields: [userId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  ipAddress  String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
 }
 
 enum HospitalStatus {
   PENDING
   VERIFIED
   REJECTED
-}
-
-model User {
-  id         String    @id @default(cuid())
-  email      String    @unique
-  password   String
-  role       Role
-  hospitalId String?
-  hospital   Hospital? @relation(fields: [hospitalId], references: [id])
-  createdAt  DateTime  @default(now())
-
-  doctor        Doctor? // ADDED
-  notifications Notification[]
-  patient       Patient? // ADDED
 }
 
 enum Role {
@@ -73,63 +275,6 @@ enum Role {
   PATIENT
 }
 
-model Doctor {
-  id             String     @id @default(cuid())
-  userId         String     @unique
-  user           User       @relation(fields: [userId], references: [id])
-  specialization String
-  licenseNumber  String     @unique
-  departmentId   String
-  department     Department @relation(fields: [departmentId], references: [id])
-  createdAt      DateTime   @default(now())
-
-  appointments   Appointment[] // ADDED
-  medicalRecords MedicalRecord[]
-}
-
-model Department {
-  id         String   @id @default(cuid())
-  name       String
-  hospitalId String
-  hospital   Hospital @relation(fields: [hospitalId], references: [id])
-  createdAt  DateTime @default(now())
-
-  doctors      Doctor[] // ADDED
-  appointments Appointment[] // ADDED
-}
-
-model Patient {
-  id             String          @id @default(cuid())
-  userId         String          @unique
-  user           User            @relation(fields: [userId], references: [id])
-  dateOfBirth    DateTime
-  bloodGroup     String?
-  addressId      String?
-  address        Address?        @relation(fields: [addressId], references: [id])
-  createdAt      DateTime        @default(now())
-  medicalRecords MedicalRecord[]
-  invoices       Invoice[]
-  appointments   Appointment[] // ADDED
-}
-
-model Appointment {
-  id             String            @id @default(cuid())
-  patientId      String
-  patient        Patient           @relation(fields: [patientId], references: [id])
-  doctorId       String
-  doctor         Doctor            @relation(fields: [doctorId], references: [id])
-  departmentId   String
-  department     Department        @relation(fields: [departmentId], references: [id])
-  hospitalId     String
-  hospital       Hospital          @relation(fields: [hospitalId], references: [id])
-  medicalRecords MedicalRecord?
-  scheduledAt    DateTime
-  status         AppointmentStatus @default(PENDING)
-  isEmergency    Boolean           @default(false)
-  invoices       Invoice[]
-  createdAt      DateTime          @default(now())
-}
-
 enum AppointmentStatus {
   PENDING
   CONFIRMED
@@ -140,74 +285,12 @@ enum AppointmentStatus {
   EMERGENCY
 }
 
-model MedicalRecord {
-  id            String      @id @default(cuid())
-  appointmentId String      @unique
-  appointment   Appointment @relation(fields: [appointmentId], references: [id])
-  patientId     String
-  patient       Patient     @relation(fields: [patientId], references: [id])
-  doctorId      String
-  doctor        Doctor      @relation(fields: [doctorId], references: [id])
-
-  bloodPressure String?
-  pulse         Int?
-  temperature   Float?
-  spo2          Int?
-  heightCm      Float?
-  weightKg      Float?
-
-  chiefComplaint String
-  diagnosis      String?
-  treatmentPlan  String?
-  allergies      String?
-
-  createdAt DateTime @default(now())
-
-  prescriptions Prescription[] // ADDED — coming next
-  labOrders     LabOrder[] // ADDED — coming next
-}
-
-model Medicine {
-  id           String       @id @default(cuid())
-  name         String
-  form         MedicineForm
-  hospitalId   String
-  hospital     Hospital     @relation(fields: [hospitalId], references: [id])
-  reorderLevel Int          @default(10)
-  createdAt    DateTime     @default(now())
-
-  prescriptionItems PrescriptionItem[]
-  batches           MedicineBatch[]
-}
-
 enum MedicineForm {
   TABLET
   CAPSULE
   SYRUP
   INJECTION
   TOPICAL
-}
-
-model Prescription {
-  id              String        @id @default(cuid())
-  medicalRecordId String
-  medicalRecord   MedicalRecord @relation(fields: [medicalRecordId], references: [id])
-  createdAt       DateTime      @default(now())
-
-  items PrescriptionItem[]
-}
-
-model PrescriptionItem {
-  id             String       @id @default(cuid())
-  prescriptionId String
-  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
-  medicineId     String
-  medicine       Medicine     @relation(fields: [medicineId], references: [id])
-
-  dosage       String // e.g. "500mg"
-  frequency    Frequency
-  durationDays Int
-  instructions String?
 }
 
 enum Frequency {
@@ -218,74 +301,11 @@ enum Frequency {
   SOS
 }
 
-model MedicineBatch {
-  id              String   @id @default(cuid())
-  medicineId      String
-  medicine        Medicine @relation(fields: [medicineId], references: [id])
-  batchNumber     String
-  manufactureDate DateTime
-  expiryDate      DateTime
-  quantity        Int
-  unitCost        Float
-  mrp             Float
-  isQuarantined   Boolean  @default(false)
-  createdAt       DateTime @default(now())
-}
-
-model LabTest {
-  id           String   @id @default(cuid())
-  name         String // e.g. "Haemoglobin"
-  unit         String // e.g. "g/dL"
-  refRangeLow  Float?
-  refRangeHigh Float?
-  hospitalId   String
-  hospital     Hospital @relation(fields: [hospitalId], references: [id])
-
-  labOrders LabOrderItem[]
-}
-
-model LabOrder {
-  id              String         @id @default(cuid())
-  medicalRecordId String
-  medicalRecord   MedicalRecord  @relation(fields: [medicalRecordId], references: [id])
-  status          LabOrderStatus @default(ORDERED)
-  createdAt       DateTime       @default(now())
-
-  items LabOrderItem[]
-}
-
 enum LabOrderStatus {
   ORDERED
   SAMPLE_COLLECTED
   RESULT_UPLOADED
   APPROVED
-}
-
-model LabOrderItem {
-  id          String   @id @default(cuid())
-  labOrderId  String
-  labOrder    LabOrder @relation(fields: [labOrderId], references: [id])
-  labTestId   String
-  labTest     LabTest  @relation(fields: [labTestId], references: [id])
-  resultValue Float?
-  isFlagged   Boolean  @default(false)
-  reportUrl   String?
-}
-
-model Invoice {
-  id            String      @id @default(cuid())
-  appointmentId String      @unique
-  appointment   Appointment @relation(fields: [appointmentId], references: [id])
-  patientId     String
-  patient       Patient     @relation(fields: [patientId], references: [id])
-  hospitalId    String
-  hospital      Hospital    @relation(fields: [hospitalId], references: [id])
-
-  status      InvoiceStatus @default(DRAFT)
-  totalAmount Float         @default(0)
-  createdAt   DateTime      @default(now())
-
-  items InvoiceItem[]
 }
 
 enum InvoiceStatus {
@@ -295,37 +315,12 @@ enum InvoiceStatus {
   CANCELLED
 }
 
-model InvoiceItem {
-  id          String              @id @default(cuid())
-  invoiceId   String
-  invoice     Invoice             @relation(fields: [invoiceId], references: [id])
-  description String // e.g. "Consultation Fee", "Blood Test - CBC"
-  category    InvoiceItemCategory
-  amount      Float
-}
-
 enum InvoiceItemCategory {
   CONSULTATION
   LAB
   PHARMACY
   ROOM
   OTHER
-}
-
-model Notification {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  type    NotificationType
-  title   String
-  message String
-  isRead  Boolean          @default(false)
-
-  linkedEntityId   String?
-  linkedEntityType String?
-
-  createdAt DateTime @default(now())
 }
 
 enum NotificationType {
@@ -337,15 +332,4 @@ enum NotificationType {
   PAYMENT_RECEIVED
   LOW_STOCK_ALERT
   EMERGENCY_APPOINTMENT
-}
-
-model AuditLog {
-  id         String   @id @default(cuid())
-  userId     String?
-  action     String // e.g. "CREATE_APPOINTMENT", "DELETE_PRESCRIPTION"
-  entityType String // e.g. "Appointment"
-  entityId   String?
-  ipAddress  String?
-  metadata   String? // JSON string of what changed, optional
-  createdAt  DateTime @default(now())
 }
