@@ -16,6 +16,8 @@ async function main() {
       email: 'admin@medcore.com',
       password: hashedPassword,
       role: 'SUPER_ADMIN',
+      firstName: 'Super',
+      lastName: 'Admin',
     },
   });
 
