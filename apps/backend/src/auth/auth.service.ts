@@ -1,4 +1,8 @@
-import { Injectable, ConflictException,UnauthorizedException} from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
@@ -7,7 +11,8 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService,
+  constructor(
+    private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
 
@@ -20,19 +25,27 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 12);
+    return this.prisma.$transaction(
+      async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            email: dto.email,
+            password: hashedPassword,
+            role: 'PATIENT',
+          },
+        });
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashedPassword,
-        role: 'PATIENT',
+        const patient = await tx.patient.create({
+          data: {
+            userId: user.id,
+            dateOfBirth: new Date(dto.dateOfBirth),
+          },
+        });
+
+        return { user, patient };
       },
-    });
-    return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
+      { maxWait: 10000, timeout: 15000 },
+    );
   }
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({

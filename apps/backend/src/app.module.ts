@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config/dist/config.module';
 import { HospitalsModule } from './hospitals/hospitals.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DoctorsModule } from './doctors/doctors.module';
     HospitalsModule,
     DepartmentsModule,
     DoctorsModule,
+    AppointmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
