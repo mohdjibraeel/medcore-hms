@@ -1,8 +1,10 @@
-import { Controller,Body,Post, UseGuards, Get, Req } from '@nestjs/common';
+import { Controller, Body, Post, UseGuards, Get, Req } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -20,7 +22,14 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getMe(@Req() request: any) { 
+  getMe(@Req() request: any) {
     return request.user;
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN')
+  @Get('admin-only')
+  adminOnly(@Req() request: any) {
+    return { message: 'Welcome, admin', user: request.user };
   }
 }
