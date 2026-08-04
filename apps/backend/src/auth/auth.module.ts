@@ -10,6 +10,6 @@ import { RolesGuard } from './guards/roles.guard';
   imports: [PrismaModule,JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService,JwtAuthGuard,RolesGuard],
-  exports: [JwtAuthGuard,RolesGuard],
+  exports: [JwtAuthGuard,RolesGuard,JwtModule],
 })
 export class AuthModule {}
