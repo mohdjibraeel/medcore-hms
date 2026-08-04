@@ -32,6 +32,8 @@ export class AuthService {
             email: dto.email,
             password: hashedPassword,
             role: 'PATIENT',
+            firstName: dto.firstName,
+            lastName: dto.lastName,
           },
         });
 

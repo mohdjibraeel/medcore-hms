@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
@@ -27,4 +28,12 @@ export class CreateDoctorDto {
   @IsString()
   @IsNotEmpty()
   departmentId!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  firstName!: string;
+
+  @IsOptional()
+  @IsString()
+  lastName?: string;
 }
