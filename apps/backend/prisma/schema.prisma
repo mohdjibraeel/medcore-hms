@@ -144,6 +144,9 @@ model Medicine {
 model Prescription {
   id              String             @id @default(cuid())
   medicalRecordId String
+  patientId       String              
+  doctorId        String  
+  notes           String?
   createdAt       DateTime           @default(now())
   medicalRecord   MedicalRecord      @relation(fields: [medicalRecordId], references: [id])
   items           PrescriptionItem[]
@@ -154,6 +157,8 @@ model PrescriptionItem {
   prescriptionId String
   medicineId     String
   dosage         String
+  quantity       Int  
+  dosageUnit     String 
   frequency      Frequency
   durationDays   Int
   instructions   String?
