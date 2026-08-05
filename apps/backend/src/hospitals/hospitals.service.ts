@@ -1,6 +1,7 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
+import { UpdateHospitalStatusDto } from './dto/update-status.dto';
 
 @Injectable()
 export class HospitalsService {
@@ -22,4 +23,18 @@ export class HospitalsService {
       },
     });
   }
+
+  async updateStatus(id:string,dto: UpdateHospitalStatusDto) {
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id },
+    });
+
+    if(!hospital) {
+      throw new NotFoundException('Hospital not found');
+    }
+    return this.prisma.hospital.update({
+      where: { id },
+      data: { status: dto.status },
+    });
+  } 
 }
