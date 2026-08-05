@@ -47,21 +47,23 @@ export default function DashboardPage() {
     fetchAppointments();
   }, [token]);
 
-  const updateAppointmentStatus = async (appointmentId: string) => {
-    try {
-      await api.patch(`/appointments/${appointmentId}/status`, {
-        status: "CONFIRMED",
-      });
+  // const updateAppointmentStatus = async (appointmentId: string) => {
+  //   try {
+  //     await api.patch(`/appointments/${appointmentId}/status`, {
+  //       status: "CONFIRMED",
+  //     });
 
-      setAppointments((prev) =>
-        prev.map((appt) =>
-          appt.id === appointmentId ? { ...appt, status: "CONFIRMED" } : appt,
-        ),
-      );
-    } catch (err: any) {
-      console.error("Failed to update appointment:", err);
-    }
-  };
+  //     setAppointments((prev) =>
+  //       prev.map((appt) =>
+  //         appt.id === appointmentId ? { ...appt, status: "CONFIRMED" } : appt,
+  //       ),
+  //     );
+  //   } catch (err: any) {
+  //     console.error("Failed to update appointment:", err);
+  //   }
+  // };
+
+
 
   // Fetch medical records
   useEffect(() => {
@@ -182,14 +184,6 @@ export default function DashboardPage() {
                     >
                       {appt.status}
                     </span>
-                    {appt.status === "PENDING" && (
-                      <button
-                        onClick={() => updateAppointmentStatus(appt.id)}
-                        className="ml-3 bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition-colors"
-                      >
-                        Confirm
-                      </button>
-                    )}
                   </div>
                 </li>
               ))}
