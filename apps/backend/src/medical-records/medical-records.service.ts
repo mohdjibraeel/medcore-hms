@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMedicalRecordDto } from './dto/create-medical-record.dto';
 
@@ -15,18 +20,20 @@ export class MedicalRecordsService {
         doctorId: true,
         patientId: true,
         doctor: {
-          select: { userId: true }
-        }
-      }
+          select: { userId: true },
+        },
+      },
     });
 
     if (!appointment) {
-      throw new NotFoundException(`Appointment with ID ${dto.appointmentId} not found`);
+      throw new NotFoundException(
+        `Appointment with ID ${dto.appointmentId} not found`,
+      );
     }
 
     // STEP 2: Get the calling user's Doctor profile
     const callingDoctor = await this.prisma.doctor.findUnique({
-      where: { userId: userId }
+      where: { userId: userId },
     });
 
     if (!callingDoctor) {
@@ -36,19 +43,20 @@ export class MedicalRecordsService {
     // STEP 3: AUTHORIZATION — only the assigned doctor can create the record
     if (appointment.doctorId !== callingDoctor.id) {
       throw new ForbiddenException(
-        'You are not the assigned doctor for this appointment'
+        'You are not the assigned doctor for this appointment',
       );
     }
 
     // STEP 4: Check if a MedicalRecord already exists for this appointment
     const existingRecord = await this.prisma.medicalRecord.findUnique({
-      where: { appointmentId: dto.appointmentId }
+      where: { appointmentId: dto.appointmentId },
     });
 
     if (existingRecord) {
-      throw new ConflictException(
-        `Medical record already exists for appointment ${dto.appointmentId}`
-      );
+      throw new ConflictException({
+        message: `Medical record already exists for appointment ${dto.appointmentId}`,
+        existingRecordId: existingRecord.id,
+      });
     }
 
     // STEP 5: Create the record — patientId/doctorId DERIVED from appointment, NOT from DTO
@@ -70,23 +78,26 @@ export class MedicalRecordsService {
       },
       include: {
         patient: {
-          include: { user: true }
+          include: { user: true },
         },
         doctor: {
-          include: { user: true }
-        }
-      }
+          include: { user: true },
+        },
+      },
     });
   }
-  async findAll(patientId: string) {
-  return this.prisma.medicalRecord.findMany({
-    where: { patientId },
-    include: {
-      doctor: { include: { user: true } },
-      patient: { include: { user: true } },
-      appointment: true,
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-}
+  async findAll(patientId: string,doctorId?: string) {
+    return this.prisma.medicalRecord.findMany({
+      where: {
+        patientId,
+        doctorId,
+      },
+      include: {
+        doctor: { include: { user: true } },
+        patient: { include: { user: true } },
+        appointment: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

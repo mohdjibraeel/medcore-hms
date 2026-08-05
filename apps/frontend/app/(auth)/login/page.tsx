@@ -49,7 +49,12 @@ export default function LoginPage() {
       setAuth(accessToken, profileData);
 
       // Step 4: Redirect to dashboard
-      router.push("/dashboard");
+      // Step 4: Redirect based on role
+      if (profileData.role === "DOCTOR") {
+        router.push("/doctor");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

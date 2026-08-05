@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req, Query, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Query,
+  Get,
+} from '@nestjs/common';
 import { MedicalRecordsService } from './medical-records.service';
 import { CreateMedicalRecordDto } from './dto/create-medical-record.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -25,7 +33,10 @@ export class MedicalRecordsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('PATIENT', 'DOCTOR', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Get()
-  findAll(@Query('patientId') patientId: string) {
-    return this.medicalRecordsService.findAll(patientId);
+  findAll(
+    @Query('patientId') patientId: string,
+    @Query('doctorId') doctorId?: string,
+  ) {
+    return this.medicalRecordsService.findAll(patientId, doctorId);
   }
 }
