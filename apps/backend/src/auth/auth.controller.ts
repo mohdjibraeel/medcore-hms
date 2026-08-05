@@ -20,16 +20,17 @@ export class AuthController {
     return this.authService.login(body);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('me')
-  getMe(@Req() request: any) {
-    return request.user;
-  }
-
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN')
   @Get('admin-only')
   adminOnly(@Req() request: any) {
     return { message: 'Welcome, admin', user: request.user };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMe(@Req() request: any) {
+    // request.user contains { sub, email, role } from JWT
+    return this.authService.getMe(request.user.sub);
   }
 }

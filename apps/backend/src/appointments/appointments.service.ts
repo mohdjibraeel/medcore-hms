@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { AppointmentStatus } from 'generated/prisma/client';
 
 @Injectable()
 export class AppointmentsService {
@@ -57,6 +58,47 @@ export class AppointmentsService {
         hospitalId: dto.hospitalId,
         scheduledAt: new Date(dto.scheduledAt),
         isEmergency: dto.isEmergency ?? false,
+      },
+    });
+  }
+
+  async findAll(query: { patientId?: string; doctorId?: string }) {
+    const where: any = {};
+    if (query.patientId) where.patientId = query.patientId;
+    if (query.doctorId) where.doctorId = query.doctorId;
+
+    return this.prisma.appointment.findMany({
+      where,
+      include: {
+        patient: { include: { user: true } },
+        doctor: { include: { user: true } },
+        department: true,
+        hospital: true,
+      },
+      orderBy: { scheduledAt: 'desc' },
+    });
+  }
+
+  async updateStatus(appointmentId: string, newStatus: AppointmentStatus) {
+    // Check if appointment exists
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id: appointmentId },
+    });
+    if (!appointment) {
+      throw new NotFoundException(
+        `Appointment with ID ${appointmentId} not found`,
+      );
+    }
+
+    // Update status
+    return this.prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { status: newStatus },
+      include: {
+        patient: { include: { user: true } },
+        doctor: { include: { user: true } },
+        department: true,
+        hospital: true,
       },
     });
   }

@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
@@ -78,4 +79,20 @@ export class AuthService {
 
     return { accessToken, refreshToken };
   }
+
+  async getMe(userId: string) {
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      patient: true,
+      doctor: true,
+    },
+  });
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+  // Remove password before returning
+  const { password, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+}
 }

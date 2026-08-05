@@ -78,4 +78,15 @@ export class MedicalRecordsService {
       }
     });
   }
+  async findAll(patientId: string) {
+  return this.prisma.medicalRecord.findMany({
+    where: { patientId },
+    include: {
+      doctor: { include: { user: true } },
+      patient: { include: { user: true } },
+      appointment: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
 }

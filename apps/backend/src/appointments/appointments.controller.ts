@@ -1,9 +1,20 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { UpdateAppointmentStatusDto } from './dto/update-appointment-status.dto';
 
 @Controller('appointments')
 export class AppointmentsController {
@@ -14,5 +25,22 @@ export class AppointmentsController {
   @Post()
   create(@Body() dto: CreateAppointmentDto, @Req() req: any) {
     return this.appointmentsService.create(dto, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('PATIENT', 'DOCTOR', 'RECEPTIONIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Get()
+  findAll(@Query() query: { patientId?: string; doctorId?: string }) {
+    return this.appointmentsService.findAll(query);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('DOCTOR', 'RECEPTIONIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Patch(':id/status')
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateAppointmentStatusDto,
+  ) {
+    return this.appointmentsService.updateStatus(id, dto.status);
   }
 }
