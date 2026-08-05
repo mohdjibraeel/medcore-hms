@@ -7,19 +7,19 @@ import { api } from "../../lib/api";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { token, user, logout } = useAuthStore();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [medicalRecords, setMedicalRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingRecords, setLoadingRecords] = useState(true);
   const [error, setError] = useState("");
   const [recordsError, setRecordsError] = useState("");
+  const { token, user, logout, hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    if (!token) {
+    if (hasHydrated && !token) {
       router.push("/login");
     }
-  }, [token, router]);
+  }, [hasHydrated, token, router]);
 
   // Fetch appointments
   useEffect(() => {
@@ -43,6 +43,22 @@ export default function DashboardPage() {
 
     fetchAppointments();
   }, [token]);
+
+  const updateAppointmentStatus = async (appointmentId: string) => {
+    try {
+      await api.patch(`/appointments/${appointmentId}/status`, {
+        status: "CONFIRMED",
+      });
+
+      setAppointments((prev) =>
+        prev.map((appt) =>
+          appt.id === appointmentId ? { ...appt, status: "CONFIRMED" } : appt,
+        ),
+      );
+    } catch (err: any) {
+      console.error("Failed to update appointment:", err);
+    }
+  };
 
   // Fetch medical records
   useEffect(() => {
@@ -69,7 +85,7 @@ export default function DashboardPage() {
     fetchMedicalRecords();
   }, [token]);
 
-  if (!token) {
+  if (!hasHydrated || !token) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Loading...
@@ -141,6 +157,14 @@ export default function DashboardPage() {
                     >
                       {appt.status}
                     </span>
+                    {appt.status === "PENDING" && (
+                      <button
+                        onClick={() => updateAppointmentStatus(appt.id)}
+                        className="ml-3 bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                      >
+                        Confirm
+                      </button>
+                    )}
                   </div>
                 </li>
               ))}
