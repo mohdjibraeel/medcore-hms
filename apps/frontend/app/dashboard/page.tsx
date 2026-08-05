@@ -9,6 +9,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [medicalRecords, setMedicalRecords] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [loadingInvoices, setLoadingInvoices] = useState(true);
+  const [invoicesError, setInvoicesError] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingRecords, setLoadingRecords] = useState(true);
   const [error, setError] = useState("");
@@ -83,6 +86,28 @@ export default function DashboardPage() {
     };
 
     fetchMedicalRecords();
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchInvoices = async () => {
+      try {
+        setLoadingInvoices(true);
+        const patientId = "cmseexc870002lstvtn5pxs87";
+        const response = await api.get(`/invoices?patientId=${patientId}`);
+        const invoicesData = Array.isArray(response.data)
+          ? response.data
+          : response.data?.data || [];
+        setInvoices(invoicesData);
+      } catch (err: any) {
+        setInvoicesError(err.message || "Failed to fetch invoices");
+      } finally {
+        setLoadingInvoices(false);
+      }
+    };
+
+    fetchInvoices();
   }, [token]);
 
   if (!hasHydrated || !token) {
@@ -232,6 +257,62 @@ export default function DashboardPage() {
                 ))}
               </ul>
             )}
+        </div>
+        {/* Billing Section */}
+        <div className="bg-white rounded-lg shadow-md p-6 mt-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            Your Invoices
+          </h2>
+
+          {loadingInvoices && (
+            <p className="text-gray-500">Loading your invoices...</p>
+          )}
+
+          {invoicesError && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+              {invoicesError}
+            </div>
+          )}
+
+          {!loadingInvoices && !invoicesError && invoices.length === 0 && (
+            <p className="text-gray-500">No invoices found.</p>
+          )}
+
+          {!loadingInvoices && !invoicesError && invoices.length > 0 && (
+            <ul className="divide-y divide-gray-200">
+              {invoices.map((invoice: any) => (
+                <li key={invoice.id} className="py-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-medium text-gray-800">
+                        {new Date(invoice.createdAt).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Total: ₹{invoice.totalAmount.toFixed(2)}
+                      </p>
+                      <ul className="mt-1 text-xs text-gray-500 list-disc list-inside">
+                        {invoice.items?.map((item: any) => (
+                          <li key={item.id}>
+                            {item.description} — ₹{item.amount.toFixed(2)}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap
+              ${invoice.status === "PAID" ? "bg-green-100 text-green-800" : ""}
+              ${invoice.status === "FINALIZED" ? "bg-blue-100 text-blue-800" : ""}
+              ${invoice.status === "DRAFT" ? "bg-yellow-100 text-yellow-800" : ""}
+              ${invoice.status === "CANCELLED" ? "bg-red-100 text-red-800" : ""}
+            `}
+                    >
+                      {invoice.status}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
