@@ -37,18 +37,37 @@ model Hospital {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  password      String
-  firstName     String
-  lastName      String?
-  role          Role
-  hospitalId    String?
-  createdAt     DateTime       @default(now())
-  doctor        Doctor?
-  notifications Notification[]
-  patient       Patient?
-  hospital      Hospital?      @relation(fields: [hospitalId], references: [id])
+  id                     String         @id @default(cuid())
+  email                  String         @unique
+  password               String
+  firstName              String
+  lastName               String?
+  role                   Role
+  hospitalId             String?
+  createdAt              DateTime       @default(now())
+  doctor                 Doctor?
+  notifications          Notification[]
+  patient                Patient?
+  hospital               Hospital?      @relation(fields: [hospitalId], references: [id])
+  phone                  String?        @unique
+  isEmailVerified        Boolean        @default(false)
+  isPhoneVerified        Boolean        @default(false)
+  emailOtpHash           String?
+  emailOtpExpiresAt      DateTime?
+  passwordResetTokenHash String?
+  passwordResetExpiresAt DateTime?
+  refreshTokens          RefreshToken[]
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Doctor {
@@ -144,8 +163,8 @@ model Medicine {
 model Prescription {
   id              String             @id @default(cuid())
   medicalRecordId String
-  patientId       String              
-  doctorId        String  
+  patientId       String
+  doctorId        String
   notes           String?
   createdAt       DateTime           @default(now())
   medicalRecord   MedicalRecord      @relation(fields: [medicalRecordId], references: [id])
@@ -157,8 +176,8 @@ model PrescriptionItem {
   prescriptionId String
   medicineId     String
   dosage         String
-  quantity       Int  
-  dosageUnit     String 
+  quantity       Int
+  dosageUnit     String
   frequency      Frequency
   durationDays   Int
   instructions   String?
