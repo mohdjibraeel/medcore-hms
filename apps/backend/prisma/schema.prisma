@@ -40,11 +40,11 @@ model User {
   id            String         @id @default(cuid())
   email         String         @unique
   password      String
-  firstName     String
-  lastName      String?
   role          Role
   hospitalId    String?
   createdAt     DateTime       @default(now())
+  firstName     String
+  lastName      String?
   doctor        Doctor?
   notifications Notification[]
   patient       Patient?
@@ -145,6 +145,9 @@ model Prescription {
   id              String             @id @default(cuid())
   medicalRecordId String
   createdAt       DateTime           @default(now())
+  doctorId        String
+  patientId       String
+  notes           String?
   medicalRecord   MedicalRecord      @relation(fields: [medicalRecordId], references: [id])
   items           PrescriptionItem[]
 }
@@ -157,6 +160,8 @@ model PrescriptionItem {
   frequency      Frequency
   durationDays   Int
   instructions   String?
+  dosageUnit     String
+  quantity       Int
   medicine       Medicine     @relation(fields: [medicineId], references: [id])
   prescription   Prescription @relation(fields: [prescriptionId], references: [id])
 }
