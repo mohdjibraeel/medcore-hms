@@ -9,7 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt/dist/jwt.service';
 import { LoginDto } from './dto/login.dto';
-import { generateRawToken,sha256 } from './token.util';
+import { sha256 } from './token.util';
 
 @Injectable()
 export class AuthService {
@@ -109,4 +109,66 @@ export class AuthService {
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
+
+  // Add this method after login()
+
+  async refresh(refreshToken: string) {
+    // 1. Verify the refresh token
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    // 2. Check if token exists in DB and is not revoked
+    const tokenHash = sha256(refreshToken);
+    const storedToken = await this.prisma.refreshToken.findFirst({
+      where: {
+        tokenHash,
+        userId: payload.sub,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+    });
+    if (!storedToken) {
+      throw new UnauthorizedException('Refresh token not found or revoked');
+    }
+
+    // 3. (Optional) Rotate: revoke the old token and issue a new one
+    await this.prisma.refreshToken.update({
+      where: { id: storedToken.id },
+      data: { revokedAt: new Date() },
+    });
+
+    // 4. Issue a new token pair
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const newTokens = await this.issueTokenPair({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    return newTokens; // { accessToken, refreshToken }
+  }
+
+  async logout(refreshToken: string): Promise<void> {
+  const tokenHash = sha256(refreshToken);
+  const storedToken = await this.prisma.refreshToken.findFirst({
+    where: { tokenHash, revokedAt: null },
+  });
+  if (storedToken) {
+    await this.prisma.refreshToken.update({
+      where: { id: storedToken.id },
+      data: { revokedAt: new Date() },
+    });
+  }
+  // If token not found, it's already invalid – just return success
+}
 }

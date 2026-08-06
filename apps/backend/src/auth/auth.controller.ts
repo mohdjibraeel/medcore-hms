@@ -1,4 +1,12 @@
-import { Controller, Body, Post, UseGuards, Get, Req } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  UseGuards,
+  Get,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -32,5 +40,18 @@ export class AuthController {
   getMe(@Req() request: any) {
     // request.user contains { sub, email, role } from JWT
     return this.authService.getMe(request.user.sub);
+  }
+
+  @Post('refresh')
+  async refresh(@Body('refreshToken') refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token required');
+    }
+    return this.authService.refresh(refreshToken);
+  }
+  @Post('logout')
+  async logout(@Body('refreshToken') refreshToken: string) {
+    await this.authService.logout(refreshToken);
+    return { message: 'Logged out successfully' };
   }
 }
