@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,5 +32,10 @@ export class AuthController {
   @Get('admin-only')
   adminOnly(@Req() request: any) {
     return { message: 'Welcome, admin', user: request.user };
+  }
+
+  @Post('refresh')
+  refresh(@Body() body: RefreshTokenDto) {
+    return this.authService.refresh(body);
   }
 }
