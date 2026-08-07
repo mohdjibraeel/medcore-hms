@@ -2,9 +2,11 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { UpdateAppointmentStatusDto } from './dto/update-appointment-status.dto';
 
 @Injectable()
 export class AppointmentsService {
@@ -58,6 +60,38 @@ export class AppointmentsService {
         scheduledAt: new Date(dto.scheduledAt),
         isEmergency: dto.isEmergency ?? false,
       },
+    });
+  }
+
+  private static readonly ALLOWED_TRANSITIONS: Record<string, string[]> = {
+    PENDING: ['CONFIRMED', 'CANCELLED'],
+    CONFIRMED: ['IN_PROGRESS', 'CANCELLED', 'NO_SHOW'],
+    IN_PROGRESS: ['COMPLETED'],
+    COMPLETED: [],
+    CANCELLED: [],
+    NO_SHOW: [],
+    EMERGENCY: [],
+  };
+
+  async updateStatus(id: string, dto: UpdateAppointmentStatusDto) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id },
+    });
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    const allowedNextStatuses =
+      AppointmentsService.ALLOWED_TRANSITIONS[appointment.status] ?? [];
+    if (!allowedNextStatuses.includes(dto.status)) {
+      throw new ConflictException(
+        `Cannot transition from ${appointment.status} to ${dto.status}`,
+      );
+    }
+
+    return this.prisma.appointment.update({
+      where: { id },
+      data: { status: dto.status },
     });
   }
 }

@@ -43,8 +43,8 @@ export class AuthService {
             dateOfBirth: new Date(dto.dateOfBirth),
           },
         });
-
-        return { user, patient };
+        const { password, ...userWithoutPassword } = user;
+        return { user: userWithoutPassword, patient };
       },
       { maxWait: 10000, timeout: 15000 },
     );

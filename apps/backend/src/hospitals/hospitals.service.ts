@@ -37,4 +37,10 @@ export class HospitalsService {
       data: { status: dto.status },
     });
   } 
+
+  async findAll() {
+    return this.prisma.hospital.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }
