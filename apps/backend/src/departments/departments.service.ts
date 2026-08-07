@@ -22,4 +22,18 @@ export class DepartmentsService {
       },
     });
   }
+
+  async findByHospital(hospitalId: string) {
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+    if (!hospital) {
+      throw new NotFoundException('Hospital not found');
+    }
+
+    return this.prisma.department.findMany({
+      where: { hospitalId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }
