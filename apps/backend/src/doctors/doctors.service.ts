@@ -57,4 +57,23 @@ export class DoctorsService {
       },
     );
   }
+
+  async findAll(hospitalId?: string, specialization?: string) {
+    return this.prisma.doctor.findMany({
+      where: {
+        ...(hospitalId && { user: { hospitalId } }),
+        ...(specialization && {
+          specialization: { contains: specialization, mode: 'insensitive' },
+        }),
+      },
+      include: {
+        user: {
+          select: { firstName: true, lastName: true, email: true },
+        },
+        department: {
+          select: { name: true },
+        },
+      },
+    });
+  }
 }

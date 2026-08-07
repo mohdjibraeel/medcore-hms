@@ -67,4 +67,35 @@ export class MedicalRecordsService {
       },
     });
   }
+
+  async findByPatient(
+    patientId: string,
+    currentUser: { sub: string; role: string },
+  ) {
+    const patient = await this.prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+    if (!patient) {
+      throw new NotFoundException('Patient not found');
+    }
+
+    if (currentUser.role === 'PATIENT' && patient.userId !== currentUser.sub) {
+      throw new ForbiddenException(
+        'You can only view your own medical records',
+      );
+    }
+
+    return this.prisma.medicalRecord.findMany({
+      where: { patientId },
+      include: {
+        doctor: {
+          include: {
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+        appointment: { select: { scheduledAt: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }
