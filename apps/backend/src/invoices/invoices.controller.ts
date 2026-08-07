@@ -32,7 +32,7 @@ export class InvoicesController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Roles( 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Patch(':id/mark-paid')
   markPaid(@Param('id') id: string) {
     return this.invoicesService.markPaid(id);
