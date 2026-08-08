@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDoctorDto } from '../doctors/dto/create-doctor.dto';
 import * as bcrypt from 'bcrypt';
@@ -58,10 +58,31 @@ export class DoctorsService {
     );
   }
 
-  async findAll(hospitalId?: string, specialization?: string) {
+  async findAll(
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+    hospitalId?: string,
+    specialization?: string,
+  ) {
+    const isStaffScoped =
+      currentUser.role !== 'PATIENT' && currentUser.role !== 'SUPER_ADMIN';
+
+    if (isStaffScoped && !currentUser.hospitalId) {
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
+    }
+
+    // Staff: hospitalId is forced from their own account, never trusted from the query string.
+    // Patient/Super Admin: query param is an honest search filter (or omitted = search everywhere).
+    const effectiveHospitalId = isStaffScoped
+      ? currentUser.hospitalId!
+      : hospitalId;
+
     return this.prisma.doctor.findMany({
       where: {
-        ...(hospitalId && { user: { hospitalId } }),
+        ...(effectiveHospitalId && {
+          user: { hospitalId: effectiveHospitalId },
+        }),
         ...(specialization && {
           specialization: { contains: specialization, mode: 'insensitive' },
         }),
