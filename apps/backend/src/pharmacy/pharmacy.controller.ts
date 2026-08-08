@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { PharmacyService } from './pharmacy.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { CreateMedicineBatchDto } from './dto/create-medicine-batch.dto';
@@ -13,8 +13,8 @@ export class PharmacyController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('PHARMACIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Post('medicines')
-  createMedicine(@Body() dto: CreateMedicineDto) {
-    return this.pharmacyService.createMedicine(dto);
+  createMedicine(@Body() dto: CreateMedicineDto, @Req() req: any) {
+    return this.pharmacyService.createMedicine(dto, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

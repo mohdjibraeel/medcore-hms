@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { LabOrdersService } from './lab-orders.service';
 import { CreateLabOrderDto } from './dto/create-lab-order.dto';
 import { UploadLabResultDto } from './dto/upload-lab-result.dto';
@@ -20,21 +28,25 @@ export class LabOrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('LAB_TECHNICIAN')
   @Patch(':id/collect')
-  collectSample(@Param('id') id: string) {
-    return this.labOrdersService.collectSample(id);
+  collectSample(@Param('id') id: string, @Req() req: any) {
+    return this.labOrdersService.collectSample(id, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('LAB_TECHNICIAN')
   @Patch(':id/result')
-  uploadResult(@Param('id') id: string, @Body() dto: UploadLabResultDto) {
-    return this.labOrdersService.uploadResult(id, dto);
+  uploadResult(
+    @Param('id') id: string,
+    @Body() dto: UploadLabResultDto,
+    @Req() req: any,
+  ) {
+    return this.labOrdersService.uploadResult(id, dto, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('LAB_TECHNICIAN')
   @Patch(':id/approve')
-  approve(@Param('id') id: string) {
-    return this.labOrdersService.approve(id);
+  approve(@Param('id') id: string, @Req() req: any) {
+    return this.labOrdersService.approve(id, req.user);
   }
 }

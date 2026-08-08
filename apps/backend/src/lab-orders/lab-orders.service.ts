@@ -7,6 +7,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLabOrderDto } from './dto/create-lab-order.dto';
 import { UploadLabResultDto } from './dto/upload-lab-result.dto';
+import { Role } from 'generated/prisma/client';
+import { assertSameHospital } from 'src/common/utils/tenancy.util';
 
 @Injectable()
 export class LabOrdersService {
@@ -14,7 +16,7 @@ export class LabOrdersService {
 
   async create(
     dto: CreateLabOrderDto,
-    currentUser: { sub: string; role: string },
+    currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
     // 1. MedicalRecord must exist
     const medicalRecord = await this.prisma.medicalRecord.findUnique({
@@ -37,15 +39,21 @@ export class LabOrdersService {
       );
     }
 
-    // 3. Every labTestId must exist
+    // 3. Every labTestId must exist AND belong to the doctor's own hospital —
+    // prevents ordering a lab test that's only offered at another hospital.
     const labTestIds = dto.items.map((item) => item.labTestId);
     const labTests = await this.prisma.labTest.findMany({
-      where: { id: { in: labTestIds } },
+      where: {
+        id: { in: labTestIds },
+        hospitalId: currentUser.hospitalId ?? undefined,
+      },
     });
     const foundIds = new Set(labTests.map((t) => t.id));
     const missingIds = labTestIds.filter((id) => !foundIds.has(id));
     if (missingIds.length > 0) {
-      throw new NotFoundException(`Lab test(s) not found: ${missingIds.join(', ')}`);
+      throw new NotFoundException(
+        `Lab test(s) not found in your hospital's inventory: ${missingIds.join(', ')}`,
+      );
     }
 
     // 4. Create LabOrder + LabOrderItems atomically (status defaults to ORDERED)
@@ -71,11 +79,24 @@ export class LabOrdersService {
     );
   }
 
-  async collectSample(id: string) {
-    const labOrder = await this.prisma.labOrder.findUnique({ where: { id } });
+  async collectSample(
+    id: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const labOrder = await this.prisma.labOrder.findUnique({
+      where: { id },
+      include: { medicalRecord: { include: { appointment: true } } },
+    });
     if (!labOrder) {
       throw new NotFoundException('Lab order not found');
     }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      labOrder.medicalRecord.appointment.hospitalId,
+      currentUser.role as Role,
+    );
+
     if (labOrder.status !== 'ORDERED') {
       throw new ConflictException(
         `Cannot collect sample: order is currently ${labOrder.status}, expected ORDERED`,
@@ -87,21 +108,34 @@ export class LabOrdersService {
     });
   }
 
-  async uploadResult(id: string, dto: UploadLabResultDto) {
+  async uploadResult(
+    id: string,
+    dto: UploadLabResultDto,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const labOrder = await this.prisma.labOrder.findUnique({
       where: { id },
-      include: { items: { include: { labTest: true } } },
+      include: {
+        items: { include: { labTest: true } },
+        medicalRecord: { include: { appointment: true } },
+      },
     });
     if (!labOrder) {
       throw new NotFoundException('Lab order not found');
     }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      labOrder.medicalRecord.appointment.hospitalId,
+      currentUser.role as Role,
+    );
+
     if (labOrder.status !== 'SAMPLE_COLLECTED') {
       throw new ConflictException(
         `Cannot upload result: order is currently ${labOrder.status}, expected SAMPLE_COLLECTED`,
       );
     }
 
-    // Every labOrderItemId in the request must belong to this LabOrder
     const validItemIds = new Set(labOrder.items.map((i) => i.id));
     const missingItemIds = dto.items
       .map((i) => i.labOrderItemId)
@@ -143,11 +177,24 @@ export class LabOrdersService {
     );
   }
 
-  async approve(id: string) {
-    const labOrder = await this.prisma.labOrder.findUnique({ where: { id } });
+  async approve(
+    id: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const labOrder = await this.prisma.labOrder.findUnique({
+      where: { id },
+      include: { medicalRecord: { include: { appointment: true } } },
+    });
     if (!labOrder) {
       throw new NotFoundException('Lab order not found');
     }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      labOrder.medicalRecord.appointment.hospitalId,
+      currentUser.role as Role,
+    );
+
     if (labOrder.status !== 'RESULT_UPLOADED') {
       throw new ConflictException(
         `Cannot approve: order is currently ${labOrder.status}, expected RESULT_UPLOADED`,
