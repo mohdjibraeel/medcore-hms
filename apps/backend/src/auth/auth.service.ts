@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt/dist/jwt.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 
-@Injectable()
+@Injectable() 
 export class AuthService {
   constructor(
     private prisma: PrismaService,
@@ -66,7 +66,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = { sub: user.id, email: user.email, role: user.role, hospitalId: user.hospitalId };
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
@@ -82,32 +82,33 @@ export class AuthService {
   }
 
   async refresh(dto: RefreshTokenDto) {
-    let payload: { sub: string; email: string; role: string };
+  let payload: { sub: string; email: string; role: string; hospitalId: string | null };
 
-    try {
-      payload = await this.jwtService.verifyAsync(dto.refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
-      });
-    } catch {
-      throw new UnauthorizedException('Invalid or expired refresh token');
-    }
-
-    // Re-fetch the user to make sure the account still exists / hasn't been deactivated
-    // since the refresh token was issued (a stale token shouldn't grant access forever).
-    const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub },
+  try {
+    payload = await this.jwtService.verifyAsync(dto.refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
     });
-    if (!user) {
-      throw new UnauthorizedException('User no longer exists');
-    }
-
-    const newPayload = { sub: user.id, email: user.email, role: user.role };
-
-    const accessToken = await this.jwtService.signAsync(newPayload, {
-      secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: '15m',
-    });
-
-    return { accessToken };
+  } catch {
+    throw new UnauthorizedException('Invalid or expired refresh token');
   }
+
+  const user = await this.prisma.user.findUnique({
+    where: { id: payload.sub },
+  });
+  if (!user) {
+    throw new UnauthorizedException('User no longer exists');
+  }
+
+  // Pull hospitalId fresh from the re-fetched user, not from the old payload —
+  // if an admin ever changes a staff member's hospital, refresh should reflect
+  // the current value, not whatever was true when the old refresh token was issued.
+  const newPayload = { sub: user.id, email: user.email, role: user.role, hospitalId: user.hospitalId };
+
+  const accessToken = await this.jwtService.signAsync(newPayload, {
+    secret: process.env.JWT_ACCESS_SECRET,
+    expiresIn: '15m',
+  });
+
+  return { accessToken };
+}
 }

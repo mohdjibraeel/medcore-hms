@@ -25,7 +25,7 @@ export class MedicalRecordsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('DOCTOR', 'NURSE', 'PATIENT')
+  @Roles('DOCTOR', 'NURSE', 'PATIENT','SUPER_ADMIN')
   @Get(':patientId')
   findByPatient(@Param('patientId') patientId: string, @Req() req: any) {
     return this.medicalRecordsService.findByPatient(patientId, req.user);

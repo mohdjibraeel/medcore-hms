@@ -70,7 +70,7 @@ export class MedicalRecordsService {
 
   async findByPatient(
     patientId: string,
-    currentUser: { sub: string; role: string },
+    currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
     const patient = await this.prisma.patient.findUnique({
       where: { id: patientId },
@@ -85,8 +85,26 @@ export class MedicalRecordsService {
       );
     }
 
+    const isStaffScoped =
+      currentUser.role !== 'PATIENT' && currentUser.role !== 'SUPER_ADMIN';
+
+    if (isStaffScoped && !currentUser.hospitalId) {
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
+    }
+
+    // Narrowed here: TS now knows this is `string`, not `string | null`,
+    // because we already threw above if it was falsy for staff.
+    const staffHospitalId = currentUser.hospitalId as string;
+
     return this.prisma.medicalRecord.findMany({
-      where: { patientId },
+      where: {
+        patientId,
+        ...(isStaffScoped && {
+          appointment: { hospitalId: staffHospitalId },
+        }),
+      },
       include: {
         doctor: {
           include: {
@@ -98,4 +116,6 @@ export class MedicalRecordsService {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  
 }
