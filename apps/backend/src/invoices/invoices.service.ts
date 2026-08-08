@@ -7,6 +7,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { AddInvoiceItemDto } from './dto/add-invoice-item.dto';
+import { Role } from 'generated/prisma/client';
+import { assertSameHospital } from 'src/common/utils/tenancy.util';
 
 @Injectable()
 export class InvoicesService {
@@ -38,13 +40,24 @@ export class InvoicesService {
     });
   }
 
-  async addItem(invoiceId: string, dto: AddInvoiceItemDto) {
+  async addItem(
+    invoiceId: string,
+    dto: AddInvoiceItemDto,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const invoice = await this.prisma.invoice.findUnique({
       where: { id: invoiceId },
     });
     if (!invoice) {
       throw new NotFoundException('Invoice not found');
     }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      invoice.hospitalId,
+      currentUser.role as Role,
+    );
+
     if (invoice.status !== 'DRAFT') {
       throw new ConflictException(
         `Cannot add items: invoice is currently ${invoice.status}, expected DRAFT`,
@@ -72,32 +85,51 @@ export class InvoicesService {
     });
   }
 
-  async finalize(invoiceId: string) {
+  async finalize(
+    invoiceId: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const invoice = await this.prisma.invoice.findUnique({
       where: { id: invoiceId },
     });
     if (!invoice) {
       throw new NotFoundException('Invoice not found');
     }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      invoice.hospitalId,
+      currentUser.role as Role,
+    );
+
     if (invoice.status !== 'DRAFT') {
       throw new ConflictException(
         `Cannot finalize: invoice is currently ${invoice.status}, expected DRAFT`,
       );
     }
-
     return this.prisma.invoice.update({
       where: { id: invoiceId },
       data: { status: 'FINALIZED' },
     });
   }
 
-  async markPaid(invoiceId: string) {
+  async markPaid(
+    invoiceId: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const invoice = await this.prisma.invoice.findUnique({
       where: { id: invoiceId },
     });
     if (!invoice) {
       throw new NotFoundException('Invoice not found');
     }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      invoice.hospitalId,
+      currentUser.role as Role,
+    );
+
     if (invoice.status !== 'FINALIZED') {
       throw new ConflictException(
         `Cannot mark paid: invoice is currently ${invoice.status}, expected FINALIZED`,
@@ -110,7 +142,10 @@ export class InvoicesService {
     });
   }
 
-  async findOne(invoiceId: string, currentUser: { sub: string; role: string }) {
+  async findOne(
+    invoiceId: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const invoice = await this.prisma.invoice.findUnique({
       where: { id: invoiceId },
       include: { items: true },
@@ -124,10 +159,16 @@ export class InvoicesService {
         where: { userId: currentUser.sub },
       });
       if (!patient || patient.id !== invoice.patientId) {
-        throw new ForbiddenException(
-          'You do not have access to this invoice',
-        );
+        throw new ForbiddenException('You do not have access to this invoice');
       }
+    } else {
+      // Non-patient (staff/admin) — tenancy check instead of ownership check.
+      // SUPER_ADMIN bypassed inside assertSameHospital.
+      assertSameHospital(
+        currentUser.hospitalId,
+        invoice.hospitalId,
+        currentUser.role as Role,
+      );
     }
 
     return invoice;

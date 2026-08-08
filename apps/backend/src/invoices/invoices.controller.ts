@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { InvoicesService } from './invoices.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { AddInvoiceItemDto } from './dto/add-invoice-item.dto';
@@ -20,22 +29,26 @@ export class InvoicesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('RECEPTIONIST', 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Post(':id/items')
-  addItem(@Param('id') id: string, @Body() dto: AddInvoiceItemDto) {
-    return this.invoicesService.addItem(id, dto);
+  addItem(
+    @Param('id') id: string,
+    @Body() dto: AddInvoiceItemDto,
+    @Req() req: any,
+  ) {
+    return this.invoicesService.addItem(id, dto, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('RECEPTIONIST', 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Patch(':id/finalize')
-  finalize(@Param('id') id: string) {
-    return this.invoicesService.finalize(id);
+  finalize(@Param('id') id: string, @Req() req: any) {
+    return this.invoicesService.finalize(id, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles( 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Roles('ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Patch(':id/mark-paid')
-  markPaid(@Param('id') id: string) {
-    return this.invoicesService.markPaid(id);
+  markPaid(@Param('id') id: string, @Req() req: any) {
+    return this.invoicesService.markPaid(id, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
