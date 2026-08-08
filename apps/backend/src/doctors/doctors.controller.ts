@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -16,13 +16,13 @@ export class DoctorsController {
     return this.doctorService.create(dto);
   }
 
-  
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(
     @Query('hospitalId') hospitalId?: string,
     @Query('specialization') specialization?: string,
+    @Req() req?: any,
   ) {
-    return this.doctorService.findAll(hospitalId, specialization);
+    return this.doctorService.findAll(req.user, hospitalId, specialization);
   }
 }

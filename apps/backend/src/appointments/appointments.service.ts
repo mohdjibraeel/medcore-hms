@@ -7,6 +7,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentStatusDto } from './dto/update-appointment-status.dto';
+import { assertSameHospital } from 'src/common/utils/tenancy.util';
+import { Role } from 'generated/prisma/client';
 
 @Injectable()
 export class AppointmentsService {
@@ -73,13 +75,26 @@ export class AppointmentsService {
     EMERGENCY: [],
   };
 
-  async updateStatus(id: string, dto: UpdateAppointmentStatusDto) {
+  async updateStatus(
+    id: string,
+    dto: UpdateAppointmentStatusDto,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const appointment = await this.prisma.appointment.findUnique({
       where: { id },
     });
     if (!appointment) {
       throw new NotFoundException('Appointment not found');
     }
+
+    // Tenancy check FIRST — before computing/validating any state transition.
+    // No point telling a caller "invalid transition" for a record they
+    // shouldn't even know exists.
+    assertSameHospital(
+      currentUser.hospitalId,
+      appointment.hospitalId,
+      currentUser.role as Role,
+    );
 
     const allowedNextStatuses =
       AppointmentsService.ALLOWED_TRANSITIONS[appointment.status] ?? [];
