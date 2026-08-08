@@ -13,6 +13,7 @@ import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { LabOrdersModule } from './lab-orders/lab-orders.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { InvoicesModule } from './invoices/invoices.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { InvoicesModule } from './invoices/invoices.module';
     LabOrdersModule,
     PharmacyModule,
     InvoicesModule,
+    RedisModule
   ],
   controllers: [AppController],
   providers: [AppService],
