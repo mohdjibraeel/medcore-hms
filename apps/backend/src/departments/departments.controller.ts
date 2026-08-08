@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -10,9 +10,9 @@ export class DepartmentsController {
   constructor(private deparmtmentsService: DepartmentsService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN','HOSPITAL_ADMIN')
+  @Roles('SUPER_ADMIN', 'HOSPITAL_ADMIN')
   @Post()
-  create(@Body() dto :CreateDepartmentDto) {
-    return this.deparmtmentsService.create(dto);
-  } 
+  create(@Body() dto: CreateDepartmentDto, @Req() req: any) {
+    return this.deparmtmentsService.create(dto, req.user);
+  }
 }
