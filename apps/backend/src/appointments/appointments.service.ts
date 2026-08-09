@@ -9,10 +9,14 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentStatusDto } from './dto/update-appointment-status.dto';
 import { assertSameHospital } from 'src/common/utils/tenancy.util';
 import { Role } from 'generated/prisma/client';
+import { NotificationsGateway } from 'src/notifications/notifications.gateway';
 
 @Injectable()
 export class AppointmentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsGateway: NotificationsGateway,
+  ) {}
 
   async create(
     dto: CreateAppointmentDto,
@@ -153,9 +157,27 @@ export class AppointmentsService {
       );
     }
 
-    return this.prisma.appointment.update({
+    const updated = await this.prisma.appointment.update({
       where: { id },
       data: { status: dto.status },
     });
+
+    // Notify the patient in real time, if they're connected. This is
+    // best-effort — if the patient's socket isn't connected, emitToUser
+    // silently no-ops (Socket.IO rooms with no members just drop the event).
+    // We don't await/block the response on this, and we don't let a socket
+    // failure affect the actual status update, which has already succeeded.
+    const patient = await this.prisma.patient.findUnique({
+      where: { id: updated.patientId },
+      select: { userId: true },
+    });
+    if (patient) {
+      this.notificationsGateway.emitToUser(patient.userId, 'appointment-status-changed', {
+        appointmentId: updated.id,
+        status: updated.status,
+      });
+    }
+
+    return updated;
   }
 }
