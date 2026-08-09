@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule } from '@nestjs/config/dist/config.module';
+import { ConfigModule } from '@nestjs/config';
 import { HospitalsModule } from './hospitals/hospitals.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { DoctorsModule } from './doctors/doctors.module';
@@ -14,6 +14,9 @@ import { LabOrdersModule } from './lab-orders/lab-orders.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { InvoicesModule } from './invoices/invoices.module';
 import { RedisModule } from './redis/redis.module';
+import { getBullMQConfig } from 'test-bullmq';
+import { BullModule } from '@nestjs/bullmq/dist/bull.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -31,7 +34,9 @@ import { RedisModule } from './redis/redis.module';
     LabOrdersModule,
     PharmacyModule,
     InvoicesModule,
-    RedisModule
+    RedisModule,
+    BullModule.forRoot(getBullMQConfig()),
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
