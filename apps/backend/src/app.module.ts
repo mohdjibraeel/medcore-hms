@@ -17,6 +17,7 @@ import { RedisModule } from './redis/redis.module';
 import { getBullMQConfig } from 'test-bullmq';
 import { BullModule } from '@nestjs/bullmq/dist/bull.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     RedisModule,
     BullModule.forRoot(getBullMQConfig()),
     NotificationsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

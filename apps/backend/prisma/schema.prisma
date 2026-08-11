@@ -218,6 +218,7 @@ model Invoice {
   hospitalId    String
   status        InvoiceStatus @default(DRAFT)
   totalAmount   Float         @default(0)
+  razorpayOrderId String?     @unique
   createdAt     DateTime      @default(now())
   appointment   Appointment   @relation(fields: [appointmentId], references: [id])
   hospital      Hospital      @relation(fields: [hospitalId], references: [id])
