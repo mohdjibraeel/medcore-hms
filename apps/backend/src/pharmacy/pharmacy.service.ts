@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { CreateMedicineBatchDto } from './dto/create-medicine-batch.dto';
+import { DispenseMedicineDto } from './dto/dispense-medicine.dto';
 
 @Injectable()
 export class PharmacyService {
@@ -89,6 +90,73 @@ export class PharmacyService {
           : {}),
       },
       include: { batches: true },
+    });
+  }
+
+  async dispenseMedicine(
+    dto: DispenseMedicineDto,
+    currentUser: { sub: string; role: string },
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      const item = await tx.prescriptionItem.findUnique({
+        where: { id: dto.prescriptionItemId },
+        include: { dispensations: true },
+      });
+      if (!item) {
+        throw new NotFoundException('Prescription item not found');
+      }
+
+      const alreadyDispensed = item.dispensations.reduce(
+        (sum, d) => sum + d.quantity,
+        0,
+      );
+      const remaining = item.quantity - alreadyDispensed;
+
+      if (dto.quantity > remaining) {
+        throw new BadRequestException(
+          `Only ${remaining} unit(s) remain to be dispensed for this item`,
+        );
+      }
+
+      // FEFO selection: among batches for this medicine that are not
+      // expired and not quarantined, pick the one expiring soonest that
+      // still has enough quantity. $queryRaw with FOR UPDATE locks the
+      // chosen row so a concurrent dispense request can't read the same
+      // stale quantity and oversell it.
+      type BatchRow = { id: string; quantity: number };
+
+      const batches = await tx.$queryRaw<BatchRow[]>`
+        SELECT "id", "quantity"
+        FROM "MedicineBatch"
+        WHERE "medicineId" = ${item.medicineId}
+          AND "isQuarantined" = false
+          AND "expiryDate" > NOW()
+          AND "quantity" >= ${dto.quantity}
+        ORDER BY "expiryDate" ASC
+        LIMIT 1
+        FOR UPDATE
+      `;
+
+      const batch = batches[0];
+      if (!batch) {
+        throw new BadRequestException(
+          'No valid (non-expired, non-quarantined, sufficient-stock) batch available for this medicine',
+        );
+      }
+
+      await tx.medicineBatch.update({
+        where: { id: batch.id },
+        data: { quantity: { decrement: dto.quantity } },
+      });
+
+      return tx.dispensation.create({
+        data: {
+          prescriptionItemId: item.id,
+          medicineBatchId: batch.id,
+          quantity: dto.quantity,
+          dispensedByUserId: currentUser.sub,
+        },
+      });
     });
   }
 }

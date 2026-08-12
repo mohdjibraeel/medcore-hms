@@ -47,6 +47,7 @@ model User {
   lastName      String?
   doctor        Doctor?
   notifications Notification[]
+  dispensations  Dispensation[]
   patient       Patient?
   hospital      Hospital?      @relation(fields: [hospitalId], references: [id])
 }
@@ -160,6 +161,7 @@ model PrescriptionItem {
   frequency      Frequency
   durationDays   Int
   instructions   String?
+  dispensations  Dispensation[]
   dosageUnit     String
   quantity       Int
   medicine       Medicine     @relation(fields: [medicineId], references: [id])
@@ -174,6 +176,7 @@ model MedicineBatch {
   expiryDate      DateTime
   quantity        Int
   unitCost        Float
+  dispensations  Dispensation[]
   mrp             Float
   isQuarantined   Boolean  @default(false)
   createdAt       DateTime @default(now())
@@ -263,6 +266,18 @@ model playing_with_neon {
   id    Int    @id @default(autoincrement())
   name  String
   value Float? @db.Real
+}
+
+model Dispensation {
+  id                 String           @id @default(cuid())
+  prescriptionItemId String
+  medicineBatchId    String
+  quantity           Int
+  dispensedAt        DateTime         @default(now())
+  dispensedByUserId  String?
+  prescriptionItem   PrescriptionItem @relation(fields: [prescriptionItemId], references: [id])
+  medicineBatch      MedicineBatch    @relation(fields: [medicineBatchId], references: [id])
+  dispensedByUser    User?            @relation(fields: [dispensedByUserId], references: [id])
 }
 
 enum HospitalStatus {
