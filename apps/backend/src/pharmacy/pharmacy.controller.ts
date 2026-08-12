@@ -5,6 +5,7 @@ import { CreateMedicineBatchDto } from './dto/create-medicine-batch.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { DispenseMedicineDto } from './dto/dispense-medicine.dto';
 
 @Controller()
 export class PharmacyController {
@@ -31,5 +32,12 @@ export class PharmacyController {
     @Query('search') search?: string,
   ) {
     return this.pharmacyService.findMedicines(hospitalId, search);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('PHARMACIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Post('dispense')
+  dispenseMedicine(@Body() dto: DispenseMedicineDto, @Req() req: any) {
+    return this.pharmacyService.dispenseMedicine(dto, req.user);
   }
 }
