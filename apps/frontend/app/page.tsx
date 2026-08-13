@@ -1,7 +1,12 @@
+'use client';
+import { useAuthStore } from '@/store/authStore';
 import Image from "next/image";
+
 export default function Home() {
+  const user = useAuthStore((state) => state.user);
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      {user && <p>Logged in as: {user.firstName} ({user.role})</p>}
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <Image
           className="dark:invert"
