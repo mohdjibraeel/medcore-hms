@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { login } from '@/services/auth.service';
 import { ApiError } from '@/lib/api-client';
+import { ROLE_DASHBOARD_ROUTES } from '@/constants/routes';
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -33,8 +34,8 @@ export default function LoginPage() {
   const onSubmit = async (values: LoginFormValues) => {
     setServerError(null);
     try {
-      await login(values);
-      router.push('/');
+      const user = await login(values);
+      router.push(ROLE_DASHBOARD_ROUTES[user.role]);
     } catch (err) {
       setServerError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
     }
