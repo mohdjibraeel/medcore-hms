@@ -1,0 +1,76 @@
+'use client';
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { login } from '@/services/auth.service';
+import { ApiError } from '@/lib/api-client';
+
+const loginSchema = z.object({
+  email: z.string().email('Enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (values: LoginFormValues) => {
+    setServerError(null);
+    try {
+      await login(values);
+      router.push('/');
+    } catch (err) {
+      setServerError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-sm space-y-4 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm"
+      >
+        <div className="space-y-1 text-center">
+          <h1 className="text-xl font-semibold text-zinc-900">MedCore HMS</h1>
+          <p className="text-sm text-zinc-500">Sign in to your account</p>
+        </div>
+
+        {serverError && (
+          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">{serverError}</p>
+        )}
+
+        <div className="space-y-1">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" autoComplete="email" {...register('email')} />
+          {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+        </div>
+
+        <div className="space-y-1">
+          <Label htmlFor="password">Password</Label>
+          <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
+          {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+        </div>
+
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
+        </Button>
+      </form>
+    </div>
+  );
+}
