@@ -2,3 +2,7 @@ export * from './roles';
 export * from './user';
 export * from './auth';
 export * from './api';
+export * from './hospital';
+export * from './doctor';
+export * from './appointment';
+export * from './pharmacy';

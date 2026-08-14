@@ -13,10 +13,85 @@ import { NotificationsGateway } from 'src/notifications/notifications.gateway';
 
 @Injectable()
 export class AppointmentsService {
+  // Clinic hours assumption — not stored anywhere in the schema yet, so this
+  // is a deliberate fixed default rather than derived data. Revisit if the
+  // PRD's "doctor availability calendar" work ever adds real per-doctor hours.
+  private static readonly SLOT_START_HOUR = 9; // 9:00 AM
+  private static readonly SLOT_END_HOUR = 17; // 5:00 PM (last slot starts 16:30)
+  private static readonly SLOT_MINUTES = 30;
+
   constructor(
     private prisma: PrismaService,
     private notificationsGateway: NotificationsGateway,
   ) {}
+
+  // Hardcoded IST (UTC+5:30) — this system assumes a single-timezone (India)
+  // hospital deployment. Revisit if multi-region hospitals are ever supported.
+  private static readonly IST_OFFSET_MINUTES = 330;
+
+  private istSlotToUtc(dateStr: string, hour: number, minute: number): Date {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const totalMinutes =
+      hour * 60 + minute - AppointmentsService.IST_OFFSET_MINUTES;
+    // Date.UTC normalizes out-of-range minute values automatically (including
+    // negative ones), correctly rolling back into the previous UTC hour/day.
+    return new Date(Date.UTC(year, month - 1, day, 0, totalMinutes));
+  }
+
+  async getAvailability(doctorId: string, dateStr: string) {
+    if (!doctorId || !dateStr) {
+      throw new NotFoundException('doctorId and date are both required');
+    }
+
+    const doctor = await this.prisma.doctor.findUnique({
+      where: { id: doctorId },
+    });
+    if (!doctor) {
+      throw new NotFoundException('Doctor not found');
+    }
+
+    const dayStart = new Date(`${dateStr}T00:00:00.000Z`);
+    const dayEnd = new Date(`${dateStr}T23:59:59.999Z`);
+
+    const bookedAppointments = await this.prisma.appointment.findMany({
+      where: {
+        doctorId,
+        scheduledAt: { gte: dayStart, lte: dayEnd },
+        status: { notIn: ['CANCELLED', 'NO_SHOW'] },
+      },
+      select: { scheduledAt: true },
+    });
+
+    const bookedTimes = new Set(
+      bookedAppointments.map((appt) => appt.scheduledAt.toISOString()),
+    );
+
+    const slots: { time: string; scheduledAt: string; available: boolean }[] =
+      [];
+
+    for (
+      let hour = AppointmentsService.SLOT_START_HOUR;
+      hour < AppointmentsService.SLOT_END_HOUR;
+      hour++
+    ) {
+      for (
+        let minute = 0;
+        minute < 60;
+        minute += AppointmentsService.SLOT_MINUTES
+      ) {
+        const slotDate = this.istSlotToUtc(dateStr, hour, minute);
+        const iso = slotDate.toISOString();
+
+        slots.push({
+          time: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+          scheduledAt: iso,
+          available: !bookedTimes.has(iso),
+        });
+      }
+    }
+
+    return { doctorId, date: dateStr, slots };
+  }
 
   async create(
     dto: CreateAppointmentDto,
@@ -25,7 +100,6 @@ export class AppointmentsService {
     let patientId: string;
 
     if (currentUser.role === 'PATIENT') {
-      // Ignore whatever dto.patientId might contain — resolve from the caller's own identity
       const patient = await this.prisma.patient.findUnique({
         where: { userId: currentUser.sub },
       });
@@ -36,7 +110,6 @@ export class AppointmentsService {
       }
       patientId = patient.id;
     } else {
-      // Staff booking on behalf of someone — dto.patientId is required in this case
       if (!dto.patientId) {
         throw new ForbiddenException(
           'patientId is required when booking on behalf of a patient',
@@ -45,7 +118,6 @@ export class AppointmentsService {
       patientId = dto.patientId;
     }
 
-    // FK existence checks — same pattern as Doctors
     const [patient, doctor, department, hospital] = await Promise.all([
       this.prisma.patient.findUnique({ where: { id: patientId } }),
       this.prisma.doctor.findUnique({ where: { id: dto.doctorId } }),
@@ -61,16 +133,8 @@ export class AppointmentsService {
 
     return this.prisma.$transaction(
       async (tx) => {
-        // Lock the Doctor row itself so that any concurrent booking attempt
-        // for this same doctor has to wait here until this transaction
-        // finishes. We lock the Doctor (not the Appointment) because the
-        // appointment slot we're checking may not exist as a row yet —
-        // FOR UPDATE can only lock rows that already exist.
         await tx.$queryRaw`SELECT id FROM "Doctor" WHERE id = ${dto.doctorId} FOR UPDATE`;
 
-        // Now that we hold the lock, nobody else booking THIS doctor can
-        // run this same check until we're done — so this check-then-create
-        // is effectively atomic with respect to other booking attempts.
         const conflict = await tx.appointment.findFirst({
           where: {
             doctorId: dto.doctorId,
@@ -101,7 +165,49 @@ export class AppointmentsService {
       { maxWait: 10000, timeout: 15000 },
     );
   }
+  async findMine(currentUser: { sub: string; role: string }) {
+    if (currentUser.role === 'DOCTOR') {
+      const doctor = await this.prisma.doctor.findUnique({
+        where: { userId: currentUser.sub },
+      });
+      if (!doctor) {
+        throw new NotFoundException(
+          'Doctor profile not found for this account',
+        );
+      }
 
+      return this.prisma.appointment.findMany({
+        where: { doctorId: doctor.id },
+        orderBy: { scheduledAt: 'asc' },
+        include: {
+          patient: {
+            include: { user: { select: { firstName: true, lastName: true } } },
+          },
+          department: { select: { name: true } },
+          hospital: { select: { name: true } },
+        },
+      });
+    }
+
+    const patient = await this.prisma.patient.findUnique({
+      where: { userId: currentUser.sub },
+    });
+    if (!patient) {
+      throw new NotFoundException('Patient profile not found for this account');
+    }
+
+    return this.prisma.appointment.findMany({
+      where: { patientId: patient.id },
+      orderBy: { scheduledAt: 'asc' },
+      include: {
+        doctor: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
+        department: { select: { name: true } },
+        hospital: { select: { name: true } },
+      },
+    });
+  }
   private static readonly ALLOWED_TRANSITIONS: Record<string, string[]> = {
     PENDING: ['CONFIRMED', 'CANCELLED'],
     CONFIRMED: ['IN_PROGRESS', 'CANCELLED', 'NO_SHOW'],
@@ -124,20 +230,12 @@ export class AppointmentsService {
       throw new NotFoundException('Appointment not found');
     }
 
-    // Tenancy check FIRST — before computing/validating any state transition.
-    // No point telling a caller "invalid transition" for a record they
-    // shouldn't even know exists.
     assertSameHospital(
       currentUser.hospitalId,
       appointment.hospitalId,
       currentUser.role as Role,
     );
 
-    // Ownership check for DOCTOR specifically — hospital-level tenancy alone
-    // isn't enough here, since two doctors can share a hospital. A doctor
-    // should only be able to update appointments that are actually theirs.
-    // RECEPTIONIST/HOSPITAL_ADMIN/SUPER_ADMIN are intentionally exempt —
-    // managing the whole hospital's schedule across doctors is their job.
     if (currentUser.role === 'DOCTOR') {
       const doctor = await this.prisma.doctor.findUnique({
         where: { userId: currentUser.sub },
@@ -162,20 +260,19 @@ export class AppointmentsService {
       data: { status: dto.status },
     });
 
-    // Notify the patient in real time, if they're connected. This is
-    // best-effort — if the patient's socket isn't connected, emitToUser
-    // silently no-ops (Socket.IO rooms with no members just drop the event).
-    // We don't await/block the response on this, and we don't let a socket
-    // failure affect the actual status update, which has already succeeded.
     const patient = await this.prisma.patient.findUnique({
       where: { id: updated.patientId },
       select: { userId: true },
     });
     if (patient) {
-      this.notificationsGateway.emitToUser(patient.userId, 'appointment-status-changed', {
-        appointmentId: updated.id,
-        status: updated.status,
-      });
+      this.notificationsGateway.emitToUser(
+        patient.userId,
+        'appointment-status-changed',
+        {
+          appointmentId: updated.id,
+          status: updated.status,
+        },
+      );
     }
 
     return updated;
