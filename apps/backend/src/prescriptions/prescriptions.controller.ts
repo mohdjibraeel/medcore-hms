@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { PrescriptionsService } from './prescriptions.service';
 import { CreatePrescriptionDto } from './dto/create-prescription.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -14,5 +14,12 @@ export class PrescriptionsController {
   @Post()
   create(@Body() dto: CreatePrescriptionDto, @Req() req: any) {
     return this.prescriptionsService.create(dto, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('PHARMACIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Get('pending')
+  findPending(@Req() req: any) {
+    return this.prescriptionsService.findPending(req.user);
   }
 }
