@@ -14,7 +14,6 @@ export class PrescriptionsService {
     dto: CreatePrescriptionDto,
     currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
-    // 1. MedicalRecord must exist
     const medicalRecord = await this.prisma.medicalRecord.findUnique({
       where: { id: dto.medicalRecordId },
     });
@@ -22,7 +21,6 @@ export class PrescriptionsService {
       throw new NotFoundException('Medical record not found');
     }
 
-    // 2. Caller must have a Doctor profile
     const callingDoctor = await this.prisma.doctor.findUnique({
       where: { userId: currentUser.sub },
     });
@@ -30,17 +28,12 @@ export class PrescriptionsService {
       throw new NotFoundException('Doctor profile not found for this account');
     }
 
-    // 3. Caller must be the doctor who owns this MedicalRecord
-    // (this transitively guarantees same-hospital already, since a Doctor's
-    // hospitalId is fixed at creation — no separate assertSameHospital needed here)
     if (medicalRecord.doctorId !== callingDoctor.id) {
       throw new ForbiddenException(
         'You are not the doctor associated with this medical record',
       );
     }
 
-    // 4. Every medicineId in items must exist AND belong to the doctor's own hospital —
-    // prevents prescribing medicine that only exists in another hospital's inventory.
     const medicineIds = dto.items.map((item) => item.medicineId);
     const medicines = await this.prisma.medicine.findMany({
       where: {
@@ -56,7 +49,6 @@ export class PrescriptionsService {
       );
     }
 
-    // 5. Create Prescription + all PrescriptionItems atomically
     return this.prisma.$transaction(
       async (tx) => {
         const prescription = await tx.prescription.create({
@@ -88,5 +80,95 @@ export class PrescriptionsService {
       },
       { maxWait: 10000, timeout: 15000 },
     );
+  }
+
+  async findPending(currentUser: {
+    sub: string;
+    role: string;
+    hospitalId: string | null;
+  }) {
+    const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
+    if (isStaffScoped && !currentUser.hospitalId) {
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
+    }
+    const effectiveHospitalId = isStaffScoped
+      ? currentUser.hospitalId!
+      : undefined;
+
+    const items = await this.prisma.prescriptionItem.findMany({
+      where: {
+        medicine: {
+          ...(effectiveHospitalId ? { hospitalId: effectiveHospitalId } : {}),
+        },
+      },
+      include: {
+        medicine: { select: { name: true, form: true } },
+        dispensations: { select: { quantity: true } },
+        prescription: true, // scalar patientId/doctorId only — no nested relation exists here
+      },
+      orderBy: { id: 'desc' },
+    });
+
+    const pending = items
+      .map((item) => {
+        const dispensed = item.dispensations.reduce(
+          (sum, d) => sum + d.quantity,
+          0,
+        );
+        return { item, remaining: item.quantity - dispensed };
+      })
+      .filter(({ remaining }) => remaining > 0);
+
+    if (pending.length === 0) {
+      return [];
+    }
+
+    // Prescription only stores patientId/doctorId as plain strings, not real
+    // Prisma relations — so we look those up separately and join in memory.
+    const patientIds = [
+      ...new Set(pending.map((p) => p.item.prescription.patientId)),
+    ];
+    const doctorIds = [
+      ...new Set(pending.map((p) => p.item.prescription.doctorId)),
+    ];
+
+    const [patients, doctors] = await Promise.all([
+      this.prisma.patient.findMany({
+        where: { id: { in: patientIds } },
+        include: { user: { select: { firstName: true, lastName: true } } },
+      }),
+      this.prisma.doctor.findMany({
+        where: { id: { in: doctorIds } },
+        include: { user: { select: { firstName: true, lastName: true } } },
+      }),
+    ]);
+
+    const patientMap = new Map(patients.map((p) => [p.id, p]));
+    const doctorMap = new Map(doctors.map((d) => [d.id, d]));
+
+    return pending.map(({ item, remaining }) => {
+      const patient = patientMap.get(item.prescription.patientId);
+      const doctor = doctorMap.get(item.prescription.doctorId);
+
+      return {
+        id: item.id,
+        medicineName: item.medicine.name,
+        medicineForm: item.medicine.form,
+        dosage: item.dosage,
+        dosageUnit: item.dosageUnit,
+        frequency: item.frequency,
+        durationDays: item.durationDays,
+        quantity: item.quantity,
+        remaining,
+        patientName: patient
+          ? `${patient.user.firstName} ${patient.user.lastName ?? ''}`.trim()
+          : 'Unknown patient',
+        doctorName: doctor
+          ? `${doctor.user.firstName} ${doctor.user.lastName ?? ''}`.trim()
+          : 'Unknown doctor',
+      };
+    });
   }
 }
