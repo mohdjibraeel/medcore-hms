@@ -11,7 +11,15 @@ interface SidebarItem {
 function getSidebarItems(role: Role): SidebarItem[] {
   switch (role) {
     case Role.PATIENT:
-      return [{ label: 'Overview', href: '/dashboard/patient' }];
+      return [
+        { label: 'Overview', href: '/dashboard/patient' },
+        { label: 'Book Appointment', href: '/dashboard/patient/book' },
+        { label: 'My Appointments', href: '/dashboard/patient/appointments' },
+      ];
+    case Role.DOCTOR:
+      return [{ label: "Today's Appointments", href: '/dashboard/doctor' }];
+    case Role.PHARMACIST:
+      return [{ label: 'Dispensary', href: '/dashboard/pharmacist' }];
     default:
       return [{ label: 'Overview', href: '/dashboard' }];
   }

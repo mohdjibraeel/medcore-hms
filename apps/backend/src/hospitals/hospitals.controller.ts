@@ -22,7 +22,6 @@ export class HospitalsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN')
   @Get()
   findAll() {
     return this.hospitalsService.findAll();

@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -18,11 +20,27 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class AppointmentsController {
   constructor(private appointmentsService: AppointmentsService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('availability')
+  getAvailability(
+    @Query('doctorId') doctorId: string,
+    @Query('date') date: string,
+  ) {
+    return this.appointmentsService.getAvailability(doctorId, date);
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('PATIENT', 'RECEPTIONIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Post()
   create(@Body() dto: CreateAppointmentDto, @Req() req: any) {
     return this.appointmentsService.create(dto, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('PATIENT','DOCTOR')
+  @Get('me')
+  findMine(@Req() req: any) {
+    return this.appointmentsService.findMine(req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
