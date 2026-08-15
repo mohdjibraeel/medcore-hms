@@ -4,19 +4,21 @@ import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { usePatientSearch } from '@/services/patients.service';
-import { useHospitals } from '@/services/hospitals.service';
 import { useDoctors } from '@/services/doctors.service';
 import { useAvailability, useCreateAppointment } from '@/services/appointments.service';
+import { useAuthStore } from '@/store/authStore';
 import { ApiError } from '@/lib/api-client';
 import type { Doctor, PatientSearchResult } from '@medcore/shared-types';
-import { Label } from '@/components/ui/label';
 
 export default function BookForPatientPage() {
+  const user = useAuthStore((state) => state.user);
+  const hospitalId = user?.hospitalId ?? null;
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<PatientSearchResult | null>(null);
 
-  const [hospitalId, setHospitalId] = useState('');
   const [doctorId, setDoctorId] = useState('');
   const [date, setDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState<{ time: string; scheduledAt: string } | null>(null);
@@ -24,8 +26,7 @@ export default function BookForPatientPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { data: patients, isLoading: patientsLoading } = usePatientSearch(searchTerm);
-  const { data: hospitals, isLoading: hospitalsLoading } = useHospitals();
-  const { data: doctors, isLoading: doctorsLoading } = useDoctors(hospitalId || null);
+  const { data: doctors, isLoading: doctorsLoading } = useDoctors(hospitalId);
   const { data: availability, isLoading: availabilityLoading } = useAvailability(doctorId || null, date || null);
   const createAppointment = useCreateAppointment();
 
@@ -33,7 +34,7 @@ export default function BookForPatientPage() {
   const today = new Date().toISOString().split('T')[0];
 
   const handleConfirm = async () => {
-    if (!selectedDoctor || !selectedSlot || !selectedPatient) return;
+    if (!selectedDoctor || !selectedSlot || !selectedPatient || !hospitalId) return;
     setErrorMessage(null);
     setSuccessMessage(null);
     try {
@@ -52,6 +53,14 @@ export default function BookForPatientPage() {
       setErrorMessage(err instanceof ApiError ? err.message : 'Something went wrong.');
     }
   };
+
+  if (!hospitalId) {
+    return (
+      <p className="text-sm text-red-600">
+        Your account isn&apos;t assigned to a hospital, so you can&apos;t book appointments. Contact an admin.
+      </p>
+    );
+  }
 
   return (
     <div className="max-w-xl">
@@ -102,24 +111,10 @@ export default function BookForPatientPage() {
           </div>
 
           <div>
-            <Label>Hospital</Label>
-            <Select value={hospitalId} onValueChange={(v) => { setHospitalId(v); setDoctorId(''); setSelectedSlot(null); }}>
-              <SelectTrigger>
-                <SelectValue placeholder={hospitalsLoading ? 'Loading...' : 'Select a hospital'} />
-              </SelectTrigger>
-              <SelectContent>
-                {hospitals?.map((h) => (
-                  <SelectItem key={h.id} value={h.id}>{h.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
             <Label>Doctor</Label>
-            <Select value={doctorId} onValueChange={(v) => { setDoctorId(v); setSelectedSlot(null); }} disabled={!hospitalId}>
+            <Select value={doctorId} onValueChange={(v) => { setDoctorId(v); setSelectedSlot(null); }}>
               <SelectTrigger>
-                <SelectValue placeholder={!hospitalId ? 'Select a hospital first' : doctorsLoading ? 'Loading...' : 'Select a doctor'} />
+                <SelectValue placeholder={doctorsLoading ? 'Loading...' : 'Select a doctor'} />
               </SelectTrigger>
               <SelectContent>
                 {doctors?.map((d) => (

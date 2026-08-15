@@ -36,11 +36,11 @@ export class AppointmentsController {
     return this.appointmentsService.findMine(req.user);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+ @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('RECEPTIONIST', 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Get('by-patient/:patientId')
-  findByPatient(@Param('patientId') patientId: string) {
-    return this.appointmentsService.findByPatient(patientId);
+  findByPatient(@Param('patientId') patientId: string, @Req() req: any) {
+    return this.appointmentsService.findByPatient(patientId, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

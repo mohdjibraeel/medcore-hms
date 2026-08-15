@@ -14,13 +14,22 @@ import { assertSameHospital } from 'src/common/utils/tenancy.util';
 export class InvoicesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateInvoiceDto) {
+  async create(
+    dto: CreateInvoiceDto,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const appointment = await this.prisma.appointment.findUnique({
       where: { id: dto.appointmentId },
     });
     if (!appointment) {
       throw new NotFoundException('Appointment not found');
     }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      appointment.hospitalId,
+      currentUser.role as Role,
+    );
 
     const existing = await this.prisma.invoice.findUnique({
       where: { appointmentId: dto.appointmentId },
