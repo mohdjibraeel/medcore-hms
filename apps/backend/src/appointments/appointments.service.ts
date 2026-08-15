@@ -95,7 +95,7 @@ export class AppointmentsService {
 
   async create(
     dto: CreateAppointmentDto,
-    currentUser: { sub: string; role: string },
+    currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
     let patientId: string;
 
@@ -128,6 +128,8 @@ export class AppointmentsService {
     if (!doctor) throw new NotFoundException('Doctor not found');
     if (!department) throw new NotFoundException('Department not found');
     if (!hospital) throw new NotFoundException('Hospital not found');
+
+    assertSameHospital(currentUser.hospitalId, dto.hospitalId, currentUser.role as Role);
 
     const scheduledAt = new Date(dto.scheduledAt);
 
@@ -209,9 +211,17 @@ export class AppointmentsService {
     });
   }
 
-  async findByPatient(patientId: string) {
+  async findByPatient(
+    patientId: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
+
     return this.prisma.appointment.findMany({
-      where: { patientId },
+      where: {
+        patientId,
+        ...(isStaffScoped ? { hospitalId: currentUser.hospitalId ?? undefined } : {}),
+      },
       orderBy: { scheduledAt: 'desc' },
       include: {
         doctor: {

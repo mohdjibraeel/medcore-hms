@@ -22,8 +22,8 @@ export class InvoicesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('RECEPTIONIST', 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Post()
-  create(@Body() dto: CreateInvoiceDto) {
-    return this.invoicesService.create(dto);
+  create(@Body() dto: CreateInvoiceDto, @Req() req: any) {
+    return this.invoicesService.create(dto, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
