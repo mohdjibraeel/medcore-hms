@@ -1,20 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient, ApiError } from '@/lib/api-client';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient, ApiError } from "@/lib/api-client";
+import type { AppointmentForPatient } from "@medcore/shared-types";
 import type {
   AvailabilityResponse,
   Appointment,
   AppointmentWithDetails,
   CreateAppointmentRequest,
   AppointmentStatus,
-} from '@medcore/shared-types';
+} from "@medcore/shared-types";
 
 export function useAvailability(doctorId: string | null, date: string | null) {
   return useQuery({
-    queryKey: ['availability', doctorId, date],
+    queryKey: ["availability", doctorId, date],
     queryFn: async () => {
-      const { data } = await apiClient.get<AvailabilityResponse>('/appointments/availability', {
-        params: { doctorId, date },
-      });
+      const { data } = await apiClient.get<AvailabilityResponse>(
+        "/appointments/availability",
+        {
+          params: { doctorId, date },
+        },
+      );
       return data;
     },
     enabled: !!doctorId && !!date,
@@ -26,9 +30,9 @@ export function useAvailability(doctorId: string | null, date: string | null) {
 // from the exact same backend route — the shape just depends on who's asking.
 export function useMyAppointments<T = AppointmentWithDetails>() {
   return useQuery({
-    queryKey: ['appointments', 'me'],
+    queryKey: ["appointments", "me"],
     queryFn: async () => {
-      const { data } = await apiClient.get<T[]>('/appointments/me');
+      const { data } = await apiClient.get<T[]>("/appointments/me");
       return data;
     },
   });
@@ -38,12 +42,21 @@ export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: AppointmentStatus }) => {
-      const { data } = await apiClient.patch<Appointment>(`/appointments/${id}/status`, { status });
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: AppointmentStatus;
+    }) => {
+      const { data } = await apiClient.patch<Appointment>(
+        `/appointments/${id}/status`,
+        { status },
+      );
       return data;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments', 'me'] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "me"] });
     },
   });
 }
@@ -53,12 +66,30 @@ export function useCreateAppointment() {
 
   return useMutation({
     mutationFn: async (payload: CreateAppointmentRequest) => {
-      const { data } = await apiClient.post<Appointment>('/appointments', payload);
+      const { data } = await apiClient.post<Appointment>(
+        "/appointments",
+        payload,
+      );
       return data;
     },
     onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['availability', variables.doctorId] });
-      queryClient.invalidateQueries({ queryKey: ['appointments', 'me'] });
+      queryClient.invalidateQueries({
+        queryKey: ["availability", variables.doctorId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "me"] });
     },
+  });
+}
+
+export function useAppointmentsByPatient(patientId: string | null) {
+  return useQuery({
+    queryKey: ["appointments", "by-patient", patientId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<AppointmentForPatient[]>(
+        `/appointments/by-patient/${patientId}`,
+      );
+      return data;
+    },
+    enabled: !!patientId,
   });
 }

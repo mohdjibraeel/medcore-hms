@@ -208,6 +208,20 @@ export class AppointmentsService {
       },
     });
   }
+
+  async findByPatient(patientId: string) {
+    return this.prisma.appointment.findMany({
+      where: { patientId },
+      orderBy: { scheduledAt: 'desc' },
+      include: {
+        doctor: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
+        department: { select: { name: true } },
+        hospital: { select: { name: true } },
+      },
+    });
+  }
   private static readonly ALLOWED_TRANSITIONS: Record<string, string[]> = {
     PENDING: ['CONFIRMED', 'CANCELLED'],
     CONFIRMED: ['IN_PROGRESS', 'CANCELLED', 'NO_SHOW'],
@@ -277,4 +291,6 @@ export class AppointmentsService {
 
     return updated;
   }
+
+  
 }
