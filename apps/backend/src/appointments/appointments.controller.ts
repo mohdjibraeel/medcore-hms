@@ -30,17 +30,24 @@ export class AppointmentsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('PATIENT', 'DOCTOR')
+  @Get('me')
+  findMine(@Req() req: any) {
+    return this.appointmentsService.findMine(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('RECEPTIONIST', 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Get('by-patient/:patientId')
+  findByPatient(@Param('patientId') patientId: string) {
+    return this.appointmentsService.findByPatient(patientId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('PATIENT', 'RECEPTIONIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Post()
   create(@Body() dto: CreateAppointmentDto, @Req() req: any) {
     return this.appointmentsService.create(dto, req.user);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('PATIENT','DOCTOR')
-  @Get('me')
-  findMine(@Req() req: any) {
-    return this.appointmentsService.findMine(req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

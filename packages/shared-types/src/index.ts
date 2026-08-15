@@ -7,3 +7,4 @@ export * from './doctor';
 export * from './appointment';
 export * from './pharmacy';
 export * from './patient';
+export * from './invoice';

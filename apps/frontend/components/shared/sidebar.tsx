@@ -25,6 +25,7 @@ function getSidebarItems(role: Role): SidebarItem[] {
         { label: 'Overview', href: '/dashboard/receptionist' },
         { label: 'Register Patient', href: '/dashboard/receptionist/register-patient' },
         { label: 'Book for Patient', href: '/dashboard/receptionist/book-for-patient' },
+        { label: 'Generate Invoice', href: '/dashboard/receptionist/invoice' },
       ];
     default:
       return [{ label: 'Overview', href: '/dashboard' }];
