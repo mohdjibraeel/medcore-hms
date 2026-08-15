@@ -20,6 +20,12 @@ function getSidebarItems(role: Role): SidebarItem[] {
       return [{ label: "Today's Appointments", href: '/dashboard/doctor' }];
     case Role.PHARMACIST:
       return [{ label: 'Dispensary', href: '/dashboard/pharmacist' }];
+    case Role.RECEPTIONIST:
+      return [
+        { label: 'Overview', href: '/dashboard/receptionist' },
+        { label: 'Register Patient', href: '/dashboard/receptionist/register-patient' },
+        { label: 'Book for Patient', href: '/dashboard/receptionist/book-for-patient' },
+      ];
     default:
       return [{ label: 'Overview', href: '/dashboard' }];
   }

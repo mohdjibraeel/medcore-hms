@@ -18,6 +18,7 @@ import { getBullMQConfig } from 'test-bullmq';
 import { BullModule } from '@nestjs/bullmq/dist/bull.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PaymentsModule } from './payments/payments.module';
+import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PaymentsModule } from './payments/payments.module';
     BullModule.forRoot(getBullMQConfig()),
     NotificationsModule,
     PaymentsModule,
+    PatientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
