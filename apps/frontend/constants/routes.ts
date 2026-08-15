@@ -5,7 +5,7 @@ export const ROLE_DASHBOARD_ROUTES: Record<Role, string> = {
   [Role.HOSPITAL_ADMIN]: '/dashboard',
   [Role.DOCTOR]: '/dashboard/doctor',
   [Role.NURSE]: '/dashboard',
-  [Role.RECEPTIONIST]: '/dashboard',
+  [Role.RECEPTIONIST]: '/dashboard/receptionist',
   [Role.LAB_TECHNICIAN]: '/dashboard',
   [Role.PHARMACIST]: '/dashboard/pharmacist',
   [Role.ACCOUNTANT]: '/dashboard',
