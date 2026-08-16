@@ -8,3 +8,4 @@ export * from './appointment';
 export * from './pharmacy';
 export * from './patient';
 export * from './invoice';
+export * from './lab-order';

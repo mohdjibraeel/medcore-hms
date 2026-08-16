@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -23,6 +24,13 @@ export class LabOrdersController {
   @Post()
   create(@Body() dto: CreateLabOrderDto, @Req() req: any) {
     return this.labOrdersService.create(dto, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('LAB_TECHNICIAN')
+  @Get('queue')
+  findQueue(@Req() req: any) {
+    return this.labOrdersService.findQueue(req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

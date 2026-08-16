@@ -205,4 +205,45 @@ export class LabOrdersService {
       data: { status: 'APPROVED' },
     });
   }
+
+  async findQueue(currentUser: { sub: string; role: string; hospitalId: string | null }) {
+    const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
+    if (isStaffScoped && !currentUser.hospitalId) {
+      throw new ForbiddenException('Staff account is not assigned to a hospital');
+    }
+
+    const labOrders = await this.prisma.labOrder.findMany({
+      where: {
+        status: { not: 'APPROVED' },
+        medicalRecord: {
+          appointment: isStaffScoped ? { hospitalId: currentUser.hospitalId! } : undefined,
+        },
+      },
+      include: {
+        items: { include: { labTest: true } },
+        medicalRecord: {
+          include: {
+            patient: { include: { user: { select: { firstName: true, lastName: true } } } },
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return labOrders.map((order) => ({
+      id: order.id,
+      status: order.status,
+      createdAt: order.createdAt,
+      patientName: `${order.medicalRecord.patient.user.firstName} ${order.medicalRecord.patient.user.lastName ?? ''}`.trim(),
+      items: order.items.map((item) => ({
+        id: item.id,
+        testName: item.labTest.name,
+        unit: item.labTest.unit,
+        refRangeLow: item.labTest.refRangeLow,
+        refRangeHigh: item.labTest.refRangeHigh,
+        resultValue: item.resultValue,
+        isFlagged: item.isFlagged,
+      })),
+    }));
+  }
 }
