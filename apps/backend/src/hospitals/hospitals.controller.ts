@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, Param, Patch } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Param, Patch, ForbiddenException, Req } from '@nestjs/common';
 import { HospitalsService } from './hospitals.service';
 import { DepartmentsService } from '../departments/departments.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
@@ -26,6 +26,17 @@ export class HospitalsController {
   findAll() {
     return this.hospitalsService.findAll();
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN','HOSPITAL_ADMIN')
+  @Get('stats')
+  getStats(@Req() req: any) {
+    if (!req.user.hospitalId) {
+      throw new ForbiddenException('Your account is not assigned to a hospital');
+    }
+    return this.hospitalsService.getStats(req.user.hospitalId);
+  }
+
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN')

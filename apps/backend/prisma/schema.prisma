@@ -45,9 +45,9 @@ model User {
   createdAt     DateTime       @default(now())
   firstName     String
   lastName      String?
+  dispensations Dispensation[]
   doctor        Doctor?
   notifications Notification[]
-  dispensations  Dispensation[]
   patient       Patient?
   hospital      Hospital?      @relation(fields: [hospitalId], references: [id])
 }
@@ -154,33 +154,33 @@ model Prescription {
 }
 
 model PrescriptionItem {
-  id             String       @id @default(cuid())
+  id             String         @id @default(cuid())
   prescriptionId String
   medicineId     String
   dosage         String
   frequency      Frequency
   durationDays   Int
   instructions   String?
-  dispensations  Dispensation[]
   dosageUnit     String
   quantity       Int
-  medicine       Medicine     @relation(fields: [medicineId], references: [id])
-  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+  dispensations  Dispensation[]
+  medicine       Medicine       @relation(fields: [medicineId], references: [id])
+  prescription   Prescription   @relation(fields: [prescriptionId], references: [id])
 }
 
 model MedicineBatch {
-  id              String   @id @default(cuid())
+  id              String         @id @default(cuid())
   medicineId      String
   batchNumber     String
   manufactureDate DateTime
   expiryDate      DateTime
   quantity        Int
   unitCost        Float
-  dispensations  Dispensation[]
   mrp             Float
-  isQuarantined   Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  medicine        Medicine @relation(fields: [medicineId], references: [id])
+  isQuarantined   Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  dispensations   Dispensation[]
+  medicine        Medicine       @relation(fields: [medicineId], references: [id])
 }
 
 model LabTest {
@@ -215,18 +215,18 @@ model LabOrderItem {
 }
 
 model Invoice {
-  id            String        @id @default(cuid())
-  appointmentId String        @unique
-  patientId     String
-  hospitalId    String
-  status        InvoiceStatus @default(DRAFT)
-  totalAmount   Float         @default(0)
-  razorpayOrderId String?     @unique
-  createdAt     DateTime      @default(now())
-  appointment   Appointment   @relation(fields: [appointmentId], references: [id])
-  hospital      Hospital      @relation(fields: [hospitalId], references: [id])
-  patient       Patient       @relation(fields: [patientId], references: [id])
-  items         InvoiceItem[]
+  id              String        @id @default(cuid())
+  appointmentId   String        @unique
+  patientId       String
+  hospitalId      String
+  status          InvoiceStatus @default(DRAFT)
+  totalAmount     Float         @default(0)
+  createdAt       DateTime      @default(now())
+  razorpayOrderId String?       @unique
+  appointment     Appointment   @relation(fields: [appointmentId], references: [id])
+  hospital        Hospital      @relation(fields: [hospitalId], references: [id])
+  patient         Patient       @relation(fields: [patientId], references: [id])
+  items           InvoiceItem[]
 }
 
 model InvoiceItem {
@@ -275,9 +275,9 @@ model Dispensation {
   quantity           Int
   dispensedAt        DateTime         @default(now())
   dispensedByUserId  String?
-  prescriptionItem   PrescriptionItem @relation(fields: [prescriptionItemId], references: [id])
-  medicineBatch      MedicineBatch    @relation(fields: [medicineBatchId], references: [id])
   dispensedByUser    User?            @relation(fields: [dispensedByUserId], references: [id])
+  medicineBatch      MedicineBatch    @relation(fields: [medicineBatchId], references: [id])
+  prescriptionItem   PrescriptionItem @relation(fields: [prescriptionItemId], references: [id])
 }
 
 enum HospitalStatus {
