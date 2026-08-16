@@ -56,4 +56,11 @@ export class InvoicesController {
   findOne(@Param('id') id: string, @Req() req: any) {
     return this.invoicesService.findOne(id, req.user);
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Get()
+  findMany(@Req() req: any) {
+    return this.invoicesService.findMany(req.user);
+  }
 }

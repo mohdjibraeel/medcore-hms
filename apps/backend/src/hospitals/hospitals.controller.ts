@@ -35,7 +35,7 @@ export class HospitalsController {
   }
   
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN','HOSPITAL_ADMIN')
+  @Roles('SUPER_ADMIN','HOSPITAL_ADMIN','ACCOUNTANT')
   @Get('stats')
   getStats(@Req() req: any) {
     if (!req.user.hospitalId) {

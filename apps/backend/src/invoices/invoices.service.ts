@@ -182,4 +182,22 @@ export class InvoicesService {
 
     return invoice;
   }
+
+  async findMany(currentUser: { sub: string; role: string; hospitalId: string | null }) {
+    const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
+    if (isStaffScoped && !currentUser.hospitalId) {
+      throw new ForbiddenException('Staff account is not assigned to a hospital');
+    }
+
+    return this.prisma.invoice.findMany({
+      where: {
+        status: 'FINALIZED',
+        ...(isStaffScoped ? { hospitalId: currentUser.hospitalId! } : {}),
+      },
+      orderBy: { createdAt: 'asc' },
+      include: {
+        patient: { include: { user: { select: { firstName: true, lastName: true } } } },
+      },
+    });
+  }
 }
