@@ -27,6 +27,8 @@ function getSidebarItems(role: Role): SidebarItem[] {
         { label: 'Book for Patient', href: '/dashboard/receptionist/book-for-patient' },
         { label: 'Generate Invoice', href: '/dashboard/receptionist/invoice' },
       ];
+    case Role.HOSPITAL_ADMIN:
+      return [{ label: 'Overview', href: '/dashboard/admin' }];
     default:
       return [{ label: 'Overview', href: '/dashboard' }];
   }
