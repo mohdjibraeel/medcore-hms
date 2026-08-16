@@ -2,13 +2,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import type { Medicine, DispenseMedicineRequest } from '@medcore/shared-types';
 
-export function useMedicines() {
+export function useMedicines(hospitalId: string | null) {
   return useQuery({
-    queryKey: ['medicines'],
+    queryKey: ['medicines', hospitalId],
     queryFn: async () => {
-      const { data } = await apiClient.get<Medicine[]>('/medicines');
+      const { data } = await apiClient.get<Medicine[]>('/medicines', {
+        params: hospitalId ? { hospitalId } : undefined,
+      });
       return data;
     },
+    enabled: !!hospitalId,
   });
 }
 
@@ -21,8 +24,6 @@ export function useDispenseMedicine() {
       return data;
     },
     onSettled: () => {
-      // Dispensing changes both what's still pending and how much stock
-      // remains in the batch it was pulled from — refresh both views.
       queryClient.invalidateQueries({ queryKey: ['prescriptions', 'pending'] });
       queryClient.invalidateQueries({ queryKey: ['medicines'] });
     },
