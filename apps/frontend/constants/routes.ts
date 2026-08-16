@@ -8,6 +8,6 @@ export const ROLE_DASHBOARD_ROUTES: Record<Role, string> = {
   [Role.RECEPTIONIST]: '/dashboard/receptionist',
   [Role.LAB_TECHNICIAN]: '/dashboard/lab',
   [Role.PHARMACIST]: '/dashboard/pharmacist',
-  [Role.ACCOUNTANT]: '/dashboard',
+  [Role.ACCOUNTANT]: '/dashboard/accountant',
   [Role.PATIENT]: '/dashboard/patient',
 };

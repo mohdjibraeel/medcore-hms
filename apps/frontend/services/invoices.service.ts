@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
-import type { Invoice, InvoiceItemCategory } from '@medcore/shared-types';
+import type { Invoice, InvoiceItemCategory, InvoiceWithPatient } from '@medcore/shared-types';
 
 export function useCreateInvoice() {
   return useMutation({
@@ -40,5 +40,26 @@ export function useFinalizeInvoice() {
       const { data } = await apiClient.patch<Invoice>(`/invoices/${invoiceId}/finalize`);
       return data;
     },
+  });
+}
+
+export function usePendingInvoices() {
+  return useQuery({
+    queryKey: ['invoices', 'finalized'],
+    queryFn: async () => {
+      const { data } = await apiClient.get<InvoiceWithPatient[]>('/invoices');
+      return data;
+    },
+  });
+}
+
+export function useMarkInvoicePaid() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (invoiceId: string) => {
+      const { data } = await apiClient.patch<Invoice>(`/invoices/${invoiceId}/mark-paid`);
+      return data;
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['invoices', 'finalized'] }),
   });
 }

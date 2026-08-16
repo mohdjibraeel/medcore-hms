@@ -32,6 +32,12 @@ export interface Invoice {
   items?: InvoiceItem[];
 }
 
+export interface InvoiceWithPatient extends Invoice {
+  patient: {
+    user: { firstName: string; lastName: string | null };
+  };
+}
+
 export interface AppointmentForPatient {
   id: string;
   scheduledAt: string;
