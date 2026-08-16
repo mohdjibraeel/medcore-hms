@@ -34,6 +34,13 @@ export class LabOrdersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('DOCTOR', 'LAB_TECHNICIAN')
+  @Get('tests')
+  findTests(@Req() req: any) {
+    return this.labOrdersService.findTests(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('LAB_TECHNICIAN')
   @Patch(':id/collect')
   collectSample(@Param('id') id: string, @Req() req: any) {

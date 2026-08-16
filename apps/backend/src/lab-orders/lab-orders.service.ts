@@ -246,4 +246,15 @@ export class LabOrdersService {
       })),
     }));
   }
+
+  async findTests(currentUser: { sub: string; role: string; hospitalId: string | null }) {
+    const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
+    if (isStaffScoped && !currentUser.hospitalId) {
+      throw new ForbiddenException('Staff account is not assigned to a hospital');
+    }
+    return this.prisma.labTest.findMany({
+      where: isStaffScoped ? { hospitalId: currentUser.hospitalId! } : undefined,
+      orderBy: { name: 'asc' },
+    });
+  }
 }

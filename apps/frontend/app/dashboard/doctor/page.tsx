@@ -5,6 +5,7 @@ import { AppointmentStatus, type AppointmentWithPatientDetails } from '@medcore/
 import { Button } from '@/components/ui/button';
 import { ApiError } from '@/lib/api-client';
 import { useState } from 'react';
+import Link from 'next/dist/client/link';
 
 const NEXT_STATUS: Partial<Record<AppointmentStatus, { label: string; next: AppointmentStatus }[]>> = {
   [AppointmentStatus.PENDING]: [
@@ -89,6 +90,14 @@ export default function DoctorDashboardPage() {
               <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[appt.status]}`}>
                 {appt.status}
               </span>
+              <Link
+              href={`/dashboard/doctor/encounter/${appt.id}?patientName=${encodeURIComponent(
+                `${appt.patient.user.firstName} ${appt.patient.user.lastName ?? ''}`.trim(),
+              )}`}
+              className="mt-2 inline-block text-sm text-blue-600 underline"
+            >
+              Start Encounter
+            </Link>
             </div>
 
             {NEXT_STATUS[appt.status] && (

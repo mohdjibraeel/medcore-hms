@@ -9,3 +9,5 @@ export * from './pharmacy';
 export * from './patient';
 export * from './invoice';
 export * from './lab-order';
+export * from './medical-record';
+export * from './prescription';

@@ -20,3 +20,17 @@ export interface LabOrderQueueItem {
     isFlagged: boolean;
   }[];
 }
+
+export interface LabTest {
+  id: string;
+  name: string;
+  unit: string;
+  refRangeLow: number | null;
+  refRangeHigh: number | null;
+  hospitalId: string;
+}
+
+export interface CreateLabOrderRequest {
+  medicalRecordId: string;
+  items: { labTestId: string }[];
+}
