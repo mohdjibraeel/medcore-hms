@@ -151,4 +151,26 @@ export class HospitalsService {
       lowStockMedicines,
     };
   }
+
+  async getPlatformStats() {
+    const [hospitalsByStatus, totalDoctors, totalPatients, revenueAgg] = await Promise.all([
+      this.prisma.hospital.groupBy({ by: ['status'], _count: { _all: true } }),
+      this.prisma.doctor.count(),
+      this.prisma.patient.count(),
+      this.prisma.invoice.aggregate({ where: { status: 'PAID' }, _sum: { totalAmount: true } }),
+    ]);
+
+    const statusCounts: Record<string, number> = { PENDING: 0, VERIFIED: 0, REJECTED: 0 };
+    hospitalsByStatus.forEach((row) => {
+      statusCounts[row.status] = row._count._all;
+    });
+
+    return {
+      totalHospitals: hospitalsByStatus.reduce((sum, r) => sum + r._count._all, 0),
+      hospitalsByStatus: statusCounts,
+      totalDoctors,
+      totalPatients,
+      totalRevenue: revenueAgg._sum.totalAmount ?? 0,
+    };
+  }
 }

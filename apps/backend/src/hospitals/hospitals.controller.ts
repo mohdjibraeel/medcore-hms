@@ -28,6 +28,13 @@ export class HospitalsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN')
+  @Get('platform-stats')
+  getPlatformStats() {
+    return this.hospitalsService.getPlatformStats();
+  }
+  
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN','HOSPITAL_ADMIN')
   @Get('stats')
   getStats(@Req() req: any) {
