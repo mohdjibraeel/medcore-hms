@@ -13,9 +13,8 @@ export class MedicalRecordsService {
 
   async create(
     dto: CreateMedicalRecordDto,
-    currentUser: { sub: string; role: string },
+    currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
-    // 1. Appointment must exist
     const appointment = await this.prisma.appointment.findUnique({
       where: { id: dto.appointmentId },
     });
@@ -23,22 +22,30 @@ export class MedicalRecordsService {
       throw new NotFoundException('Appointment not found');
     }
 
-    // 2. Caller must have a Doctor profile
-    const callingDoctor = await this.prisma.doctor.findUnique({
-      where: { userId: currentUser.sub },
-    });
-    if (!callingDoctor) {
-      throw new NotFoundException('Doctor profile not found for this account');
+    if (currentUser.role === 'DOCTOR') {
+      const callingDoctor = await this.prisma.doctor.findUnique({
+        where: { userId: currentUser.sub },
+      });
+      if (!callingDoctor) {
+        throw new NotFoundException('Doctor profile not found for this account');
+      }
+      if (appointment.doctorId !== callingDoctor.id) {
+        throw new ForbiddenException(
+          'You are not the assigned doctor for this appointment',
+        );
+      }
+    } else if (currentUser.role === 'NURSE') {
+      // Nurses aren't tied to one specific doctor — just require they work
+      // at the same hospital as this appointment.
+      if (!currentUser.hospitalId || currentUser.hospitalId !== appointment.hospitalId) {
+        throw new ForbiddenException(
+          'You can only record vitals for appointments at your own hospital',
+        );
+      }
+    } else {
+      throw new ForbiddenException('Only doctors and nurses can create medical records');
     }
 
-    // 3. Caller must be the doctor assigned to this specific appointment
-    if (appointment.doctorId !== callingDoctor.id) {
-      throw new ForbiddenException(
-        'You are not the assigned doctor for this appointment',
-      );
-    }
-
-    // 4. No duplicate MedicalRecord for this appointment (appointmentId is @unique)
     const existing = await this.prisma.medicalRecord.findUnique({
       where: { appointmentId: dto.appointmentId },
     });
@@ -48,7 +55,6 @@ export class MedicalRecordsService {
       );
     }
 
-    // 5. Create — patientId/doctorId derived from Appointment, never trusted from DTO
     return this.prisma.medicalRecord.create({
       data: {
         appointmentId: appointment.id,

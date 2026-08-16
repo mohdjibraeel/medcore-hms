@@ -28,6 +28,19 @@ export interface AppointmentWithDetails extends Appointment {
   hospital: { name: string };
 }
 
+export interface AppointmentWithPatientDetails extends Appointment {
+  patient: {
+    user: { firstName: string; lastName: string | null };
+  };
+  department: { name: string };
+  hospital: { name: string };
+}
+
+export interface AppointmentForToday extends Appointment {
+  patient: { user: { firstName: string; lastName: string | null } };
+  doctor: { user: { firstName: string; lastName: string | null } };
+}
+
 export interface CreateAppointmentRequest {
   doctorId: string;
   departmentId: string;
@@ -47,11 +60,4 @@ export interface AvailabilityResponse {
   doctorId: string;
   date: string;
   slots: AvailabilitySlot[];
-}
-export interface AppointmentWithPatientDetails extends Appointment {
-  patient: {
-    user: { firstName: string; lastName: string | null };
-  };
-  department: { name: string };
-  hospital: { name: string };
 }

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api-client";
-import type { AppointmentForPatient } from "@medcore/shared-types";
+import type { AppointmentForPatient, AppointmentForToday } from "@medcore/shared-types";
 import type {
   AvailabilityResponse,
   Appointment,
@@ -91,5 +91,15 @@ export function useAppointmentsByPatient(patientId: string | null) {
       return data;
     },
     enabled: !!patientId,
+  });
+}
+
+export function useTodayAppointments() {
+  return useQuery({
+    queryKey: ['appointments', 'today'],
+    queryFn: async () => {
+      const { data } = await apiClient.get<AppointmentForToday[]>('/appointments/today');
+      return data;
+    },
   });
 }

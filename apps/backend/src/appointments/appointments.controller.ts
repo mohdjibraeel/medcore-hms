@@ -60,4 +60,11 @@ export class AppointmentsController {
   ) {
     return this.appointmentsService.updateStatus(id, dto, req.user);
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('NURSE', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Get('today')
+  findToday(@Req() req: any) {
+    return this.appointmentsService.findTodayForHospital(req.user);
+  }
 }

@@ -18,7 +18,7 @@ export class MedicalRecordsController {
   constructor(private medicalRecordsService: MedicalRecordsService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('DOCTOR')
+  @Roles('DOCTOR','NURSE')
   @Post()
   create(@Body() dto: CreateMedicalRecordDto, @Req() req: any) {
     return this.medicalRecordsService.create(dto, req.user);

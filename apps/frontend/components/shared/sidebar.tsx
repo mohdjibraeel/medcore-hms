@@ -35,6 +35,8 @@ function getSidebarItems(role: Role): SidebarItem[] {
       return [{ label: 'Lab Queue', href: '/dashboard/lab' }];
     case Role.ACCOUNTANT:
       return [{ label: 'Overview', href: '/dashboard/accountant' }];
+    case Role.NURSE:
+      return [{ label: "Today's Patients", href: '/dashboard/nurse' }];
     default:
       return [{ label: 'Overview', href: '/dashboard' }];
   }
