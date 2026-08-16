@@ -31,6 +31,8 @@ function getSidebarItems(role: Role): SidebarItem[] {
       return [{ label: 'Overview', href: '/dashboard/admin' }];
     case Role.SUPER_ADMIN:
       return [{ label: 'Platform Overview', href: '/dashboard/super-admin' }];
+    case Role.LAB_TECHNICIAN:
+      return [{ label: 'Lab Queue', href: '/dashboard/lab' }];
     default:
       return [{ label: 'Overview', href: '/dashboard' }];
   }
