@@ -29,6 +29,8 @@ function getSidebarItems(role: Role): SidebarItem[] {
       ];
     case Role.HOSPITAL_ADMIN:
       return [{ label: 'Overview', href: '/dashboard/admin' }];
+    case Role.SUPER_ADMIN:
+      return [{ label: 'Platform Overview', href: '/dashboard/super-admin' }];
     default:
       return [{ label: 'Overview', href: '/dashboard' }];
   }
