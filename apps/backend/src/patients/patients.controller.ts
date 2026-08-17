@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { PatientsService } from './patients.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -18,7 +18,7 @@ export class PatientsController {
     'SUPER_ADMIN',
   )
   @Get()
-  search(@Query('search') search?: string) {
-    return this.patientsService.search(search);
+  search(@Query('search') search: string | undefined, @Req() req: any) {
+    return this.patientsService.search(search, req.user.hospitalId);
   }
 }

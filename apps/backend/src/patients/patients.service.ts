@@ -5,19 +5,20 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PatientsService {
   constructor(private prisma: PrismaService) {}
 
-  async search(search?: string) {
+  async search(search: string | undefined, hospitalId: string) {
     const patients = await this.prisma.patient.findMany({
-      where: search
-        ? {
-            user: {
-              OR: [
-                { firstName: { contains: search, mode: 'insensitive' as const } },
-                { lastName: { contains: search, mode: 'insensitive' as const } },
-                { email: { contains: search, mode: 'insensitive' as const } },
-              ],
-            },
-          }
-        : undefined,
+      where: {
+        hospitalId,
+        ...(search && {
+          user: {
+            OR: [
+              { firstName: { contains: search, mode: 'insensitive' as const } },
+              { lastName: { contains: search, mode: 'insensitive' as const } },
+              { email: { contains: search, mode: 'insensitive' as const } },
+            ],
+          },
+        }),
+      },
       include: {
         user: { select: { firstName: true, lastName: true, email: true } },
       },
