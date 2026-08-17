@@ -8,16 +8,16 @@ export class PatientsService {
   async search(search: string | undefined, hospitalId: string) {
     const patients = await this.prisma.patient.findMany({
       where: {
-        hospitalId,
-        ...(search && {
-          user: {
+        user: {
+          hospitalId,
+          ...(search && {
             OR: [
               { firstName: { contains: search, mode: 'insensitive' as const } },
               { lastName: { contains: search, mode: 'insensitive' as const } },
               { email: { contains: search, mode: 'insensitive' as const } },
             ],
-          },
-        }),
+          }),
+        },
       },
       include: {
         user: { select: { firstName: true, lastName: true, email: true } },
