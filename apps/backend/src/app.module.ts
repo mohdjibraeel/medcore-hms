@@ -19,6 +19,7 @@ import { BullModule } from '@nestjs/bullmq/dist/bull.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PatientsModule } from './patients/patients.module';
+import { StaffModule } from './staff/staff.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { PatientsModule } from './patients/patients.module';
     NotificationsModule,
     PaymentsModule,
     PatientsModule,
+    StaffModule,
   ],
   controllers: [AppController],
   providers: [AppService],
