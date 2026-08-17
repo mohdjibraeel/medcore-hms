@@ -7,24 +7,52 @@ import * as bcrypt from 'bcrypt';
 export class DoctorsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateDoctorDto) {
+  async create(
+    dto: CreateDoctorDto,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const isStaffScoped =
+      currentUser.role !== 'PATIENT' && currentUser.role !== 'SUPER_ADMIN';
+
+    if (isStaffScoped && !currentUser.hospitalId) {
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
+    }
+
+    // Staff (e.g. Hospital Admin): hospitalId is forced from their own account,
+    // never trusted from the request body.
+    // Super Admin: may create a doctor at any hospital, so dto.hospitalId is honored.
+    const effectiveHospitalId = isStaffScoped
+      ? currentUser.hospitalId!
+      : dto.hospitalId;
+
     const hospital = await this.prisma.hospital.findUnique({
       where: {
-        id: dto.hospitalId,
+        id: effectiveHospitalId,
       },
     });
     if (!hospital) {
       throw new NotFoundException(`Hospital not found`);
     }
 
-    const deparment = await this.prisma.department.findUnique({
+    const department = await this.prisma.department.findUnique({
       where: {
         id: dto.departmentId,
       },
     });
-    if (!deparment) {
+    if (!department) {
       throw new NotFoundException(`Department not found`);
     }
+
+    // The department must belong to the hospital we're actually creating under —
+    // otherwise a caller could pass a valid but unrelated department id from another hospital.
+    if (department.hospitalId !== effectiveHospitalId) {
+      throw new ForbiddenException(
+        `Department does not belong to the target hospital`,
+      );
+    }
+
     return this.prisma.$transaction(
       async (tx) => {
         const hashedPassword = await bcrypt.hash(dto.password, 12);
@@ -34,7 +62,7 @@ export class DoctorsService {
             email: dto.email,
             password: hashedPassword,
             role: 'DOCTOR',
-            hospitalId: dto.hospitalId,
+            hospitalId: effectiveHospitalId,
             firstName: dto.firstName,
             lastName: dto.lastName,
           },
@@ -52,8 +80,8 @@ export class DoctorsService {
         return doctor;
       },
       {
-        maxWait: 10000, // max time to wait for a connection to become available
-        timeout: 15000, // max time the transaction itself is allowed to run
+        maxWait: 10000,
+        timeout: 15000,
       },
     );
   }
