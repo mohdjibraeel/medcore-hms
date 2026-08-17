@@ -12,8 +12,8 @@ export class DoctorsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'HOSPITAL_ADMIN')
   @Post()
-  create(@Body() dto: CreateDoctorDto) {
-    return this.doctorService.create(dto);
+  create(@Body() dto: CreateDoctorDto, @Req() req: any) {
+    return this.doctorService.create(dto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
