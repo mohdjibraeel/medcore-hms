@@ -262,11 +262,6 @@ model AuditLog {
   createdAt  DateTime @default(now())
 }
 
-model playing_with_neon {
-  id    Int    @id @default(autoincrement())
-  name  String
-  value Float? @db.Real
-}
 
 model Dispensation {
   id                 String           @id @default(cuid())
