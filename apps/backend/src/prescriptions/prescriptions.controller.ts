@@ -1,14 +1,18 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PrescriptionsService } from './prescriptions.service';
 import { CreatePrescriptionDto } from './dto/create-prescription.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
+@ApiTags('Prescriptions')
+@ApiBearerAuth()
 @Controller('prescriptions')
 export class PrescriptionsController {
   constructor(private prescriptionsService: PrescriptionsService) {}
 
+  @ApiOperation({ summary: 'Issue a new prescription with one or more medicine items' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('DOCTOR')
   @Post()
@@ -16,6 +20,7 @@ export class PrescriptionsController {
     return this.prescriptionsService.create(dto, req.user);
   }
 
+  @ApiOperation({ summary: 'Get prescriptions pending pharmacy fulfilment' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('PHARMACIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Get('pending')
