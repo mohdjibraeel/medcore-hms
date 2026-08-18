@@ -17,7 +17,11 @@ function getSidebarItems(role: Role): SidebarItem[] {
         { label: "My Appointments", href: "/dashboard/patient/appointments" },
       ];
     case Role.DOCTOR:
-      return [{ label: "Today's Appointments", href: "/dashboard/doctor" }];
+      return [
+        { label: "Today's Appointments", href: "/dashboard/doctor" },
+        { label: "Upcoming Appointments", href: "/dashboard/doctor/upcoming" },
+        { label: "Past Appointments", href: "/dashboard/doctor/past" },
+      ];
     case Role.PHARMACIST:
       return [{ label: "Dispensary", href: "/dashboard/pharmacist" }];
     case Role.RECEPTIONIST:
