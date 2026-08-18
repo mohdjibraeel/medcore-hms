@@ -1,6 +1,10 @@
 import { apiClient } from '@/lib/api-client';
 import { useAuthStore } from '@/store/authStore';
-import type { LoginRequest, LoginResponse, RefreshResponse, User } from '@medcore/shared-types';
+import type { LoginRequest, LoginResponse, RefreshResponse, RegisterRequest, User } from '@medcore/shared-types';
+
+export async function register(payload: RegisterRequest) {
+  await apiClient.post('/auth/register', payload);
+}
 
 export async function login(credentials: LoginRequest) {
   const { data } = await apiClient.post<LoginResponse>('/auth/login', credentials);

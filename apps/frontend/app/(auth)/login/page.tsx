@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { login } from '@/services/auth.service';
 import { ApiError } from '@/lib/api-client';
 import { ROLE_DASHBOARD_ROUTES } from '@/constants/routes';
+import Link from 'next/dist/client/link';
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -71,6 +72,12 @@ export default function LoginPage() {
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
+                <p className="text-center text-sm text-zinc-500">
+          New patient?{' '}
+          <Link href="/register" className="font-medium text-zinc-900 underline">
+            Create an account
+          </Link>
+        </p>
       </form>
     </div>
   );
