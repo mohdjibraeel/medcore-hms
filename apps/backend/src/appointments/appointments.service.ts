@@ -129,7 +129,13 @@ export class AppointmentsService {
     if (!department) throw new NotFoundException('Department not found');
     if (!hospital) throw new NotFoundException('Hospital not found');
 
-    assertSameHospital(currentUser.hospitalId, dto.hospitalId, currentUser.role as Role);
+    if (currentUser.role !== 'PATIENT') {
+      assertSameHospital(
+        currentUser.hospitalId,
+        dto.hospitalId,
+        currentUser.role as Role,
+      );
+    }
 
     const scheduledAt = new Date(dto.scheduledAt);
 
@@ -220,7 +226,9 @@ export class AppointmentsService {
     return this.prisma.appointment.findMany({
       where: {
         patientId,
-        ...(isStaffScoped ? { hospitalId: currentUser.hospitalId ?? undefined } : {}),
+        ...(isStaffScoped
+          ? { hospitalId: currentUser.hospitalId ?? undefined }
+          : {}),
       },
       orderBy: { scheduledAt: 'desc' },
       include: {
@@ -302,17 +310,37 @@ export class AppointmentsService {
     return updated;
   }
 
-  async findTodayForHospital(currentUser: { sub: string; role: string; hospitalId: string | null }) {
+  async findTodayForHospital(currentUser: {
+    sub: string;
+    role: string;
+    hospitalId: string | null;
+  }) {
     const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
     if (isStaffScoped && !currentUser.hospitalId) {
-      throw new ForbiddenException('Staff account is not assigned to a hospital');
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
     }
 
-    const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+    const todayStr = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Kolkata',
+    }).format(new Date());
     const [year, month, day] = todayStr.split('-').map(Number);
     const IST_OFFSET_MINUTES = 330;
-    const start = new Date(Date.UTC(year, month - 1, day, 0, -IST_OFFSET_MINUTES));
-    const end = new Date(Date.UTC(year, month - 1, day, 0, 24 * 60 - IST_OFFSET_MINUTES - 1, 59, 999));
+    const start = new Date(
+      Date.UTC(year, month - 1, day, 0, -IST_OFFSET_MINUTES),
+    );
+    const end = new Date(
+      Date.UTC(
+        year,
+        month - 1,
+        day,
+        0,
+        24 * 60 - IST_OFFSET_MINUTES - 1,
+        59,
+        999,
+      ),
+    );
 
     return this.prisma.appointment.findMany({
       where: {
@@ -321,10 +349,13 @@ export class AppointmentsService {
       },
       orderBy: { scheduledAt: 'asc' },
       include: {
-        patient: { include: { user: { select: { firstName: true, lastName: true } } } },
-        doctor: { include: { user: { select: { firstName: true, lastName: true } } } },
+        patient: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
+        doctor: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
       },
     });
   }
-  
 }
