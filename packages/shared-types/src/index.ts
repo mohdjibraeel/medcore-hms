@@ -12,3 +12,4 @@ export * from "./lab-order";
 export * from "./medical-record";
 export * from "./prescription";
 export * from "./staff";
+export * from './department';

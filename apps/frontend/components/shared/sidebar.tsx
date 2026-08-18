@@ -36,6 +36,7 @@ function getSidebarItems(role: Role): SidebarItem[] {
     case Role.HOSPITAL_ADMIN:
       return [
         { label: "Overview", href: "/dashboard/admin" },
+        { label: "Register Doctor", href: "/dashboard/admin/register-doctor" },
         { label: "Register Staff", href: "/dashboard/admin/register-staff" },
         { label: "Current Staff", href: "/dashboard/admin/staff" },
       ];
