@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ForbiddenException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
@@ -138,6 +139,12 @@ export class AppointmentsService {
     }
 
     const scheduledAt = new Date(dto.scheduledAt);
+
+    if (scheduledAt.getTime() <= Date.now()) {
+      throw new BadRequestException(
+        'Appointments cannot be booked for a date or time that has already passed',
+      );
+    }
 
     return this.prisma.$transaction(
       async (tx) => {
