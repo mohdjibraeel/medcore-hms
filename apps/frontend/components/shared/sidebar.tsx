@@ -37,6 +37,7 @@ function getSidebarItems(role: Role): SidebarItem[] {
       return [
         { label: "Overview", href: "/dashboard/admin" },
         { label: "Register Doctor", href: "/dashboard/admin/register-doctor" },
+        { label: "Departments", href: "/dashboard/admin/departments" },
         { label: "Register Staff", href: "/dashboard/admin/register-staff" },
         { label: "Current Staff", href: "/dashboard/admin/staff" },
       ];
