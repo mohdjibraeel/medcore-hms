@@ -28,10 +28,7 @@ export class AppointmentsController {
   @ApiQuery({ name: 'date', example: '2026-08-20' })
   @UseGuards(JwtAuthGuard)
   @Get('availability')
-  getAvailability(
-    @Query('doctorId') doctorId: string,
-    @Query('date') date: string,
-  ) {
+  getAvailability(@Query('doctorId') doctorId: string, @Query('date') date: string) {
     return this.appointmentsService.getAvailability(doctorId, date);
   }
 
@@ -63,11 +60,7 @@ export class AppointmentsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('DOCTOR', 'RECEPTIONIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Patch(':id/status')
-  updateStatus(
-    @Param('id') id: string,
-    @Body() dto: UpdateAppointmentStatusDto,
-    @Req() req: any,
-  ) {
+  updateStatus(@Param('id') id: string, @Body() dto: UpdateAppointmentStatusDto, @Req() req: any) {
     return this.appointmentsService.updateStatus(id, dto, req.user);
   }
 
@@ -77,5 +70,15 @@ export class AppointmentsController {
   @Get('today')
   findToday(@Req() req: any) {
     return this.appointmentsService.findTodayForHospital(req.user);
+  }
+
+  // Must stay LAST among the GET routes above — ':id' is a wildcard that
+  // would otherwise match 'availability', 'me', 'today', etc. as if they
+  // were an appointment id.
+  @ApiOperation({ summary: 'Get a single appointment by id' })
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  findOne(@Param('id') id: string, @Req() req: any) {
+    return this.appointmentsService.findOne(id, req.user);
   }
 }

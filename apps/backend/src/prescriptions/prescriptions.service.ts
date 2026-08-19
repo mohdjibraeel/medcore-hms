@@ -1,10 +1,13 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePrescriptionDto } from './dto/create-prescription.dto';
+import { assertSameHospital } from 'src/common/utils/tenancy.util';
+import { Role } from 'generated/prisma/enums';
 
 @Injectable()
 export class PrescriptionsService {
@@ -31,6 +34,15 @@ export class PrescriptionsService {
     if (medicalRecord.doctorId !== callingDoctor.id) {
       throw new ForbiddenException(
         'You are not the doctor associated with this medical record',
+      );
+    }
+
+    const existingPrescription = await this.prisma.prescription.findFirst({
+      where: { medicalRecordId: dto.medicalRecordId },
+    });
+    if (existingPrescription) {
+      throw new ConflictException(
+        'A prescription already exists for this encounter',
       );
     }
 
@@ -169,6 +181,31 @@ export class PrescriptionsService {
           ? `${doctor.user.firstName} ${doctor.user.lastName ?? ''}`.trim()
           : 'Unknown doctor',
       };
+    });
+  }
+
+  async findByMedicalRecord(
+    medicalRecordId: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const medicalRecord = await this.prisma.medicalRecord.findUnique({
+      where: { id: medicalRecordId },
+      include: { appointment: true },
+    });
+    if (!medicalRecord) {
+      throw new NotFoundException('Medical record not found');
+    }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      medicalRecord.appointment.hospitalId,
+      currentUser.role as Role,
+    );
+
+    return this.prisma.prescription.findFirst({
+      where: { medicalRecordId },
+      include: { items: true },
+      orderBy: { createdAt: 'desc' },
     });
   }
 }

@@ -20,3 +20,16 @@ export function useCreatePrescription() {
     },
   });
 }
+
+export function usePrescriptionByMedicalRecord(medicalRecordId: string | null) {
+  return useQuery({
+    queryKey: ['prescriptions', 'by-medical-record', medicalRecordId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<Prescription | null>(
+        `/prescriptions/by-medical-record/${medicalRecordId}`,
+      );
+      return data;
+    },
+    enabled: !!medicalRecordId,
+  });
+}
