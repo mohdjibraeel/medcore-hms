@@ -55,12 +55,26 @@ export class PharmacyService {
     });
   }
 
-  async createBatch(dto: CreateMedicineBatchDto) {
+    async createBatch(
+    dto: CreateMedicineBatchDto,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
     const medicine = await this.prisma.medicine.findUnique({
       where: { id: dto.medicineId },
     });
     if (!medicine) {
       throw new NotFoundException('Medicine not found');
+    }
+
+    // A pharmacist can only add stock to a medicine belonging to their own
+    // hospital — never trust that the medicineId in the body is safe just
+    // because it exists somewhere in the system.
+    if (currentUser.role !== 'SUPER_ADMIN') {
+      if (!currentUser.hospitalId || currentUser.hospitalId !== medicine.hospitalId) {
+        throw new ForbiddenException(
+          'You can only add stock to medicines at your own hospital',
+        );
+      }
     }
 
     const expiryDate = new Date(dto.expiryDate);
