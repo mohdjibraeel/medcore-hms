@@ -257,4 +257,44 @@ export class LabOrdersService {
       orderBy: { name: 'asc' },
     });
   }
+
+    async findByMedicalRecord(
+    medicalRecordId: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const medicalRecord = await this.prisma.medicalRecord.findUnique({
+      where: { id: medicalRecordId },
+      include: { appointment: true },
+    });
+    if (!medicalRecord) {
+      throw new NotFoundException('Medical record not found');
+    }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      medicalRecord.appointment.hospitalId,
+      currentUser.role as Role,
+    );
+
+    const labOrders = await this.prisma.labOrder.findMany({
+      where: { medicalRecordId },
+      include: { items: { include: { labTest: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return labOrders.map((order) => ({
+      id: order.id,
+      status: order.status,
+      createdAt: order.createdAt,
+      items: order.items.map((item) => ({
+        id: item.id,
+        testName: item.labTest.name,
+        unit: item.labTest.unit,
+        refRangeLow: item.labTest.refRangeLow,
+        refRangeHigh: item.labTest.refRangeHigh,
+        resultValue: item.resultValue,
+        isFlagged: item.isFlagged,
+      })),
+    }));
+  }
 }
