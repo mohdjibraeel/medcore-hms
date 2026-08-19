@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
-import type { PendingPrescriptionItem, CreatePrescriptionRequest } from '@medcore/shared-types';
+import type { PendingPrescriptionItem, CreatePrescriptionRequest, Prescription } from '@medcore/shared-types';
 
 export function usePendingPrescriptions() {
   return useQuery({
@@ -15,7 +15,7 @@ export function usePendingPrescriptions() {
 export function useCreatePrescription() {
   return useMutation({
     mutationFn: async (payload: CreatePrescriptionRequest) => {
-      const { data } = await apiClient.post('/prescriptions', payload);
+      const { data } = await apiClient.post<Prescription>('/prescriptions', payload);
       return data;
     },
   });

@@ -20,12 +20,13 @@ export default function DoctorDashboardPage() {
     (appt) => getISTDateString(new Date(appt.scheduledAt)) === todayIST,
   ) ?? [];
 
-  const handleStatusChange = async (id: string, status: AppointmentStatus) => {
+    const handleStatusChange = async (id: string, status: AppointmentStatus) => {
     setErrorMessage(null);
     try {
       await updateStatus.mutateAsync({ id, status });
     } catch (err) {
       setErrorMessage(err instanceof ApiError ? err.message : 'Something went wrong.');
+      throw err;
     }
   };
 

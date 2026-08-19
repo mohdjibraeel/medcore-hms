@@ -25,7 +25,11 @@ import {
 import { useMedicines } from "@/services/pharmacy.service";
 import { useCreatePrescription } from "@/services/prescriptions.service";
 import { ApiError } from "@/lib/api-client";
-import { Frequency, type MedicalRecord } from "@medcore/shared-types";
+import {
+  Frequency,
+  Prescription,
+  type MedicalRecord,
+} from "@medcore/shared-types";
 
 interface PrescriptionRow {
   medicineId: string;
@@ -233,12 +237,12 @@ export default function EncounterPage() {
             <ExistingRecordSummary record={existingRecord} />
           ) : null}
 
-          {!labGateCleared ? (
-            <LabGate
-              medicalRecordId={medicalRecordId}
-              onCleared={() => setLabGateCleared(true)}
-            />
-          ) : (
+          <LabGate
+            medicalRecordId={medicalRecordId}
+            cleared={labGateCleared}
+            onCleared={() => setLabGateCleared(true)}
+          />
+          {labGateCleared && (
             <PrescriptionSection
               medicalRecordId={medicalRecordId}
               hospitalId={hospitalId}
@@ -259,11 +263,14 @@ const LAB_STEPS: { key: string; label: string }[] = [
 
 function LabGate({
   medicalRecordId,
+  cleared,
   onCleared,
 }: {
   medicalRecordId: string;
+  cleared: boolean;
   onCleared: () => void;
 }) {
+  // All hooks first, unconditionally, every render — no early returns above this line.
   const { data: orders, isLoading } =
     useLabOrdersByMedicalRecord(medicalRecordId);
   const { data: labTests } = useLabTests();
@@ -272,6 +279,38 @@ function LabGate({
   const [isOrdering, setIsOrdering] = useState(false);
   const [selectedTestIds, setSelectedTestIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  // Once the doctor has moved on to prescribing, keep the lab outcome
+  // visible as a permanent read-only summary — same pattern as the medical
+  // record card not disappearing. If labs were skipped entirely, there's
+  // nothing to show.
+  if (cleared) {
+    if (!orders || orders.length === 0) return null;
+    return (
+      <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-zinc-700">Lab Results</h2>
+        {orders.map((order) => (
+          <div key={order.id} className="space-y-1">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex justify-between text-sm">
+                <span className="text-zinc-700">{item.testName}</span>
+                <span
+                  className={
+                    item.isFlagged
+                      ? "font-medium text-red-600"
+                      : "text-zinc-900"
+                  }
+                >
+                  {item.resultValue} {item.unit}
+                  {item.isFlagged && " \u26A0"}
+                </span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -283,8 +322,6 @@ function LabGate({
   const allApproved =
     hasOrders && orders!.every((o) => o.status === "APPROVED");
 
-  // Every test already ordered in ANY round for this encounter, regardless
-  // of that round's status — never offer these again.
   const alreadyOrderedTestIds = new Set(
     (orders ?? []).flatMap((order) =>
       order.items.map((item) => item.labTestId),
@@ -314,8 +351,6 @@ function LabGate({
     }
   };
 
-  // The "order tests" form — shown either on first ask, or when the doctor
-  // clicks "Add More Tests" from the waiting/results view below.
   if (isOrdering) {
     return (
       <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
@@ -364,7 +399,6 @@ function LabGate({
     );
   }
 
-  // Every ordered test, across every round, has been approved.
   if (allApproved) {
     return (
       <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
@@ -406,8 +440,6 @@ function LabGate({
     );
   }
 
-  // At least one round is still in progress — show progress per order,
-  // keep polling, and let the doctor add a *different* test while waiting.
   if (hasOrders) {
     return (
       <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4">
@@ -466,7 +498,6 @@ function LabGate({
     );
   }
 
-  // Nothing ordered yet — ask the decision question first.
   return (
     <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
       <h2 className="text-sm font-semibold text-zinc-700">Lab Tests</h2>
@@ -484,7 +515,6 @@ function LabGate({
     </div>
   );
 }
-
 function PrescriptionSection({
   medicalRecordId,
   hospitalId,
@@ -495,7 +525,8 @@ function PrescriptionSection({
   const { data: medicines, isLoading } = useMedicines(hospitalId);
   const createPrescription = useCreatePrescription();
   const [rows, setRows] = useState<PrescriptionRow[]>([{ ...emptyRow }]);
-  const [success, setSuccess] = useState(false);
+  const [savedPrescription, setSavedPrescription] =
+    useState<Prescription | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const updateRow = (
@@ -525,7 +556,7 @@ function PrescriptionSection({
       return;
     }
     try {
-      await createPrescription.mutateAsync({
+      const created = await createPrescription.mutateAsync({
         medicalRecordId,
         items: rows.map((row) => ({
           medicineId: row.medicineId,
@@ -537,17 +568,37 @@ function PrescriptionSection({
           instructions: row.instructions || undefined,
         })),
       });
-      setSuccess(true);
+      setSavedPrescription(created);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong.");
     }
   };
 
-  if (success) {
+  if (savedPrescription) {
+    const medicineName = (id: string) =>
+      medicines?.find((m) => m.id === id)?.name ?? "Unknown medicine";
     return (
-      <div className="rounded-lg border border-zinc-200 bg-white p-4">
-        <h2 className="text-sm font-semibold text-zinc-700">Prescription</h2>
-        <p className="mt-2 text-sm text-green-700">Prescription saved.</p>
+      <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-zinc-700">
+          Prescription — Saved
+        </h2>
+        <div className="divide-y divide-zinc-100">
+          {savedPrescription.items.map((item) => (
+            <div key={item.id} className="py-2 text-sm">
+              <div className="font-medium text-zinc-900">
+                {medicineName(item.medicineId)}
+              </div>
+              <div className="text-zinc-500">
+                {item.dosage}
+                {item.dosageUnit} &middot; {item.frequency} &middot;{" "}
+                {item.durationDays} days &middot; Qty {item.quantity}
+              </div>
+              {item.instructions && (
+                <div className="text-zinc-500">{item.instructions}</div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
