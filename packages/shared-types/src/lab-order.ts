@@ -41,6 +41,7 @@ export interface LabOrderDetail {
   createdAt: string;
   items: {
     id: string;
+    labTestId: string;
     testName: string;
     unit: string;
     refRangeLow: number | null;

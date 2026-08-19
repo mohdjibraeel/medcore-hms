@@ -29,7 +29,7 @@ export function useCreateLabOrder() {
       const { data } = await apiClient.post('/lab-orders', payload);
       return data;
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['lab-orders', 'queue'] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['lab-orders'] }),
   });
 }
 

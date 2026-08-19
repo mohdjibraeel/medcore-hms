@@ -56,6 +56,24 @@ export class LabOrdersService {
       );
     }
 
+    // Block re-ordering a test that's already been ordered for this same
+    // encounter, in any prior round, regardless of that order's status —
+    // an already-approved or still-pending test shouldn't be orderable again.
+    const alreadyOrdered = await this.prisma.labOrderItem.findMany({
+      where: {
+        labTestId: { in: labTestIds },
+        labOrder: { medicalRecordId: medicalRecord.id },
+      },
+      include: { labTest: true },
+    });
+    if (alreadyOrdered.length > 0) {
+      throw new ConflictException(
+        `These test(s) have already been ordered for this encounter: ${alreadyOrdered
+          .map((i) => i.labTest.name)
+          .join(', ')}`,
+      );
+    }
+
     // 4. Create LabOrder + LabOrderItems atomically (status defaults to ORDERED)
     return this.prisma.$transaction(
       async (tx) => {
@@ -206,24 +224,36 @@ export class LabOrdersService {
     });
   }
 
-  async findQueue(currentUser: { sub: string; role: string; hospitalId: string | null }) {
+  async findQueue(currentUser: {
+    sub: string;
+    role: string;
+    hospitalId: string | null;
+  }) {
     const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
     if (isStaffScoped && !currentUser.hospitalId) {
-      throw new ForbiddenException('Staff account is not assigned to a hospital');
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
     }
 
     const labOrders = await this.prisma.labOrder.findMany({
       where: {
         status: { not: 'APPROVED' },
         medicalRecord: {
-          appointment: isStaffScoped ? { hospitalId: currentUser.hospitalId! } : undefined,
+          appointment: isStaffScoped
+            ? { hospitalId: currentUser.hospitalId! }
+            : undefined,
         },
       },
       include: {
         items: { include: { labTest: true } },
         medicalRecord: {
           include: {
-            patient: { include: { user: { select: { firstName: true, lastName: true } } } },
+            patient: {
+              include: {
+                user: { select: { firstName: true, lastName: true } },
+              },
+            },
           },
         },
       },
@@ -234,7 +264,8 @@ export class LabOrdersService {
       id: order.id,
       status: order.status,
       createdAt: order.createdAt,
-      patientName: `${order.medicalRecord.patient.user.firstName} ${order.medicalRecord.patient.user.lastName ?? ''}`.trim(),
+      patientName:
+        `${order.medicalRecord.patient.user.firstName} ${order.medicalRecord.patient.user.lastName ?? ''}`.trim(),
       items: order.items.map((item) => ({
         id: item.id,
         testName: item.labTest.name,
@@ -247,18 +278,26 @@ export class LabOrdersService {
     }));
   }
 
-  async findTests(currentUser: { sub: string; role: string; hospitalId: string | null }) {
+  async findTests(currentUser: {
+    sub: string;
+    role: string;
+    hospitalId: string | null;
+  }) {
     const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
     if (isStaffScoped && !currentUser.hospitalId) {
-      throw new ForbiddenException('Staff account is not assigned to a hospital');
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
     }
     return this.prisma.labTest.findMany({
-      where: isStaffScoped ? { hospitalId: currentUser.hospitalId! } : undefined,
+      where: isStaffScoped
+        ? { hospitalId: currentUser.hospitalId! }
+        : undefined,
       orderBy: { name: 'asc' },
     });
   }
 
-    async findByMedicalRecord(
+  async findByMedicalRecord(
     medicalRecordId: string,
     currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
@@ -288,6 +327,7 @@ export class LabOrdersService {
       createdAt: order.createdAt,
       items: order.items.map((item) => ({
         id: item.id,
+        labTestId: item.labTestId,
         testName: item.labTest.name,
         unit: item.labTest.unit,
         refRangeLow: item.labTest.refRangeLow,
