@@ -61,3 +61,10 @@ export interface AvailabilityResponse {
   date: string;
   slots: AvailabilitySlot[];
 }
+
+export interface AppointmentDetail extends Appointment {
+  patient: { user: { firstName: string; lastName: string | null } };
+  doctor: { user: { firstName: string; lastName: string | null } };
+  department: { name: string };
+  hospital: { name: string };
+}

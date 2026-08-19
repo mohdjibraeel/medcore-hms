@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PrescriptionsService } from './prescriptions.service';
 import { CreatePrescriptionDto } from './dto/create-prescription.dto';
@@ -18,6 +18,14 @@ export class PrescriptionsController {
   @Post()
   create(@Body() dto: CreatePrescriptionDto, @Req() req: any) {
     return this.prescriptionsService.create(dto, req.user);
+  }
+
+  @ApiOperation({ summary: 'Check whether a prescription already exists for this encounter' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('DOCTOR', 'NURSE')
+  @Get('by-medical-record/:medicalRecordId')
+  findByMedicalRecord(@Param('medicalRecordId') medicalRecordId: string, @Req() req: any) {
+    return this.prescriptionsService.findByMedicalRecord(medicalRecordId, req.user);
   }
 
   @ApiOperation({ summary: 'Get prescriptions pending pharmacy fulfilment' })

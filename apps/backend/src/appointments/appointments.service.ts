@@ -334,7 +334,6 @@ export class AppointmentsService {
         });
       }
     }
-
     return updated;
   }
 
@@ -385,5 +384,54 @@ export class AppointmentsService {
         },
       },
     });
+  }
+
+  async findOne(
+    id: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id },
+      include: {
+        patient: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
+        doctor: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
+        department: { select: { name: true } },
+        hospital: { select: { name: true } },
+      },
+    });
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    if (currentUser.role === 'PATIENT') {
+      const patient = await this.prisma.patient.findUnique({
+        where: { userId: currentUser.sub },
+      });
+      if (!patient || patient.id !== appointment.patientId) {
+        throw new ForbiddenException('You can only view your own appointments');
+      }
+    } else if (currentUser.role === 'DOCTOR') {
+      const doctor = await this.prisma.doctor.findUnique({
+        where: { userId: currentUser.sub },
+      });
+      if (!doctor || doctor.id !== appointment.doctorId) {
+        throw new ForbiddenException('You can only view your own appointments');
+      }
+    } else if (currentUser.role !== 'SUPER_ADMIN') {
+      if (
+        !currentUser.hospitalId ||
+        currentUser.hospitalId !== appointment.hospitalId
+      ) {
+        throw new ForbiddenException(
+          'You can only view appointments at your own hospital',
+        );
+      }
+    }
+
+    return appointment;
   }
 }
