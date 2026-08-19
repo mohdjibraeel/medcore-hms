@@ -18,5 +18,14 @@ export interface MedicalRecord {
   patientId: string;
   doctorId: string;
   chiefComplaint: string;
+  bloodPressure: string | null;
+  pulse: number | null;
+  temperature: number | null;
+  spo2: number | null;
+  heightCm: number | null;
+  weightKg: number | null;
+  diagnosis: string | null;
+  treatmentPlan: string | null;
+  allergies: string | null;
   createdAt: string;
 }
