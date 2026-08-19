@@ -27,7 +27,9 @@ export class MedicalRecordsService {
         where: { userId: currentUser.sub },
       });
       if (!callingDoctor) {
-        throw new NotFoundException('Doctor profile not found for this account');
+        throw new NotFoundException(
+          'Doctor profile not found for this account',
+        );
       }
       if (appointment.doctorId !== callingDoctor.id) {
         throw new ForbiddenException(
@@ -37,13 +39,18 @@ export class MedicalRecordsService {
     } else if (currentUser.role === 'NURSE') {
       // Nurses aren't tied to one specific doctor — just require they work
       // at the same hospital as this appointment.
-      if (!currentUser.hospitalId || currentUser.hospitalId !== appointment.hospitalId) {
+      if (
+        !currentUser.hospitalId ||
+        currentUser.hospitalId !== appointment.hospitalId
+      ) {
         throw new ForbiddenException(
           'You can only record vitals for appointments at your own hospital',
         );
       }
     } else {
-      throw new ForbiddenException('Only doctors and nurses can create medical records');
+      throw new ForbiddenException(
+        'Only doctors and nurses can create medical records',
+      );
     }
 
     const existing = await this.prisma.medicalRecord.findUnique({
@@ -123,5 +130,45 @@ export class MedicalRecordsService {
     });
   }
 
-  
+  async findByAppointment(
+    appointmentId: string,
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+  ) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id: appointmentId },
+    });
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    if (currentUser.role === 'DOCTOR') {
+      const callingDoctor = await this.prisma.doctor.findUnique({
+        where: { userId: currentUser.sub },
+      });
+      if (!callingDoctor || appointment.doctorId !== callingDoctor.id) {
+        throw new ForbiddenException(
+          'You are not the assigned doctor for this appointment',
+        );
+      }
+    } else if (currentUser.role === 'NURSE') {
+      if (
+        !currentUser.hospitalId ||
+        currentUser.hospitalId !== appointment.hospitalId
+      ) {
+        throw new ForbiddenException(
+          'You can only view records for appointments at your own hospital',
+        );
+      }
+    } else {
+      throw new ForbiddenException(
+        'Only doctors and nurses can view this encounter record',
+      );
+    }
+
+    // Intentionally returns null rather than throwing when nothing exists yet —
+    // "not filled in yet" is a normal, expected state for this check, not an error.
+    return this.prisma.medicalRecord.findUnique({
+      where: { appointmentId },
+    });
+  }
 }
