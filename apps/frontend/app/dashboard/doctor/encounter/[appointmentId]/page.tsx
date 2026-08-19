@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuthStore } from '@/store/authStore';
 import { useCreateMedicalRecord, useMedicalRecordByAppointment } from '@/services/medical-records.service';
-import { useLabTests, useCreateLabOrder } from '@/services/lab-orders.service';
+import { useLabTests, useCreateLabOrder, useLabOrdersByMedicalRecord } from '@/services/lab-orders.service';
 import { useMedicines } from '@/services/pharmacy.service';
 import { useCreatePrescription } from '@/services/prescriptions.service';
 import { ApiError } from '@/lib/api-client';
@@ -51,8 +51,8 @@ function ExistingRecordSummary({ record }: { record: MedicalRecord }) {
       <div>
         <h2 className="text-sm font-semibold text-zinc-700">Medical Record — Already on File</h2>
         <p className="mt-1 text-xs text-zinc-500">
-          This encounter&apos;s vitals and complaint were already recorded nurse. Review below,
-          then continue to lab orders or prescription.
+          This encounter&apos;s vitals and complaint were already recorded (e.g. by a nurse). Review below,
+          then continue below — no need to fill this in again.
         </p>
       </div>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
@@ -82,6 +82,7 @@ export default function EncounterPage() {
   const [medicalRecordId, setMedicalRecordId] = useState<string | null>(null);
   const [justCreated, setJustCreated] = useState(false);
   const [recordError, setRecordError] = useState<string | null>(null);
+  const [labGateCleared, setLabGateCleared] = useState(false);
 
   const [chiefComplaint, setChiefComplaint] = useState('');
   const [diagnosis, setDiagnosis] = useState('');
@@ -92,9 +93,6 @@ export default function EncounterPage() {
 
   const createRecord = useCreateMedicalRecord();
 
-  // The moment the check confirms a record already exists for this
-  // appointment, skip straight past the form — no need to wait for a
-  // failed submit to find out.
   useEffect(() => {
     if (existingRecord) {
       setMedicalRecordId(existingRecord.id);
@@ -125,7 +123,7 @@ export default function EncounterPage() {
     <div className="max-w-2xl space-y-8">
       <div>
         <h1 className="text-lg font-semibold text-zinc-900">Encounter — {patientName}</h1>
-        <p className="mt-1 text-sm text-zinc-500">Record vitals, then order tests or write a prescription.</p>
+        <p className="mt-1 text-sm text-zinc-500">Record vitals, then decide on labs before prescribing.</p>
       </div>
 
       {isCheckingRecord ? (
@@ -170,36 +168,123 @@ export default function EncounterPage() {
         <>
           {justCreated ? (
             <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
-              Medical record saved. You can now order tests and/or write a prescription.
+              Medical record saved.
             </p>
           ) : existingRecord ? (
             <ExistingRecordSummary record={existingRecord} />
           ) : null}
-          <LabOrderSection medicalRecordId={medicalRecordId} hospitalId={hospitalId} />
-          <PrescriptionSection medicalRecordId={medicalRecordId} hospitalId={hospitalId} />
+
+          {!labGateCleared ? (
+            <LabGate medicalRecordId={medicalRecordId} onCleared={() => setLabGateCleared(true)} />
+          ) : (
+            <PrescriptionSection medicalRecordId={medicalRecordId} hospitalId={hospitalId} />
+          )}
         </>
       )}
     </div>
   );
 }
 
-function LabOrderSection({
-  medicalRecordId,
-  hospitalId,
-}: {
-  medicalRecordId: string;
-  hospitalId: string | null;
-}) {
-  const { data: labTests, isLoading } = useLabTests();
-  const createLabOrder = useCreateLabOrder();
+const LAB_STEPS: { key: string; label: string }[] = [
+  { key: 'ORDERED', label: 'Ordered' },
+  { key: 'SAMPLE_COLLECTED', label: 'Sample Collected' },
+  { key: 'RESULT_UPLOADED', label: 'Results Uploaded' },
+  { key: 'APPROVED', label: 'Approved' },
+];
+
+function LabGate({ medicalRecordId, onCleared }: { medicalRecordId: string; onCleared: () => void }) {
+  const { data: orders, isLoading } = useLabOrdersByMedicalRecord(medicalRecordId);
+  const [wantsTests, setWantsTests] = useState<boolean | null>(null);
   const [selectedTestIds, setSelectedTestIds] = useState<string[]>([]);
-  const [success, setSuccess] = useState(false);
+  const { data: labTests } = useLabTests();
+  const createLabOrder = useCreateLabOrder();
   const [error, setError] = useState<string | null>(null);
 
-  const toggleTest = (id: string) => {
-    setSelectedTestIds((prev) =>
-      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
+  if (isLoading) {
+    return <p className="text-sm text-zinc-500">Checking lab order status...</p>;
+  }
+
+  const hasOrders = (orders?.length ?? 0) > 0;
+  const allApproved = hasOrders && orders!.every((o) => o.status === 'APPROVED');
+
+  // An order already exists and every result has been approved by the lab —
+  // show the results, and let the doctor consciously move on to prescribing.
+  if (allApproved) {
+    return (
+      <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-zinc-700">Lab Results</h2>
+        {orders!.map((order) => (
+          <div key={order.id} className="space-y-1">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex justify-between text-sm">
+                <span className="text-zinc-700">{item.testName}</span>
+                <span className={item.isFlagged ? 'font-medium text-red-600' : 'text-zinc-900'}>
+                  {item.resultValue} {item.unit}
+                  {item.isFlagged && ' \u26A0'}
+                </span>
+              </div>
+            ))}
+          </div>
+        ))}
+        <Button size="sm" onClick={onCleared}>Continue to Prescription</Button>
+      </div>
     );
+  }
+
+  // An order exists but isn't fully approved yet — show progress and keep polling.
+  // Prescription stays locked until this resolves.
+  if (hasOrders) {
+    const order = orders![0];
+    const currentIndex = LAB_STEPS.findIndex((s) => s.key === order.status);
+
+    return (
+      <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-zinc-700">Waiting on Lab Results</h2>
+        <p className="text-xs text-zinc-500">
+          Prescription is on hold until results come back and are approved by the lab.
+        </p>
+        <div className="flex flex-wrap gap-2 text-xs">
+          {LAB_STEPS.map((s, i) => (
+            <span
+              key={s.key}
+              className={`rounded-full px-2 py-1 ${
+                i <= currentIndex ? 'bg-blue-50 text-blue-700' : 'bg-zinc-100 text-zinc-400'
+              }`}
+            >
+              {s.label}
+            </span>
+          ))}
+        </div>
+        <ul className="text-sm text-zinc-600">
+          {order.items.map((item) => (
+            <li key={item.id}>{item.testName}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  // No order exists yet — ask the decision question first.
+  if (wantsTests === null) {
+    return (
+      <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-zinc-700">Lab Tests</h2>
+        <p className="text-sm text-zinc-600">Does this patient need any lab tests before you prescribe?</p>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => setWantsTests(true)}>
+            Yes, order tests
+          </Button>
+          <Button size="sm" onClick={onCleared}>
+            No, skip to prescription
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Doctor chose "Yes" — show the test-selection form.
+  const toggleTest = (id: string) => {
+    setSelectedTestIds((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]));
   };
 
   const handleSubmit = async () => {
@@ -209,86 +294,57 @@ function LabOrderSection({
         medicalRecordId,
         items: selectedTestIds.map((labTestId) => ({ labTestId })),
       });
-      setSuccess(true);
+      // No manual state flip needed — invalidating the query re-fetches `orders`,
+      // which naturally moves this component into the "waiting" branch above.
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong.");
+      setError(err instanceof ApiError ? err.message : 'Something went wrong.');
     }
   };
-
-  if (success) {
-    return (
-      <div className="rounded-lg border border-zinc-200 bg-white p-4">
-        <h2 className="text-sm font-semibold text-zinc-700">Lab Order</h2>
-        <p className="mt-2 text-sm text-green-700">Lab order placed.</p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
       <h2 className="text-sm font-semibold text-zinc-700">Order Lab Tests</h2>
       {error && <p className="text-sm text-red-600">{error}</p>}
-      {isLoading && <p className="text-sm text-zinc-500">Loading tests...</p>}
       <div className="space-y-1">
         {labTests?.map((test) => (
           <label key={test.id} className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={selectedTestIds.includes(test.id)}
-              onChange={() => toggleTest(test.id)}
-            />
+            <input type="checkbox" checked={selectedTestIds.includes(test.id)} onChange={() => toggleTest(test.id)} />
             {test.name}
           </label>
         ))}
       </div>
-      <Button
-        size="sm"
-        disabled={selectedTestIds.length === 0 || createLabOrder.isPending}
-        onClick={handleSubmit}
-      >
-        {createLabOrder.isPending ? "Ordering..." : "Order Selected Tests"}
-      </Button>
+      <div className="flex gap-2">
+        <Button size="sm" variant="outline" onClick={() => setWantsTests(null)}>
+          Back
+        </Button>
+        <Button size="sm" disabled={selectedTestIds.length === 0 || createLabOrder.isPending} onClick={handleSubmit}>
+          {createLabOrder.isPending ? 'Ordering...' : 'Order Selected Tests'}
+        </Button>
+      </div>
     </div>
   );
 }
 
-function PrescriptionSection({
-  medicalRecordId,
-  hospitalId,
-}: {
-  medicalRecordId: string;
-  hospitalId: string | null;
-}) {
+function PrescriptionSection({ medicalRecordId, hospitalId }: { medicalRecordId: string; hospitalId: string | null }) {
   const { data: medicines, isLoading } = useMedicines(hospitalId);
   const createPrescription = useCreatePrescription();
   const [rows, setRows] = useState<PrescriptionRow[]>([{ ...emptyRow }]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateRow = (
-    index: number,
-    field: keyof PrescriptionRow,
-    value: string,
-  ) => {
-    setRows((prev) =>
-      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
-    );
+  const updateRow = (index: number, field: keyof PrescriptionRow, value: string) => {
+    setRows((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
   };
 
   const addRow = () => setRows((prev) => [...prev, { ...emptyRow }]);
 
   const isRowComplete = (row: PrescriptionRow) =>
-    row.medicineId &&
-    row.dosage &&
-    row.dosageUnit &&
-    row.frequency &&
-    row.durationDays &&
-    row.quantity;
+    row.medicineId && row.dosage && row.dosageUnit && row.frequency && row.durationDays && row.quantity;
 
   const handleSubmit = async () => {
     setError(null);
     if (!rows.every(isRowComplete)) {
-      setError("Fill in every field for each medicine row before saving.");
+      setError('Fill in every field for each medicine row before saving.');
       return;
     }
     try {
@@ -306,7 +362,7 @@ function PrescriptionSection({
       });
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong.");
+      setError(err instanceof ApiError ? err.message : 'Something went wrong.');
     }
   };
 
@@ -321,94 +377,44 @@ function PrescriptionSection({
 
   return (
     <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4">
-      <h2 className="text-sm font-semibold text-zinc-700">
-        Write Prescription
-      </h2>
+      <h2 className="text-sm font-semibold text-zinc-700">Write Prescription</h2>
       {error && <p className="text-sm text-red-600">{error}</p>}
-      {isLoading && (
-        <p className="text-sm text-zinc-500">Loading medicines...</p>
-      )}
+      {isLoading && <p className="text-sm text-zinc-500">Loading medicines...</p>}
 
       {rows.map((row, index) => (
-        <div
-          key={index}
-          className="space-y-2 border-b border-zinc-100 pb-3 last:border-0"
-        >
-          <Select
-            value={row.medicineId}
-            onValueChange={(v) => updateRow(index, "medicineId", v)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Medicine" />
-            </SelectTrigger>
+        <div key={index} className="space-y-2 border-b border-zinc-100 pb-3 last:border-0">
+          <Select value={row.medicineId} onValueChange={(v) => updateRow(index, 'medicineId', v)}>
+            <SelectTrigger><SelectValue placeholder="Medicine" /></SelectTrigger>
             <SelectContent>
               {medicines?.map((med) => (
-                <SelectItem key={med.id} value={med.id}>
-                  {med.name}
-                </SelectItem>
+                <SelectItem key={med.id} value={med.id}>{med.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
           <div className="grid grid-cols-4 gap-2">
-            <Input
-              placeholder="Dosage (e.g. 500)"
-              value={row.dosage}
-              onChange={(e) => updateRow(index, "dosage", e.target.value)}
-            />
-            <Input
-              placeholder="Unit (mg)"
-              value={row.dosageUnit}
-              onChange={(e) => updateRow(index, "dosageUnit", e.target.value)}
-            />
-            <Select
-              value={row.frequency}
-              onValueChange={(v) => updateRow(index, "frequency", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Frequency" />
-              </SelectTrigger>
+            <Input placeholder="Dosage (e.g. 500)" value={row.dosage} onChange={(e) => updateRow(index, 'dosage', e.target.value)} />
+            <Input placeholder="Unit (mg)" value={row.dosageUnit} onChange={(e) => updateRow(index, 'dosageUnit', e.target.value)} />
+            <Select value={row.frequency} onValueChange={(v) => updateRow(index, 'frequency', v)}>
+              <SelectTrigger><SelectValue placeholder="Frequency" /></SelectTrigger>
               <SelectContent>
                 {Object.values(Frequency).map((f) => (
-                  <SelectItem key={f} value={f}>
-                    {f}
-                  </SelectItem>
+                  <SelectItem key={f} value={f}>{f}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Input
-              type="number"
-              placeholder="Duration (days)"
-              value={row.durationDays}
-              onChange={(e) => updateRow(index, "durationDays", e.target.value)}
-            />
+            <Input type="number" placeholder="Duration (days)" value={row.durationDays} onChange={(e) => updateRow(index, 'durationDays', e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="number"
-              placeholder="Quantity"
-              value={row.quantity}
-              onChange={(e) => updateRow(index, "quantity", e.target.value)}
-            />
-            <Input
-              placeholder="Instructions (optional)"
-              value={row.instructions}
-              onChange={(e) => updateRow(index, "instructions", e.target.value)}
-            />
+            <Input type="number" placeholder="Quantity" value={row.quantity} onChange={(e) => updateRow(index, 'quantity', e.target.value)} />
+            <Input placeholder="Instructions (optional)" value={row.instructions} onChange={(e) => updateRow(index, 'instructions', e.target.value)} />
           </div>
         </div>
       ))}
 
       <div className="flex gap-2">
-        <Button type="button" size="sm" variant="outline" onClick={addRow}>
-          Add Medicine
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          disabled={createPrescription.isPending}
-          onClick={handleSubmit}
-        >
-          {createPrescription.isPending ? "Saving..." : "Save Prescription"}
+        <Button type="button" size="sm" variant="outline" onClick={addRow}>Add Medicine</Button>
+        <Button type="button" size="sm" disabled={createPrescription.isPending} onClick={handleSubmit}>
+          {createPrescription.isPending ? 'Saving...' : 'Save Prescription'}
         </Button>
       </div>
     </div>

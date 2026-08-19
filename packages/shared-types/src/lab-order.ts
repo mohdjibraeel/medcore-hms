@@ -34,3 +34,18 @@ export interface CreateLabOrderRequest {
   medicalRecordId: string;
   items: { labTestId: string }[];
 }
+
+export interface LabOrderDetail {
+  id: string;
+  status: LabOrderStatus;
+  createdAt: string;
+  items: {
+    id: string;
+    testName: string;
+    unit: string;
+    refRangeLow: number | null;
+    refRangeHigh: number | null;
+    resultValue: number | null;
+    isFlagged: boolean;
+  }[];
+}

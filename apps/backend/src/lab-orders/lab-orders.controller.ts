@@ -64,4 +64,14 @@ export class LabOrdersController {
   approve(@Param('id') id: string, @Req() req: any) {
     return this.labOrdersService.approve(id, req.user);
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('DOCTOR', 'NURSE')
+  @Get('by-medical-record/:medicalRecordId')
+  findByMedicalRecord(
+    @Param('medicalRecordId') medicalRecordId: string,
+    @Req() req: any,
+  ) {
+    return this.labOrdersService.findByMedicalRecord(medicalRecordId, req.user);
+  }
 }

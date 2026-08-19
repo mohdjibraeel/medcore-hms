@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
-import type { LabOrderQueueItem, LabTest, CreateLabOrderRequest } from '@medcore/shared-types';
+import type { LabOrderQueueItem, LabTest, CreateLabOrderRequest, LabOrderDetail } from '@medcore/shared-types';
 
 export function useLabOrderQueue() {
   return useQuery({
@@ -69,5 +69,26 @@ export function useApproveLabOrder() {
       return data;
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['lab-orders', 'queue'] }),
+  });
+}
+
+export function useLabOrdersByMedicalRecord(medicalRecordId: string | null) {
+  return useQuery({
+    queryKey: ['lab-orders', 'by-medical-record', medicalRecordId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<LabOrderDetail[]>(
+        `/lab-orders/by-medical-record/${medicalRecordId}`,
+      );
+      return data;
+    },
+    enabled: !!medicalRecordId,
+    // Keep polling every 5s while any order isn't fully approved yet;
+    // stop automatically once results are in, so we're not polling forever.
+    refetchInterval: (query) => {
+      const orders = query.state.data;
+      if (!orders || orders.length === 0) return false;
+      const allApproved = orders.every((o) => o.status === 'APPROVED');
+      return allApproved ? false : 5000;
+    },
   });
 }
