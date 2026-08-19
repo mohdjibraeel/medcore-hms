@@ -11,6 +11,7 @@ import { UpdateAppointmentStatusDto } from './dto/update-appointment-status.dto'
 import { assertSameHospital } from 'src/common/utils/tenancy.util';
 import { Role } from 'generated/prisma/client';
 import { NotificationsGateway } from 'src/notifications/notifications.gateway';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -24,6 +25,7 @@ export class AppointmentsService {
   constructor(
     private prisma: PrismaService,
     private notificationsGateway: NotificationsGateway,
+    private notificationsService: NotificationsService,
   ) {}
 
   // Hardcoded IST (UTC+5:30) — this system assumes a single-timezone (India)
@@ -312,6 +314,25 @@ export class AppointmentsService {
           status: updated.status,
         },
       );
+    }
+    if (dto.status === 'CONFIRMED') {
+      const patientUser = await this.prisma.user.findUnique({
+        where: { id: patient?.userId },
+        select: { email: true, firstName: true },
+      });
+      if (patientUser?.email) {
+        await this.notificationsService.sendEmail(patientUser.email, {
+          subject: 'Your appointment is confirmed',
+          body: `Hi ${patientUser.firstName}, your appointment scheduled on ${updated.scheduledAt.toLocaleString(
+            'en-IN',
+            {
+              timeZone: 'Asia/Kolkata',
+              dateStyle: 'medium',
+              timeStyle: 'short',
+            },
+          )} has been confirmed by your doctor.`,
+        });
+      }
     }
 
     return updated;
