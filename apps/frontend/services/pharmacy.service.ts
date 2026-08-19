@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import type { Medicine, DispenseMedicineRequest } from '@medcore/shared-types';
+import type { CreateMedicineRequest } from '@medcore/shared-types';
 
 export function useMedicines(hospitalId: string | null) {
   return useQuery({
@@ -27,5 +28,30 @@ export function useDispenseMedicine() {
       queryClient.invalidateQueries({ queryKey: ['prescriptions', 'pending'] });
       queryClient.invalidateQueries({ queryKey: ['medicines'] });
     },
+  });
+}
+
+
+export function useCreateMedicine() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: CreateMedicineRequest) => {
+      const { data } = await apiClient.post<Medicine>('/medicines', payload);
+      return data;
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['medicines'] }),
+  });
+}
+
+import type { CreateMedicineBatchRequest } from '@medcore/shared-types';
+
+export function useCreateMedicineBatch() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: CreateMedicineBatchRequest) => {
+      const { data } = await apiClient.post('/medicine-batches', payload);
+      return data;
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['medicines'] }),
   });
 }

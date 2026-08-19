@@ -55,3 +55,20 @@ export interface DispenseMedicineRequest {
   prescriptionItemId: string;
   quantity: number;
 }
+
+export interface CreateMedicineRequest {
+  name: string;
+  form: MedicineForm;
+  hospitalId: string;
+  reorderLevel?: number;
+}
+
+export interface CreateMedicineBatchRequest {
+  medicineId: string;
+  batchNumber: string;
+  manufactureDate: string;
+  expiryDate: string;
+  quantity: number;
+  unitCost: number;
+  mrp: number;
+}
