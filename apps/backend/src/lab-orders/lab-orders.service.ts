@@ -339,15 +339,29 @@ export class LabOrdersService {
     }));
   }
 
-  async createTest(
+    async createTest(
     dto: CreateLabTestDto,
     currentUser: { role: string; hospitalId: string | null },
   ) {
     if (!currentUser.hospitalId) {
-      throw new ForbiddenException(
-        'Your account is not assigned to a hospital',
+      throw new ForbiddenException('Your account is not assigned to a hospital');
+    }
+
+    // Case-insensitive check, scoped to this hospital only — the same test
+    // name legitimately can exist at two different hospitals, just not
+    // twice at the same one.
+    const existing = await this.prisma.labTest.findFirst({
+      where: {
+        hospitalId: currentUser.hospitalId,
+        name: { equals: dto.name, mode: 'insensitive' },
+      },
+    });
+    if (existing) {
+      throw new ConflictException(
+        `A lab test named "${existing.name}" already exists at your hospital`,
       );
     }
+
     return this.prisma.labTest.create({
       data: {
         name: dto.name,
