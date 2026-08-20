@@ -42,7 +42,9 @@ export class InvoicesController {
     return this.invoicesService.addItem(id, dto, req.user);
   }
 
-  @ApiOperation({ summary: 'Finalize a draft invoice so it can be shared with the patient' })
+  @ApiOperation({
+    summary: 'Finalize a draft invoice so it can be shared with the patient',
+  })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('RECEPTIONIST', 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Patch(':id/finalize')
@@ -50,7 +52,9 @@ export class InvoicesController {
     return this.invoicesService.finalize(id, req.user);
   }
 
-  @ApiOperation({ summary: 'Manually mark an invoice as paid (e.g. cash payment)' })
+  @ApiOperation({
+    summary: 'Manually mark an invoice as paid (e.g. cash payment)',
+  })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Patch(':id/mark-paid')
@@ -71,5 +75,19 @@ export class InvoicesController {
   @Get()
   findMany(@Req() req: any) {
     return this.invoicesService.findMany(req.user);
+  }
+
+  @ApiOperation({
+    summary:
+      'Get suggested invoice line items pulled from the actual encounter (consultation, approved labs, dispensed medicines)',
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('RECEPTIONIST', 'ACCOUNTANT', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Get('suggested-charges/:appointmentId')
+  getSuggestedCharges(
+    @Param('appointmentId') appointmentId: string,
+    @Req() req: any,
+  ) {
+    return this.invoicesService.getSuggestedCharges(appointmentId, req.user);
   }
 }

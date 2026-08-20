@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDoctorDto } from '../doctors/dto/create-doctor.dto';
 import * as bcrypt from 'bcrypt';
@@ -74,6 +78,7 @@ export class DoctorsService {
             specialization: dto.specialization,
             licenseNumber: dto.licenseNumber,
             departmentId: dto.departmentId,
+            consultationFee: dto.consultationFee ?? 0,
           },
         });
 

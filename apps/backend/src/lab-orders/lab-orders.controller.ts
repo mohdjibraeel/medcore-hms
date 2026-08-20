@@ -14,6 +14,8 @@ import { UploadLabResultDto } from './dto/upload-lab-result.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { CreateLabTestDto } from './dto/create-lab-test.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('lab-orders')
 export class LabOrdersController {
@@ -31,6 +33,14 @@ export class LabOrdersController {
   @Get('queue')
   findQueue(@Req() req: any) {
     return this.labOrdersService.findQueue(req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('HOSPITAL_ADMIN', 'SUPER_ADMIN')
+  @Post('tests')
+  createTest(@Body() dto: CreateLabTestDto, @Req() req: any) {
+    return this.labOrdersService.createTest(dto, req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -53,16 +53,17 @@ model User {
 }
 
 model Doctor {
-  id             String          @id @default(cuid())
-  userId         String          @unique
-  specialization String
-  licenseNumber  String          @unique
-  departmentId   String
-  createdAt      DateTime        @default(now())
-  appointments   Appointment[]
-  department     Department      @relation(fields: [departmentId], references: [id])
-  user           User            @relation(fields: [userId], references: [id])
-  medicalRecords MedicalRecord[]
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  specialization  String
+  licenseNumber   String          @unique
+  departmentId    String
+  consultationFee Float           @default(0)
+  createdAt       DateTime        @default(now())
+  appointments    Appointment[]
+  department      Department      @relation(fields: [departmentId], references: [id])
+  user            User            @relation(fields: [userId], references: [id])
+  medicalRecords  MedicalRecord[]
 }
 
 model Department {
@@ -189,6 +190,7 @@ model LabTest {
   unit         String
   refRangeLow  Float?
   refRangeHigh Float?
+  price        Float          @default(0)
   hospitalId   String
   labOrders    LabOrderItem[]
   hospital     Hospital       @relation(fields: [hospitalId], references: [id])

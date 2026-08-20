@@ -1,8 +1,11 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
+  Min,
   MinLength,
 } from 'class-validator';
 
@@ -36,4 +39,13 @@ export class CreateDoctorDto {
   @IsOptional()
   @IsString()
   lastName?: string;
+
+  @ApiPropertyOptional({
+    example: 500,
+    description: 'Defaults to 0 if omitted',
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  consultationFee?: number;
 }

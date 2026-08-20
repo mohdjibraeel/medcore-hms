@@ -183,10 +183,16 @@ export class InvoicesService {
     return invoice;
   }
 
-  async findMany(currentUser: { sub: string; role: string; hospitalId: string | null }) {
+  async findMany(currentUser: {
+    sub: string;
+    role: string;
+    hospitalId: string | null;
+  }) {
     const isStaffScoped = currentUser.role !== 'SUPER_ADMIN';
     if (isStaffScoped && !currentUser.hospitalId) {
-      throw new ForbiddenException('Staff account is not assigned to a hospital');
+      throw new ForbiddenException(
+        'Staff account is not assigned to a hospital',
+      );
     }
 
     return this.prisma.invoice.findMany({
@@ -196,8 +202,96 @@ export class InvoicesService {
       },
       orderBy: { createdAt: 'asc' },
       include: {
-        patient: { include: { user: { select: { firstName: true, lastName: true } } } },
+        patient: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
       },
     });
+  }
+
+  async getSuggestedCharges(
+    appointmentId: string,
+    currentUser: { role: string; hospitalId: string | null },
+  ) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        doctor: {
+          select: {
+            consultationFee: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+        medicalRecords: {
+          include: {
+            labOrders: {
+              where: { status: 'APPROVED' },
+              include: { items: { include: { labTest: true } } },
+            },
+            prescriptions: {
+              include: {
+                items: {
+                  include: {
+                    medicine: true,
+                    dispensations: { include: { medicineBatch: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    assertSameHospital(
+      currentUser.hospitalId,
+      appointment.hospitalId,
+      currentUser.role as Role,
+    );
+
+    const suggestions: {
+      description: string;
+      category: string;
+      amount: number;
+    }[] = [];
+
+    // Consultation
+    suggestions.push({
+      description:
+        `Consultation — Dr. ${appointment.doctor.user.firstName} ${appointment.doctor.user.lastName ?? ''}`.trim(),
+      category: 'CONSULTATION',
+      amount: appointment.doctor.consultationFee,
+    });
+
+    // Approved lab tests only — nothing still pending/unapproved gets billed
+    for (const order of appointment.medicalRecords?.labOrders ?? []) {
+      for (const item of order.items) {
+        suggestions.push({
+          description: `Lab Test — ${item.labTest.name}`,
+          category: 'LAB',
+          amount: item.labTest.price,
+        });
+      }
+    }
+
+    // Actually dispensed medicines only — a prescribed-but-not-yet-picked-up
+    // item shouldn't be billed until it's really handed over
+    for (const prescription of appointment.medicalRecords?.prescriptions ??
+      []) {
+      for (const item of prescription.items) {
+        for (const dispensation of item.dispensations) {
+          suggestions.push({
+            description: `Pharmacy — ${item.medicine.name} x${dispensation.quantity}`,
+            category: 'PHARMACY',
+            amount: dispensation.quantity * dispensation.medicineBatch.mrp,
+          });
+        }
+      }
+    }
+
+    return suggestions;
   }
 }
