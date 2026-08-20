@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import Razorpay from 'razorpay';
 import { PrismaService } from '../prisma/prisma.service';
+import { assertSameHospital } from 'src/common/utils/tenancy.util';
+import { Role } from 'generated/prisma/enums';
 
 @Injectable()
 export class PaymentsService {
@@ -15,9 +17,9 @@ export class PaymentsService {
     this.razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
   }
 
-  async createOrder(
+    async createOrder(
     invoiceId: string,
-    currentUser: { sub: string; role: string },
+    currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
     const invoice = await this.prisma.invoice.findUnique({
       where: { id: invoiceId },
@@ -33,6 +35,8 @@ export class PaymentsService {
       if (!patient || patient.id !== invoice.patientId) {
         throw new ForbiddenException('You can only pay your own invoice');
       }
+    } else {
+      assertSameHospital(currentUser.hospitalId, invoice.hospitalId, currentUser.role as Role);
     }
 
     const amountInPaise = Math.round(invoice.totalAmount * 100);

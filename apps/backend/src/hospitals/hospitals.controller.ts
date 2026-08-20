@@ -1,19 +1,19 @@
 import { Controller, Post, Get, Body, UseGuards, Param, Patch, ForbiddenException, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { HospitalsService } from './hospitals.service';
-import { DepartmentsService } from '../departments/departments.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UpdateHospitalStatusDto } from './dto/update-status.dto';
 
+@ApiTags('Hospitals')
+@ApiBearerAuth()
 @Controller('hospitals')
 export class HospitalsController {
-  constructor(
-    private hospitalsService: HospitalsService,
-    private departmentsService: DepartmentsService,
-  ) {}
+  constructor(private hospitalsService: HospitalsService) {}
 
+  @ApiOperation({ summary: 'Create a new hospital (starts as PENDING)' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN')
   @Post()
@@ -21,21 +21,24 @@ export class HospitalsController {
     return this.hospitalsService.create(dto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'List hospitals (non-Super-Admins only see VERIFIED ones)' })
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.hospitalsService.findAll();
+  findAll(@Req() req: any) {
+    return this.hospitalsService.findAll(req.user);
   }
 
+  @ApiOperation({ summary: 'Platform-wide stats across every hospital (Super Admin only)' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN')
   @Get('platform-stats')
   getPlatformStats() {
     return this.hospitalsService.getPlatformStats();
   }
-  
+
+  @ApiOperation({ summary: "Get stats for the caller's own hospital" })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN','HOSPITAL_ADMIN','ACCOUNTANT')
+  @Roles('SUPER_ADMIN', 'HOSPITAL_ADMIN', 'ACCOUNTANT')
   @Get('stats')
   getStats(@Req() req: any) {
     if (!req.user.hospitalId) {
@@ -44,17 +47,11 @@ export class HospitalsController {
     return this.hospitalsService.getStats(req.user.hospitalId);
   }
 
-
+  @ApiOperation({ summary: "Approve or reject a hospital's registration" })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN')
   @Patch(':id/status')
   updateStatus(@Param('id') id: string, @Body() dto: UpdateHospitalStatusDto) {
     return this.hospitalsService.updateStatus(id, dto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get(':id/departments')
-  findDepartments(@Param('id') id: string) {
-    return this.departmentsService.findByHospital(id);
   }
 }
