@@ -8,6 +8,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { CreateMedicineBatchDto } from './dto/create-medicine-batch.dto';
 import { DispenseMedicineDto } from './dto/dispense-medicine.dto';
+import { assertSameHospital } from 'src/common/utils/tenancy.util';
+import { Role } from 'generated/prisma/enums';
 
 @Injectable()
 export class PharmacyService {
@@ -132,17 +134,28 @@ export class PharmacyService {
 
   async dispenseMedicine(
     dto: DispenseMedicineDto,
-    currentUser: { sub: string; role: string },
+    currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
     return this.prisma.$transaction(
       async (tx) => {
         const item = await tx.prescriptionItem.findUnique({
           where: { id: dto.prescriptionItemId },
-          include: { dispensations: true },
+          include: {
+            dispensations: true,
+            prescription: {
+              include: { medicalRecord: { include: { appointment: true } } },
+            },
+          },
         });
         if (!item) {
           throw new NotFoundException('Prescription item not found');
         }
+
+        assertSameHospital(
+          currentUser.hospitalId,
+          item.prescription.medicalRecord.appointment.hospitalId,
+          currentUser.role as Role,
+        );
 
         const alreadyDispensed = item.dispensations.reduce(
           (sum, d) => sum + d.quantity,
@@ -156,13 +169,7 @@ export class PharmacyService {
           );
         }
 
-        // FEFO selection: among batches for this medicine that are not
-        // expired and not quarantined, pick the one expiring soonest that
-        // still has enough quantity. $queryRaw with FOR UPDATE locks the
-        // chosen row so a concurrent dispense request can't read the same
-        // stale quantity and oversell it.
         type BatchRow = { id: string; quantity: number };
-
         const batches = await tx.$queryRaw<BatchRow[]>`
           SELECT "id", "quantity"
           FROM "MedicineBatch"
