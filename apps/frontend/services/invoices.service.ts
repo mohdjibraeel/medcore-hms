@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
-import type { Invoice, InvoiceItemCategory, InvoiceWithPatient } from '@medcore/shared-types';
+import type { Invoice, InvoiceItemCategory, InvoiceWithPatient, SuggestedCharge } from '@medcore/shared-types';
 
 export function useCreateInvoice() {
   return useMutation({
@@ -61,5 +61,18 @@ export function useMarkInvoicePaid() {
       return data;
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['invoices', 'finalized'] }),
+  });
+}
+
+export function useSuggestedCharges(appointmentId: string | null) {
+  return useQuery({
+    queryKey: ['invoices', 'suggested-charges', appointmentId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<SuggestedCharge[]>(
+        `/invoices/suggested-charges/${appointmentId}`,
+      );
+      return data;
+    },
+    enabled: !!appointmentId,
   });
 }

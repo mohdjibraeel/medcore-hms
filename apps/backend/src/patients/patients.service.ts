@@ -6,31 +6,33 @@ export class PatientsService {
   constructor(private prisma: PrismaService) {}
 
   async search(search: string | undefined, hospitalId: string) {
-    const patients = await this.prisma.patient.findMany({
-      where: {
+  const patients = await this.prisma.patient.findMany({
+    where: {
+      appointments: {
+        some: { hospitalId },
+      },
+      ...(search && {
         user: {
-          hospitalId,
-          ...(search && {
-            OR: [
-              { firstName: { contains: search, mode: 'insensitive' as const } },
-              { lastName: { contains: search, mode: 'insensitive' as const } },
-              { email: { contains: search, mode: 'insensitive' as const } },
-            ],
-          }),
+          OR: [
+            { firstName: { contains: search, mode: 'insensitive' as const } },
+            { lastName: { contains: search, mode: 'insensitive' as const } },
+            { email: { contains: search, mode: 'insensitive' as const } },
+          ],
         },
-      },
-      include: {
-        user: { select: { firstName: true, lastName: true, email: true } },
-      },
-      take: 20,
-    });
+      }),
+    },
+    include: {
+      user: { select: { firstName: true, lastName: true, email: true } },
+    },
+    take: 20,
+  });
 
-    return patients.map((p) => ({
-      id: p.id,
-      firstName: p.user.firstName,
-      lastName: p.user.lastName,
-      email: p.user.email,
-      dateOfBirth: p.dateOfBirth,
-    }));
-  }
+  return patients.map((p) => ({
+    id: p.id,
+    firstName: p.user.firstName,
+    lastName: p.user.lastName,
+    email: p.user.email,
+    dateOfBirth: p.dateOfBirth,
+  }));
+}
 }

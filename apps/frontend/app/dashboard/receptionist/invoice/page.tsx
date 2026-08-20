@@ -1,29 +1,53 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { usePatientSearch } from '@/services/patients.service';
-import { useAppointmentsByPatient } from '@/services/appointments.service';
-import { useCreateInvoice, useAddInvoiceItem, useFinalizeInvoice } from '@/services/invoices.service';
-import { ApiError } from '@/lib/api-client';
-import { InvoiceItemCategory, type PatientSearchResult, type AppointmentForPatient, type Invoice } from '@medcore/shared-types';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { usePatientSearch } from "@/services/patients.service";
+import { useAppointmentsByPatient } from "@/services/appointments.service";
+import {
+  useCreateInvoice,
+  useAddInvoiceItem,
+  useFinalizeInvoice,
+  useSuggestedCharges,
+} from "@/services/invoices.service";
+import { ApiError } from "@/lib/api-client";
+import {
+  InvoiceItemCategory,
+  type PatientSearchResult,
+  type AppointmentForPatient,
+  type Invoice,
+} from "@medcore/shared-types";
 
 export default function GenerateInvoicePage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPatient, setSelectedPatient] = useState<PatientSearchResult | null>(null);
-  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentForPatient | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPatient, setSelectedPatient] =
+    useState<PatientSearchResult | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<AppointmentForPatient | null>(null);
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [itemDescription, setItemDescription] = useState('');
-  const [itemCategory, setItemCategory] = useState<InvoiceItemCategory | ''>('');
-  const [itemAmount, setItemAmount] = useState('');
+  const [itemDescription, setItemDescription] = useState("");
+  const [itemCategory, setItemCategory] = useState<InvoiceItemCategory | "">(
+    "",
+  );
+  const [itemAmount, setItemAmount] = useState("");
 
-  const { data: patients, isLoading: patientsLoading } = usePatientSearch(searchTerm);
-  const { data: appointments, isLoading: appointmentsLoading } = useAppointmentsByPatient(selectedPatient?.id ?? null);
+  const { data: patients, isLoading: patientsLoading } =
+    usePatientSearch(searchTerm);
+  const { data: appointments, isLoading: appointmentsLoading } =
+    useAppointmentsByPatient(selectedPatient?.id ?? null);
+  const { data: suggestions, isLoading: suggestionsLoading } =
+    useSuggestedCharges(selectedAppointment?.id ?? null);
   const createInvoice = useCreateInvoice();
   const addItem = useAddInvoiceItem();
   const finalizeInvoice = useFinalizeInvoice();
@@ -35,7 +59,9 @@ export default function GenerateInvoicePage() {
       setSelectedAppointment(appt);
       setInvoice(result);
     } catch (err) {
-      setErrorMessage(err instanceof ApiError ? err.message : 'Something went wrong.');
+      setErrorMessage(
+        err instanceof ApiError ? err.message : "Something went wrong.",
+      );
     }
   };
 
@@ -50,11 +76,35 @@ export default function GenerateInvoicePage() {
         amount: Number(itemAmount),
       });
       setInvoice(updated);
-      setItemDescription('');
-      setItemCategory('');
-      setItemAmount('');
+      setItemDescription("");
+      setItemCategory("");
+      setItemAmount("");
     } catch (err) {
-      setErrorMessage(err instanceof ApiError ? err.message : 'Something went wrong.');
+      setErrorMessage(
+        err instanceof ApiError ? err.message : "Something went wrong.",
+      );
+    }
+  };
+
+  const handleAddSuggestion = async (suggestion: {
+    description: string;
+    category: InvoiceItemCategory;
+    amount: number;
+  }) => {
+    if (!invoice) return;
+    setErrorMessage(null);
+    try {
+      const updated = await addItem.mutateAsync({
+        invoiceId: invoice.id,
+        description: suggestion.description,
+        category: suggestion.category,
+        amount: suggestion.amount,
+      });
+      setInvoice(updated);
+    } catch (err) {
+      setErrorMessage(
+        err instanceof ApiError ? err.message : "Something went wrong.",
+      );
     }
   };
 
@@ -65,7 +115,9 @@ export default function GenerateInvoicePage() {
       const finalized = await finalizeInvoice.mutateAsync(invoice.id);
       setInvoice(finalized);
     } catch (err) {
-      setErrorMessage(err instanceof ApiError ? err.message : 'Something went wrong.');
+      setErrorMessage(
+        err instanceof ApiError ? err.message : "Something went wrong.",
+      );
     }
   };
 
@@ -74,7 +126,9 @@ export default function GenerateInvoicePage() {
       <h1 className="text-lg font-semibold text-zinc-900">Generate Invoice</h1>
 
       {errorMessage && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">{errorMessage}</p>
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {errorMessage}
+        </p>
       )}
 
       {/* Step 1: find the patient */}
@@ -88,7 +142,9 @@ export default function GenerateInvoicePage() {
             className="mt-1"
           />
           <div className="mt-3 space-y-2">
-            {patientsLoading && <p className="text-sm text-zinc-500">Loading...</p>}
+            {patientsLoading && (
+              <p className="text-sm text-zinc-500">Loading...</p>
+            )}
             {patients?.map((p) => (
               <button
                 key={p.id}
@@ -96,7 +152,9 @@ export default function GenerateInvoicePage() {
                 onClick={() => setSelectedPatient(p)}
                 className="block w-full rounded-md border border-zinc-200 bg-white p-3 text-left text-sm hover:bg-zinc-50"
               >
-                <div className="font-medium text-zinc-900">{p.firstName} {p.lastName ?? ''}</div>
+                <div className="font-medium text-zinc-900">
+                  {p.firstName} {p.lastName ?? ""}
+                </div>
                 <div className="text-zinc-500">{p.email}</div>
               </button>
             ))}
@@ -108,31 +166,61 @@ export default function GenerateInvoicePage() {
       {selectedPatient && !invoice && (
         <div className="mt-6 space-y-4">
           <div className="flex items-center justify-between rounded-md bg-zinc-100 px-3 py-2 text-sm">
-            <span>Invoicing for <strong>{selectedPatient.firstName} {selectedPatient.lastName ?? ''}</strong></span>
-            <button type="button" onClick={() => { setSelectedPatient(null); setSelectedAppointment(null); }} className="text-zinc-500 underline">
+            <span>
+              Invoicing for{" "}
+              <strong>
+                {selectedPatient.firstName} {selectedPatient.lastName ?? ""}
+              </strong>
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedPatient(null);
+                setSelectedAppointment(null);
+              }}
+              className="text-zinc-500 underline"
+            >
               Change
             </button>
           </div>
 
           <Label>Select Appointment</Label>
-          {appointmentsLoading && <p className="text-sm text-zinc-500">Loading appointments...</p>}
+          {appointmentsLoading && (
+            <p className="text-sm text-zinc-500">Loading appointments...</p>
+          )}
           <div className="space-y-2">
             {appointments?.map((appt) => (
-              <div key={appt.id} className="flex items-center justify-between rounded-md border border-zinc-200 bg-white p-3">
+              <div
+                key={appt.id}
+                className="flex items-center justify-between rounded-md border border-zinc-200 bg-white p-3"
+              >
                 <div className="text-sm">
                   <div className="font-medium text-zinc-900">
-                    Dr. {appt.doctor.user.firstName} {appt.doctor.user.lastName ?? ''} — {appt.department.name}
+                    Dr. {appt.doctor.user.firstName}{" "}
+                    {appt.doctor.user.lastName ?? ""} — {appt.department.name}
                   </div>
                   <div className="text-zinc-500">
-                    {new Date(appt.scheduledAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })} · {appt.status}
+                    {new Date(appt.scheduledAt).toLocaleString(undefined, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}{" "}
+                    · {appt.status}
                   </div>
                 </div>
-                <Button size="sm" disabled={createInvoice.isPending} onClick={() => handleCreateInvoice(appt)}>
+                <Button
+                  size="sm"
+                  disabled={createInvoice.isPending}
+                  onClick={() => handleCreateInvoice(appt)}
+                >
                   Generate Invoice
                 </Button>
               </div>
             ))}
-            {appointments?.length === 0 && <p className="text-sm text-zinc-500">No appointments found for this patient.</p>}
+            {appointments?.length === 0 && (
+              <p className="text-sm text-zinc-500">
+                No appointments found for this patient.
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -141,14 +229,21 @@ export default function GenerateInvoicePage() {
       {invoice && selectedAppointment && (
         <div className="mt-6 space-y-4">
           <div className="rounded-md bg-zinc-100 px-3 py-2 text-sm">
-            Invoice for <strong>{selectedPatient?.firstName}</strong> — Dr. {selectedAppointment.doctor.user.firstName} appointment ·{' '}
+            Invoice for <strong>{selectedPatient?.firstName}</strong> — Dr.{" "}
+            {selectedAppointment.doctor.user.firstName} appointment ·{" "}
             <span className="font-medium">{invoice.status}</span>
           </div>
 
           <div className="space-y-2">
             {invoice.items?.map((item) => (
-              <div key={item.id} className="flex justify-between rounded-md border border-zinc-200 bg-white p-3 text-sm">
-                <span>{item.description} <span className="text-zinc-400">({item.category})</span></span>
+              <div
+                key={item.id}
+                className="flex justify-between rounded-md border border-zinc-200 bg-white p-3 text-sm"
+              >
+                <span>
+                  {item.description}{" "}
+                  <span className="text-zinc-400">({item.category})</span>
+                </span>
                 <span>₹{item.amount.toFixed(2)}</span>
               </div>
             ))}
@@ -158,27 +253,110 @@ export default function GenerateInvoicePage() {
             </div>
           </div>
 
-          {invoice.status === 'DRAFT' && (
+          {invoice.status === "DRAFT" && (
             <>
+              <div className="rounded-md border border-zinc-200 bg-white p-4">
+                <div className="mb-1 flex items-center justify-between">
+                  <Label>Suggested Charges</Label>
+                  <span className="text-xs text-zinc-400">
+                    Pulled from this visit&apos;s actual record
+                  </span>
+                </div>
+                {suggestionsLoading && (
+                  <p className="text-sm text-zinc-500">
+                    Checking encounter for chargeable items...
+                  </p>
+                )}
+                {suggestions?.length === 0 && (
+                  <p className="text-sm text-zinc-400">
+                    Nothing to suggest yet for this visit.
+                  </p>
+                )}
+                <div className="space-y-2">
+                  {suggestions?.map((suggestion) => {
+                    const alreadyAdded = invoice.items?.some(
+                      (item) =>
+                        item.description === suggestion.description &&
+                        item.category === suggestion.category,
+                    );
+                    return (
+                      <div
+                        key={`${suggestion.category}-${suggestion.description}`}
+                        className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm"
+                      >
+                        <div>
+                          <div className="text-zinc-900">
+                            {suggestion.description}
+                          </div>
+                          <div className="text-zinc-500">
+                            {suggestion.category} &middot; ₹
+                            {suggestion.amount.toFixed(2)}
+                          </div>
+                        </div>
+                        {alreadyAdded ? (
+                          <span className="text-xs font-medium text-green-600">
+                            Added
+                          </span>
+                        ) : (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={addItem.isPending}
+                            onClick={() => handleAddSuggestion(suggestion)}
+                          >
+                            Add
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
               <div className="rounded-md border border-zinc-200 bg-white p-4 space-y-3">
                 <Label>Add Line Item</Label>
-                <Input placeholder="Description" value={itemDescription} onChange={(e) => setItemDescription(e.target.value)} />
-                <Select value={itemCategory} onValueChange={(v) => setItemCategory(v as InvoiceItemCategory)}>
-                  <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+                <Input
+                  placeholder="Description"
+                  value={itemDescription}
+                  onChange={(e) => setItemDescription(e.target.value)}
+                />
+                <Select
+                  value={itemCategory}
+                  onValueChange={(v) =>
+                    setItemCategory(v as InvoiceItemCategory)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
                   <SelectContent>
                     {Object.values(InvoiceItemCategory).map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <Input type="number" min={0.01} step={0.01} placeholder="Amount (₹)" value={itemAmount} onChange={(e) => setItemAmount(e.target.value)} />
+                <Input
+                  type="number"
+                  min={0.01}
+                  step={0.01}
+                  placeholder="Amount (₹)"
+                  value={itemAmount}
+                  onChange={(e) => setItemAmount(e.target.value)}
+                />
                 <Button
                   type="button"
                   className="w-full"
-                  disabled={addItem.isPending || !itemDescription || !itemCategory || !itemAmount}
+                  disabled={
+                    addItem.isPending ||
+                    !itemDescription ||
+                    !itemCategory ||
+                    !itemAmount
+                  }
                   onClick={handleAddItem}
                 >
-                  {addItem.isPending ? 'Adding...' : 'Add Item'}
+                  {addItem.isPending ? "Adding..." : "Add Item"}
                 </Button>
               </div>
 
@@ -189,12 +367,14 @@ export default function GenerateInvoicePage() {
                 disabled={finalizeInvoice.isPending || !invoice.items?.length}
                 onClick={handleFinalize}
               >
-                {finalizeInvoice.isPending ? 'Finalizing...' : 'Finalize Invoice'}
+                {finalizeInvoice.isPending
+                  ? "Finalizing..."
+                  : "Finalize Invoice"}
               </Button>
             </>
           )}
 
-          {invoice.status === 'FINALIZED' && (
+          {invoice.status === "FINALIZED" && (
             <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
               Invoice finalized. Total: ₹{invoice.totalAmount.toFixed(2)}
             </p>

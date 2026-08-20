@@ -1,15 +1,15 @@
 export enum InvoiceStatus {
-  DRAFT = 'DRAFT',
-  FINALIZED = 'FINALIZED',
-  PAID = 'PAID',
+  DRAFT = "DRAFT",
+  FINALIZED = "FINALIZED",
+  PAID = "PAID",
 }
 
 export enum InvoiceItemCategory {
-  CONSULTATION = 'CONSULTATION',
-  LAB = 'LAB',
-  PHARMACY = 'PHARMACY',
-  ROOM = 'ROOM',
-  OTHER = 'OTHER',
+  CONSULTATION = "CONSULTATION",
+  LAB = "LAB",
+  PHARMACY = "PHARMACY",
+  ROOM = "ROOM",
+  OTHER = "OTHER",
 }
 
 export interface InvoiceItem {
@@ -45,4 +45,9 @@ export interface AppointmentForPatient {
   doctor: { user: { firstName: string; lastName: string | null } };
   department: { name: string };
   hospital: { name: string };
+}
+export interface SuggestedCharge {
+  description: string;
+  category: InvoiceItemCategory;
+  amount: number;
 }
