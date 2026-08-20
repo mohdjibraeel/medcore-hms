@@ -44,7 +44,7 @@ export class LabOrdersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('DOCTOR', 'LAB_TECHNICIAN')
+  @Roles('DOCTOR', 'LAB_TECHNICIAN', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Get('tests')
   findTests(@Req() req: any) {
     return this.labOrdersService.findTests(req.user);

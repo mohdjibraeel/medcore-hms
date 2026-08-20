@@ -21,15 +21,6 @@ export interface LabOrderQueueItem {
   }[];
 }
 
-export interface LabTest {
-  id: string;
-  name: string;
-  unit: string;
-  refRangeLow: number | null;
-  refRangeHigh: number | null;
-  hospitalId: string;
-}
-
 export interface CreateLabOrderRequest {
   medicalRecordId: string;
   items: { labTestId: string }[];
@@ -49,4 +40,22 @@ export interface LabOrderDetail {
     resultValue: number | null;
     isFlagged: boolean;
   }[];
+}
+
+export interface LabTest {
+  id: string;
+  name: string;
+  unit: string;
+  refRangeLow: number | null;
+  refRangeHigh: number | null;
+  price: number;
+  hospitalId: string;
+}
+
+export interface CreateLabTestRequest {
+  name: string;
+  unit: string;
+  refRangeLow?: number;
+  refRangeHigh?: number;
+  price: number;
 }

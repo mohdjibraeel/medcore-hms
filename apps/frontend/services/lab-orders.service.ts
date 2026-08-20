@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
-import type { LabOrderQueueItem, LabTest, CreateLabOrderRequest, LabOrderDetail } from '@medcore/shared-types';
+import type { LabOrderQueueItem, LabTest, CreateLabOrderRequest, LabOrderDetail,CreateLabTestRequest } from '@medcore/shared-types';
 
 export function useLabOrderQueue() {
   return useQuery({
@@ -90,5 +90,16 @@ export function useLabOrdersByMedicalRecord(medicalRecordId: string | null) {
       const allApproved = orders.every((o) => o.status === 'APPROVED');
       return allApproved ? false : 5000;
     },
+  });
+}
+
+export function useCreateLabTest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: CreateLabTestRequest) => {
+      const { data } = await apiClient.post<LabTest>('/lab-orders/tests', payload);
+      return data;
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['lab-tests'] }),
   });
 }

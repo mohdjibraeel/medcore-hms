@@ -48,6 +48,7 @@ function getSidebarItems(role: Role): SidebarItem[] {
         { label: "Departments", href: "/dashboard/admin/departments" },
         { label: "Register Staff", href: "/dashboard/admin/register-staff" },
         { label: "Current Staff", href: "/dashboard/admin/staff" },
+        { label: 'Add Lab Test', href: '/dashboard/admin/add-lab-test' },
       ];
     case Role.SUPER_ADMIN:
       return [{ label: "Platform Overview", href: "/dashboard/super-admin" }];
