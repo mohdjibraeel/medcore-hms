@@ -55,7 +55,7 @@ export class PharmacyService {
     });
   }
 
-    async createBatch(
+  async createBatch(
     dto: CreateMedicineBatchDto,
     currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
@@ -70,7 +70,10 @@ export class PharmacyService {
     // hospital — never trust that the medicineId in the body is safe just
     // because it exists somewhere in the system.
     if (currentUser.role !== 'SUPER_ADMIN') {
-      if (!currentUser.hospitalId || currentUser.hospitalId !== medicine.hospitalId) {
+      if (
+        !currentUser.hospitalId ||
+        currentUser.hospitalId !== medicine.hospitalId
+      ) {
         throw new ForbiddenException(
           'You can only add stock to medicines at your own hospital',
         );
@@ -95,10 +98,30 @@ export class PharmacyService {
     });
   }
 
-  async findMedicines(hospitalId?: string, search?: string) {
+  async findMedicines(
+    currentUser: { sub: string; role: string; hospitalId: string | null },
+    hospitalId?: string,
+    search?: string,
+  ) {
+    let effectiveHospitalId: string | undefined;
+
+    if (currentUser.role === 'SUPER_ADMIN') {
+      // Super Admin may browse one hospital's inventory, or everything if omitted.
+      effectiveHospitalId = hospitalId;
+    } else {
+      if (!currentUser.hospitalId) {
+        throw new ForbiddenException(
+          'Your account is not assigned to a hospital',
+        );
+      }
+      // Forced from the caller's own account — the query param is never
+      // trusted for anyone except Super Admin.
+      effectiveHospitalId = currentUser.hospitalId;
+    }
+
     return this.prisma.medicine.findMany({
       where: {
-        ...(hospitalId ? { hospitalId } : {}),
+        ...(effectiveHospitalId ? { hospitalId: effectiveHospitalId } : {}),
         ...(search
           ? { name: { contains: search, mode: 'insensitive' as const } }
           : {}),

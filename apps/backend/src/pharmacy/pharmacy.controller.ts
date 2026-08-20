@@ -1,5 +1,18 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { PharmacyService } from './pharmacy.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { CreateMedicineBatchDto } from './dto/create-medicine-batch.dto';
@@ -30,13 +43,25 @@ export class PharmacyController {
     return this.pharmacyService.createBatch(dto, req.user);
   }
 
-  @ApiOperation({ summary: 'List medicines, optionally filtered by hospital or search term' })
-  @ApiQuery({ name: 'hospitalId', required: false })
+  @ApiOperation({
+    summary:
+      'List medicines at your hospital (Super Admin may pass hospitalId to browse any hospital)',
+  })
+  @ApiQuery({
+    name: 'hospitalId',
+    required: false,
+    description: 'Only honored for SUPER_ADMIN',
+  })
   @ApiQuery({ name: 'search', required: false })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('DOCTOR', 'NURSE', 'PHARMACIST', 'HOSPITAL_ADMIN', 'SUPER_ADMIN')
   @Get('medicines')
-  findMedicines(@Query('hospitalId') hospitalId?: string, @Query('search') search?: string) {
-    return this.pharmacyService.findMedicines(hospitalId, search);
+  findMedicines(
+    @Query('hospitalId') hospitalId: string | undefined,
+    @Query('search') search: string | undefined,
+    @Req() req: any,
+  ) {
+    return this.pharmacyService.findMedicines(req.user, hospitalId, search);
   }
 
   @ApiOperation({ summary: 'Dispense medicine against a prescribed item' })
