@@ -9,6 +9,7 @@ import { CreateLabOrderDto } from './dto/create-lab-order.dto';
 import { UploadLabResultDto } from './dto/upload-lab-result.dto';
 import { Role } from 'generated/prisma/client';
 import { assertSameHospital } from 'src/common/utils/tenancy.util';
+import { CreateLabTestDto } from './dto/create-lab-test.dto';
 
 @Injectable()
 export class LabOrdersService {
@@ -336,5 +337,26 @@ export class LabOrdersService {
         isFlagged: item.isFlagged,
       })),
     }));
+  }
+
+  async createTest(
+    dto: CreateLabTestDto,
+    currentUser: { role: string; hospitalId: string | null },
+  ) {
+    if (!currentUser.hospitalId) {
+      throw new ForbiddenException(
+        'Your account is not assigned to a hospital',
+      );
+    }
+    return this.prisma.labTest.create({
+      data: {
+        name: dto.name,
+        unit: dto.unit,
+        refRangeLow: dto.refRangeLow,
+        refRangeHigh: dto.refRangeHigh,
+        price: dto.price,
+        hospitalId: currentUser.hospitalId,
+      },
+    });
   }
 }

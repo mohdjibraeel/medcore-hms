@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Doctor" ADD COLUMN     "consultationFee" DOUBLE PRECISION NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "LabTest" ADD COLUMN     "price" DOUBLE PRECISION NOT NULL DEFAULT 0;

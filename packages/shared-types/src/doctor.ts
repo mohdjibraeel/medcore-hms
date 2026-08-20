@@ -13,7 +13,6 @@ export interface Doctor {
   department: {
     name: string;
   };
-  
 }
 
 export interface CreateDoctorRequest {
@@ -25,4 +24,5 @@ export interface CreateDoctorRequest {
   departmentId: string;
   firstName: string;
   lastName?: string;
+  consultationFee?: number;
 }
