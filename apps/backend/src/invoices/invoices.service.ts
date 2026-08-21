@@ -294,4 +294,18 @@ export class InvoicesService {
 
     return suggestions;
   }
+
+  async findMine(currentUser: { sub: string }) {
+    const patient = await this.prisma.patient.findUnique({
+      where: { userId: currentUser.sub },
+    });
+    if (!patient) {
+      return [];
+    }
+    return this.prisma.invoice.findMany({
+      where: { patientId: patient.id },
+      include: { items: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

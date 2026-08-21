@@ -1,14 +1,18 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import Razorpay from 'razorpay';
 import { PrismaService } from '../prisma/prisma.service';
-import { assertSameHospital } from 'src/common/utils/tenancy.util';
+import { NotificationsService } from '../notifications/notifications.service';
+import { assertSameHospital } from '../common/utils/tenancy.util';
 import { Role } from 'generated/prisma/enums';
 
 @Injectable()
 export class PaymentsService {
   private readonly razorpay: Razorpay;
 
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     if (!keyId || !keySecret) {
@@ -17,7 +21,7 @@ export class PaymentsService {
     this.razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
   }
 
-    async createOrder(
+  async createOrder(
     invoiceId: string,
     currentUser: { sub: string; role: string; hospitalId: string | null },
   ) {
@@ -102,10 +106,18 @@ export class PaymentsService {
       return { status: 'already_processed', invoiceId: invoice.id };
     }
 
-    await this.prisma.invoice.update({
+    const updated = await this.prisma.invoice.update({
       where: { id: invoice.id },
       data: { status: 'PAID' },
+      include: { patient: { include: { user: true } } },
     });
+
+    if (updated.patient.user.email) {
+      await this.notificationsService.sendEmail(updated.patient.user.email, {
+        subject: 'Payment Received — Receipt',
+        body: `Hi ${updated.patient.user.firstName}, we've received your payment of ₹${updated.totalAmount.toFixed(2)}. Thank you.`,
+      });
+    }
 
     return { status: 'processed', invoiceId: invoice.id };
   }

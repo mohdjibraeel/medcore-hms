@@ -15,6 +15,7 @@ function getSidebarItems(role: Role): SidebarItem[] {
         { label: "Overview", href: "/dashboard/patient" },
         { label: "Book Appointment", href: "/dashboard/patient/book" },
         { label: "My Appointments", href: "/dashboard/patient/appointments" },
+        { label: 'My Bills', href: '/dashboard/patient/bills' },
       ];
     case Role.DOCTOR:
       return [

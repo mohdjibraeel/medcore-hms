@@ -62,6 +62,14 @@ export class InvoicesController {
     return this.invoicesService.markPaid(id, req.user);
   }
 
+  @ApiOperation({ summary: "Get the current patient's own invoices" })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('PATIENT')
+  @Get('me')
+  findMine(@Req() req: any) {
+    return this.invoicesService.findMine(req.user);
+  }
+
   @ApiOperation({ summary: 'Get a single invoice by ID' })
   @UseGuards(JwtAuthGuard)
   @Get(':id')
