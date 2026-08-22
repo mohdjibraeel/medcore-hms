@@ -10,16 +10,22 @@ import { JwtService } from '@nestjs/jwt/dist/jwt.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RedisService } from 'src/redis/redis.service';
-import { randomUUID } from 'crypto';
+import { randomInt, randomUUID } from 'crypto';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 
 @Injectable()
 export class AuthService {
   private readonly REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days, matches refresh token JWT expiry
+  private generateOtp(): string {
+    return randomInt(100000, 999999).toString();
+  }
 
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
     private redisService: RedisService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -31,7 +37,7 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 12);
-    return this.prisma.$transaction(
+    const result = await this.prisma.$transaction(
       async (tx) => {
         const user = await tx.user.create({
           data: {
@@ -54,6 +60,14 @@ export class AuthService {
       },
       { maxWait: 10000, timeout: 15000 },
     );
+    const otp = this.generateOtp();
+    await this.redisService.set(`otp:email:${result.user.id}`, otp, 60 * 10);
+    await this.notificationsService.sendEmail(result.user.email, {
+      subject: 'Verify your MedCore account',
+      body: `Your verification code is ${otp}. It expires in 10 minutes.`,
+    });
+
+    return result;
   }
 
   async login(dto: LoginDto) {
@@ -191,5 +205,32 @@ export class AuthService {
     await this.redisService.del(`rt:${payload.sub}:${dto.deviceId}`);
 
     return { message: 'Logged out' };
+  }
+
+  async verifyEmail(dto: VerifyEmailDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    // Deliberately vague error — don't reveal whether the email exists at all.
+    // Otherwise this endpoint becomes a free tool for checking who's registered.
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or code');
+    }
+
+    const key = `otp:email:${user.id}`;
+    const storedOtp = await this.redisService.get(key);
+
+    if (!storedOtp || storedOtp !== dto.otp) {
+      throw new UnauthorizedException('Invalid or expired code');
+    }
+
+    await this.redisService.del(key);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { emailVerified: true },
+    });
+
+    return { message: 'Email verified successfully' };
   }
 }

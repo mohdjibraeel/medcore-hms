@@ -4,7 +4,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { patchConsoleForSensitiveData } from './common/logger/log-sanitizer';
 
+
+patchConsoleForSensitiveData();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
   app.enableCors({

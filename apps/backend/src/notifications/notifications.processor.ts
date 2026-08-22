@@ -31,7 +31,7 @@ export class NotificationsProcessor extends WorkerHost {
   }
 
   async process(job: Job): Promise<any> {
-    this.logger.log(`Processing job "${job.name}" with data: ${JSON.stringify(job.data)}`);
+    this.logger.log(`Processing job "${job.name}"`); // job.data may contain OTPs/tokens — don't log it raw
 
     switch (job.name) {
       case 'send-email':
@@ -65,7 +65,9 @@ export class NotificationsProcessor extends WorkerHost {
     });
 
     if (result.error) {
-      this.logger.error(`Resend failed for job ${job.id}: ${result.error.message}`);
+      this.logger.error(
+        `Resend failed for job ${job.id}: ${result.error.message}`,
+      );
       throw new Error(`Resend send failed: ${result.error.message}`);
     }
 
@@ -83,7 +85,9 @@ export class NotificationsProcessor extends WorkerHost {
     });
 
     if (message.errorCode) {
-      this.logger.error(`Twilio failed for job ${job.id}: ${message.errorMessage}`);
+      this.logger.error(
+        `Twilio failed for job ${job.id}: ${message.errorMessage}`,
+      );
       throw new Error(`Twilio send failed: ${message.errorMessage}`);
     }
 

@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -52,5 +53,11 @@ export class AuthController {
   @Post('logout')
   logout(@Body() body: RefreshTokenDto) {
     return this.authService.logout(body);
+  }
+
+  @ApiOperation({ summary: 'Verify email address using 6-digit OTP' })
+  @Post('verify-email')
+  verifyEmail(@Body() body: VerifyEmailDto) {
+    return this.authService.verifyEmail(body);
   }
 }

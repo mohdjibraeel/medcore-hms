@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { NotificationsProcessor } from './notifications.processor';
 import { NotificationsService } from './notifications.service';
@@ -10,8 +10,7 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     BullModule.registerQueue({
       name: 'notifications',
-    }),
-    AuthModule,
+    }),forwardRef(()=>AuthModule),
   ],
   controllers: [NotificationsController],
   providers: [NotificationsProcessor, NotificationsService, NotificationsGateway],
