@@ -8,6 +8,8 @@ import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import { SendPhoneOtpDto } from './dto/send-phone-otp.dto';
+import { VerifyPhoneDto } from './dto/verify-phone.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -59,5 +61,21 @@ export class AuthController {
   @Post('verify-email')
   verifyEmail(@Body() body: VerifyEmailDto) {
     return this.authService.verifyEmail(body);
+  }
+
+  @ApiOperation({ summary: 'Send or resend an SMS OTP to verify phone number' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('send-phone-otp')
+  sendPhoneOtp(@Req() request: any, @Body() body: SendPhoneOtpDto) {
+    return this.authService.sendPhoneOtp(request.user.sub, body);
+  }
+
+  @ApiOperation({ summary: 'Verify phone number using 6-digit SMS OTP' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('verify-phone')
+  verifyPhone(@Req() request: any, @Body() body: VerifyPhoneDto) {
+    return this.authService.verifyPhone(request.user.sub, body);
   }
 }

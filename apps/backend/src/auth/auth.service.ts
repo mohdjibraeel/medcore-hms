@@ -13,6 +13,8 @@ import { RedisService } from 'src/redis/redis.service';
 import { randomInt, randomUUID } from 'crypto';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import { VerifyPhoneDto } from './dto/verify-phone.dto';
+import { SendPhoneOtpDto } from './dto/send-phone-otp.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,6 +48,7 @@ export class AuthService {
             role: 'PATIENT',
             firstName: dto.firstName,
             lastName: dto.lastName,
+            phone: dto.phone,
           },
         });
 
@@ -232,5 +235,61 @@ export class AuthService {
     });
 
     return { message: 'Email verified successfully' };
+  }
+
+  async sendPhoneOtp(userId: string, dto: SendPhoneOtpDto) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    let phone = user.phone;
+
+    if (dto.phone) {
+      // updating/setting the phone — check no one else already has it
+      const existingPhone = await this.prisma.user.findUnique({
+        where: { phone: dto.phone },
+      });
+      if (existingPhone && existingPhone.id !== userId) {
+        throw new ConflictException('This phone number is already registered');
+      }
+      phone = dto.phone;
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { phone, phoneVerified: false }, // changing the number resets verification
+      });
+    }
+
+    if (!phone) {
+      throw new ConflictException(
+        'No phone number on file. Provide one in the request.',
+      );
+    }
+
+    const otp = this.generateOtp();
+    await this.redisService.set(`otp:phone:${userId}`, otp, 60 * 10);
+
+    await this.notificationsService.sendSms(phone, {
+      body: `Your MedCore verification code is ${otp}. It expires in 10 minutes.`,
+    });
+
+    return { message: 'OTP sent' };
+  }
+
+  async verifyPhone(userId: string, dto: VerifyPhoneDto) {
+    const key = `otp:phone:${userId}`;
+    const storedOtp = await this.redisService.get(key);
+
+    if (!storedOtp || storedOtp !== dto.otp) {
+      throw new UnauthorizedException('Invalid or expired code');
+    }
+
+    await this.redisService.del(key);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { phoneVerified: true },
+    });
+
+    return { message: 'Phone verified successfully' };
   }
 }

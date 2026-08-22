@@ -48,6 +48,8 @@ model User {
   dispensations Dispensation[]
   doctor        Doctor?
   notifications Notification[]
+  phone         String?  @unique
+  phoneVerified Boolean  @default(false)
   emailVerified Boolean @default(false)
   patient       Patient?
   hospital      Hospital?      @relation(fields: [hospitalId], references: [id])
