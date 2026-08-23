@@ -10,6 +10,8 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { SendPhoneOtpDto } from './dto/send-phone-otp.dto';
 import { VerifyPhoneDto } from './dto/verify-phone.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -77,5 +79,17 @@ export class AuthController {
   @Post('verify-phone')
   verifyPhone(@Req() request: any, @Body() body: VerifyPhoneDto) {
     return this.authService.verifyPhone(request.user.sub, body);
+  }
+
+  @ApiOperation({ summary: 'Request a password reset link via email' })
+  @Post('forgot-password')
+  forgotPassword(@Body() body: ForgotPasswordDto) {
+    return this.authService.forgotPassword(body);
+  }
+
+  @ApiOperation({ summary: 'Reset password using a valid reset token' })
+  @Post('reset-password')
+  resetPassword(@Body() body: ResetPasswordDto) {
+    return this.authService.resetPassword(body);
   }
 }

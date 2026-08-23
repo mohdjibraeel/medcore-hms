@@ -15,10 +15,14 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { VerifyPhoneDto } from './dto/verify-phone.dto';
 import { SendPhoneOtpDto } from './dto/send-phone-otp.dto';
+import { randomBytes } from 'crypto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   private readonly REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days, matches refresh token JWT expiry
+  private readonly RESET_TOKEN_TTL_SECONDS = 60 * 30; // 30 minutes
   private generateOtp(): string {
     return randomInt(100000, 999999).toString();
   }
@@ -291,5 +295,67 @@ export class AuthService {
     });
 
     return { message: 'Phone verified successfully' };
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    // Always return the same generic message, whether or not the email exists.
+    // If we said "email not found" here, this endpoint becomes a free tool
+    // for checking who has an account — a privacy leak on its own.
+    const genericResponse = {
+      message: 'If that email is registered, a reset link has been sent.',
+    };
+
+    if (!user) {
+      return genericResponse;
+    }
+
+    // randomBytes, not a 6-digit OTP: this token sits in an email inbox,
+    // possibly for a while — it needs to be effectively unguessable, not
+    // just "hard to guess in 10 minutes" like an OTP typed on a keypad.
+    const token = randomBytes(32).toString('hex');
+
+    await this.redisService.set(
+      `pwreset:${token}`,
+      user.id,
+      this.RESET_TOKEN_TTL_SECONDS,
+    );
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+    await this.notificationsService.sendEmail(user.email, {
+      subject: 'Reset your MedCore password',
+      body: `Click this link to reset your password: ${resetLink}. This link expires in 30 minutes.`,
+    });
+
+    return genericResponse;
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const key = `pwreset:${dto.token}`;
+    const userId = await this.redisService.get(key);
+
+    if (!userId) {
+      throw new UnauthorizedException('Invalid or expired reset token');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 12);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    await this.redisService.del(key); // one-time use, same pattern as the email OTP
+
+    // Password just changed — revoke every active session on every device.
+    // Otherwise, someone who had a stolen password AND was already logged in
+    // stays logged in even after the "fix."
+    await this.redisService.delByPattern(`rt:${userId}:*`);
+
+    return { message: 'Password reset successfully. Please log in again.' };
   }
 }
