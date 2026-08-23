@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api-client';
 import { useAuthStore } from '@/store/authStore';
-import type { LoginRequest, LoginResponse, RefreshResponse, RegisterRequest, User } from '@medcore/shared-types';
+import type { ForgotPasswordRequest, LoginRequest, LoginResponse, MessageResponse, RefreshResponse, RegisterRequest, ResetPasswordRequest, User } from '@medcore/shared-types';
 
 export async function register(payload: RegisterRequest) {
   await apiClient.post('/auth/register', payload);
@@ -66,4 +66,15 @@ export async function trySilentLogin() {
   } finally {
     useAuthStore.getState().setHydrated(true);
   }
+  
+}
+
+export async function forgotPassword(payload: ForgotPasswordRequest) {
+  const { data } = await apiClient.post<MessageResponse>('/auth/forgot-password', payload);
+  return data;
+}
+
+export async function resetPassword(payload: ResetPasswordRequest) {
+  const { data } = await apiClient.post<MessageResponse>('/auth/reset-password', payload);
+  return data;
 }
