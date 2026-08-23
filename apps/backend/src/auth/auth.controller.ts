@@ -1,4 +1,14 @@
-import { Controller, Body, Post, UseGuards, Get, Req } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  UseGuards,
+  Get,
+  Req,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
+import type { Response, Request } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
@@ -18,6 +28,9 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  private readonly REFRESH_COOKIE_NAME = 'refresh_token';
+  private readonly REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days, in ms
+
   @ApiOperation({ summary: 'Register a new user account' })
   @Post('register')
   register(@Body() body: RegisterDto) {
@@ -26,8 +39,21 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Log in and receive access + refresh tokens' })
   @Post('login')
-  login(@Body() body: LoginDto) {
-    return this.authService.login(body);
+  async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.login(body);
+    res.cookie(this.REFRESH_COOKIE_NAME, result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in prod; allow http on localhost
+      sameSite: 'lax',
+      maxAge: this.REFRESH_COOKIE_MAX_AGE,
+      path: '/auth', // cookie only sent to /auth/* routes, not every request
+    });
+
+    const { refreshToken, ...safeResult } = result; // strip it from the JSON body
+    return safeResult; // { accessToken, deviceId, user } — no refreshToken in the response
   }
 
   @ApiOperation({ summary: 'Get the currently authenticated user profile' })
@@ -49,14 +75,43 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Exchange a refresh token for a new access token' })
   @Post('refresh')
-  refresh(@Body() body: RefreshTokenDto) {
-    return this.authService.refresh(body);
+  async refresh(
+    @Req() req: Request,
+    @Body() body: RefreshTokenDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies?.[this.REFRESH_COOKIE_NAME];
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('No refresh token provided');
+    }
+
+    const result = await this.authService.refresh(refreshToken, body.deviceId); // <-- was: this.authService.refresh(body)
+
+    res.cookie(this.REFRESH_COOKIE_NAME, result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: this.REFRESH_COOKIE_MAX_AGE,
+      path: '/auth',
+    });
+
+    const { refreshToken: _, ...safeResult } = result;
+    return safeResult;
   }
 
   @ApiOperation({ summary: 'Revoke the refresh token and log out' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard) 
   @Post('logout')
-  logout(@Body() body: RefreshTokenDto) {
-    return this.authService.logout(body);
+  async logout(
+    @Req() req: any,
+    @Body() dto: { deviceId: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.logout(req.user.sub, dto.deviceId);
+    res.clearCookie(this.REFRESH_COOKIE_NAME, { path: '/auth' });
+    return { message: 'Logged out successfully' };
   }
 
   @ApiOperation({ summary: 'Verify email address using 6-digit OTP' })

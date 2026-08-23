@@ -131,7 +131,7 @@ export class AuthService {
     return userWithoutPassword;
   }
 
-  async refresh(dto: RefreshTokenDto) {
+  async refresh(refreshToken: string, deviceId: string) {
     let payload: {
       sub: string;
       email: string;
@@ -140,20 +140,17 @@ export class AuthService {
     };
 
     try {
-      payload = await this.jwtService.verifyAsync(dto.refreshToken, {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
       });
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const redisKey = `rt:${payload.sub}:${dto.deviceId}`;
+    const redisKey = `rt:${payload.sub}:${deviceId}`;
     const storedToken = await this.redisService.get(redisKey);
 
-    if (!storedToken || storedToken !== dto.refreshToken) {
-      // Either this token was already rotated out (reuse of a stale token),
-      // or no session exists for this user+device at all. Either way, wipe
-      // whatever is currently stored so this device is fully logged out.
+    if (!storedToken || storedToken !== refreshToken) {
       await this.redisService.del(redisKey);
       throw new UnauthorizedException(
         'Refresh token has already been used or is invalid. Please log in again.',
@@ -167,9 +164,6 @@ export class AuthService {
       throw new UnauthorizedException('User no longer exists');
     }
 
-    // Pull hospitalId fresh from the re-fetched user, not from the old payload —
-    // if an admin ever changes a staff member's hospital, refresh should reflect
-    // the current value, not whatever was true when the old refresh token was issued.
     const newPayload = {
       sub: user.id,
       email: user.email,
@@ -196,21 +190,8 @@ export class AuthService {
     return { accessToken, refreshToken: newRefreshToken };
   }
 
-  async logout(dto: RefreshTokenDto) {
-    let payload: { sub: string };
-
-    try {
-      payload = await this.jwtService.verifyAsync(dto.refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
-      });
-    } catch {
-      // Token's already invalid/expired — nothing to clean up, but don't
-      // error either; the end state (no valid session) is what logout wants anyway.
-      return { message: 'Logged out' };
-    }
-
-    await this.redisService.del(`rt:${payload.sub}:${dto.deviceId}`);
-
+  async logout(userId: string, deviceId: string) {
+    await this.redisService.del(`rt:${userId}:${deviceId}`);
     return { message: 'Logged out' };
   }
 

@@ -15,12 +15,12 @@ export class ApiError extends Error {
 
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true, // required so the httpOnly refresh cookie is sent automatically
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Attach the current access token to every outgoing request automatically.
 apiClient.interceptors.request.use((config) => {
   const { accessToken } = useAuthStore.getState();
   if (accessToken && !config.headers.Authorization) {
@@ -44,18 +44,16 @@ apiClient.interceptors.response.use(
 
     if (isExpiredToken && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
-      const { refreshToken, deviceId, setAccessToken, clearSession } =
-        useAuthStore.getState();
+      const { deviceId, setAccessToken, clearSession } = useAuthStore.getState();
 
-      if (refreshToken && deviceId) {
+      if (deviceId) {
         try {
           const { data } = await apiClient.post(
             '/auth/refresh',
-            { refreshToken, deviceId },
+            { deviceId }, // no refreshToken here — the httpOnly cookie carries it automatically
             { _isRefreshRequest: true } as any,
           );
           setAccessToken(data.accessToken);
-          useAuthStore.setState({ refreshToken: data.refreshToken });
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalRequest);
         } catch {

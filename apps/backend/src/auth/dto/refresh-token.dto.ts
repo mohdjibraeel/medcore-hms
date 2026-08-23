@@ -5,10 +5,5 @@ export class RefreshTokenDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  refreshToken!: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   deviceId!: string;
 }

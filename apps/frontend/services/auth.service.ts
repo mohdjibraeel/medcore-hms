@@ -16,18 +16,18 @@ export async function login(credentials: LoginRequest) {
   useAuthStore.getState().setSession({
     user,
     accessToken: data.accessToken,
-    refreshToken: data.refreshToken,
     deviceId: data.deviceId,
+    // no refreshToken — it lives in the httpOnly cookie now, never in JS
   });
 
   return user;
 }
 
 export async function logout() {
-  const { refreshToken, deviceId } = useAuthStore.getState();
-  if (refreshToken && deviceId) {
+  const { deviceId } = useAuthStore.getState();
+  if (deviceId) {
     try {
-      await apiClient.post('/auth/logout', { refreshToken, deviceId });
+      await apiClient.post('/auth/logout', { deviceId }); // no refreshToken in the body
     } catch {
       // Already invalid/expired on the backend — fine, we clear local state regardless.
     }
@@ -36,17 +36,19 @@ export async function logout() {
 }
 
 export async function trySilentLogin() {
-  const { refreshToken, deviceId } = useAuthStore.getState();
+  const { deviceId } = useAuthStore.getState();
 
-  if (!refreshToken || !deviceId) {
+  if (!deviceId) {
     useAuthStore.getState().setHydrated(true);
     return;
   }
 
   try {
+    // No refreshToken to check for anymore — the browser either has the
+    // httpOnly cookie or it doesn't. We just try, and let the backend say no.
     const { data } = await apiClient.post<RefreshResponse>(
       '/auth/refresh',
-      { refreshToken, deviceId },
+      { deviceId },
       { _isRefreshRequest: true } as any,
     );
 
@@ -57,7 +59,6 @@ export async function trySilentLogin() {
     useAuthStore.getState().setSession({
       user,
       accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
       deviceId,
     });
   } catch {

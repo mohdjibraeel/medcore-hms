@@ -12,17 +12,14 @@ export interface RegisterRequest {
 }
 
 export interface RefreshRequest {
-  refreshToken: string;
   deviceId: string;
 }
 
 export interface LoginResponse {
   accessToken: string;
-  refreshToken: string;
   deviceId: string;
 }
 
 export interface RefreshResponse {
   accessToken: string;
-  refreshToken: string;
 }
