@@ -18,6 +18,7 @@ import { SendPhoneOtpDto } from './dto/send-phone-otp.dto';
 import { randomBytes } from 'crypto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { getPermissionsForRole } from './constants/permissions';
 
 @Injectable()
 export class AuthService {
@@ -128,7 +129,11 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
     const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+
+    return {
+      ...userWithoutPassword,
+      permissions: getPermissionsForRole(user.role),
+    };
   }
 
   async refresh(refreshToken: string, deviceId: string) {
