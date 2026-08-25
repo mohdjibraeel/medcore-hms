@@ -6,13 +6,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { patchConsoleForSensitiveData } from './common/logger/log-sanitizer';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 
 patchConsoleForSensitiveData();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
 
-  
+  app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
     origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',

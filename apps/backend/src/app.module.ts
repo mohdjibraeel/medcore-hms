@@ -20,12 +20,21 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PatientsModule } from './patients/patients.module';
 import { StaffModule } from './staff/staff.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000, // 1 minute, in milliseconds
+        limit: 1000, // 1000 requests per minute — general API cap
+      },
+    ]),
     AuthModule,
     PrismaModule,
     HospitalsModule,
@@ -45,6 +54,12 @@ import { StaffModule } from './staff/staff.module';
     StaffModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -22,9 +22,11 @@ import { SendPhoneOtpDto } from './dto/send-phone-otp.dto';
 import { VerifyPhoneDto } from './dto/verify-phone.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Auth')
 @Controller('auth')
+@Throttle({ default: { limit: 100, ttl: 900000 } })
 export class AuthController {
   constructor(private authService: AuthService) {}
 
