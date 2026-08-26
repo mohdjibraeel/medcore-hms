@@ -145,3 +145,32 @@ export async function seedTwoHospitals() {
   const hospitalB = await seedOneHospital('B');
   return { hospitalA, hospitalB };
 }
+
+/**
+ * Creates one more patient in an existing hospital — used when a test
+ * needs two different people (e.g. racing for the same appointment slot).
+ */
+export async function createExtraPatient(hospitalId: string, label: string) {
+  const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 12);
+
+  const patientUser = await testPrisma.user.create({
+    data: {
+      email: `patient.extra.${label.toLowerCase()}.${Date.now()}@test.medcore.com`,
+      password: hashedPassword,
+      role: 'PATIENT',
+      hospitalId,
+      firstName: `ExtraPatient${label}`,
+      emailVerified: true,
+    },
+  });
+
+  const patient = await testPrisma.patient.create({
+    data: { userId: patientUser.id, dateOfBirth: new Date('1996-02-02') },
+  });
+
+  return {
+    patientUser: { id: patientUser.id, email: patientUser.email },
+    patient: { id: patient.id },
+    patientToken: signAccessToken({ ...patientUser, hospitalId }),
+  };
+}
