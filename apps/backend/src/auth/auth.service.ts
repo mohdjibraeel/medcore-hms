@@ -8,7 +8,6 @@ import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt/dist/jwt.service';
 import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { randomInt, randomUUID } from 'crypto';
 import { NotificationsService } from 'src/notifications/notifications.service';
@@ -105,10 +104,13 @@ export class AuthService {
       expiresIn: '15m',
     });
 
-    const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '7d',
-    });
+    const refreshToken = await this.jwtService.signAsync(
+      { ...payload, jti: randomUUID() },
+      {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
+      },
+    );
 
     const deviceId = randomUUID();
 
@@ -181,10 +183,13 @@ export class AuthService {
       expiresIn: '15m',
     });
 
-    const newRefreshToken = await this.jwtService.signAsync(newPayload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '7d',
-    });
+    const newRefreshToken = await this.jwtService.signAsync(
+      { ...newPayload, jti: randomUUID() },
+      {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
+      },
+    );
 
     await this.redisService.set(
       redisKey,

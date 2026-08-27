@@ -9,7 +9,7 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 export const testPrisma = new PrismaClient({ adapter });
 
 const jwtService = new JwtService();
-const TEST_PASSWORD = 'TestPass123!';
+export const TEST_PASSWORD = 'TestPass123!';
 
 // Signs a real, valid access token — same shape as auth.service.ts login() —
 // so we can skip the OTP/email-verification flow in tests and log straight in.
