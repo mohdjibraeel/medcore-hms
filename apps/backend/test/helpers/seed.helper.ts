@@ -174,3 +174,28 @@ export async function createExtraPatient(hospitalId: string, label: string) {
     patientToken: signAccessToken({ ...patientUser, hospitalId }),
   };
 }
+
+/**
+ * Creates a staff user with any role (pharmacist, accountant, nurse, etc.)
+ * at an existing hospital — reusable across tests that need staff beyond
+ * just doctors and patients.
+ */
+export async function createStaffUser(hospitalId: string, role: string, label: string) {
+  const hashedPassword = await bcrypt.hash(TEST_PASSWORD, 12);
+
+  const user = await testPrisma.user.create({
+    data: {
+      email: `${role.toLowerCase()}.${label.toLowerCase()}.${Date.now()}@test.medcore.com`,
+      password: hashedPassword,
+      role: role as any,
+      hospitalId,
+      firstName: `${role}${label}`,
+      emailVerified: true,
+    },
+  });
+
+  return {
+    user: { id: user.id, email: user.email },
+    token: signAccessToken({ ...user, hospitalId }),
+  };
+}
