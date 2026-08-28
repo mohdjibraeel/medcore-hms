@@ -51,5 +51,20 @@ services:
       redis:
         condition: service_healthy
 
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        # Baked into the browser bundle at build time — must be reachable
+        # from the BROWSER, so localhost, not the internal "backend" hostname.
+        NEXT_PUBLIC_API_URL: http://localhost:3000
+    container_name: medcore-frontend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+
 volumes:
   postgres-data:
