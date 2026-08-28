@@ -1,0 +1,23 @@
+﻿flowchart TB
+    subgraph Client["Client Layer"]
+        Browser["Browser<br/>(Next.js Frontend)"]
+    end
+    subgraph DockerHost["Docker Host (docker-compose)"]
+        Nginx["Nginx<br/>Reverse Proxy<br/>:80"]
+        Frontend["Frontend Container<br/>Next.js<br/>:3000"]
+        Backend["Backend Container<br/>NestJS API<br/>:4000"]
+        Redis["Redis Container<br/>Cache/Sessions<br/>:6379"]
+        Postgres["PostgreSQL Container<br/>Database<br/>:5432"]
+    end
+    Browser -->|HTTP :80| Nginx
+    Nginx -->|proxy /| Frontend
+    Nginx -->|proxy /api| Backend
+    Backend -->|Prisma ORM| Postgres
+    Backend -->|cache/session ops| Redis
+    Frontend -.->|SSR/API calls| Backend
+    classDef container fill:#e8f0fe,stroke:#4285f4,stroke-width:1px
+    classDef proxy fill:#fef7e0,stroke:#f9ab00,stroke-width:1px
+    classDef db fill:#e6f4ea,stroke:#34a853,stroke-width:1px
+    class Frontend,Backend container
+    class Nginx proxy
+    class Postgres,Redis db

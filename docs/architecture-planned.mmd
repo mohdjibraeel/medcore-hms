@@ -1,0 +1,18 @@
+﻿flowchart TB
+    subgraph UserLayer["User"]
+        Browser["Browser"]
+    end
+    subgraph Vercel["Vercel (Planned)"]
+        Frontend["Next.js Frontend<br/>Edge/CDN Deployed"]
+    end
+    subgraph AWS["AWS (Planned)"]
+        EC2["EC2 / Managed Backend<br/>NestJS API"]
+        RDS["Managed PostgreSQL<br/>(RDS or equivalent)"]
+        ElastiCache["Managed Redis<br/>(ElastiCache or equivalent)"]
+    end
+    Browser -->|HTTPS| Frontend
+    Frontend -->|HTTPS API calls| EC2
+    EC2 -->|Prisma ORM| RDS
+    EC2 -->|cache/session ops| ElastiCache
+    classDef planned fill:#f3e8fd,stroke:#a142f4,stroke-width:1px,stroke-dasharray: 5 5
+    class Frontend,EC2,RDS,ElastiCache planned
