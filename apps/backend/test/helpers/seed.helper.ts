@@ -53,6 +53,7 @@ export async function cleanupDatabase() {
   await testPrisma.invoiceItem.deleteMany();
   await testPrisma.invoice.deleteMany();
   await testPrisma.labOrderItem.deleteMany();
+  await testPrisma.labTest.deleteMany();
   await testPrisma.labOrder.deleteMany();
   await testPrisma.prescriptionItem.deleteMany();
   await testPrisma.prescription.deleteMany();
