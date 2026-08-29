@@ -1,0 +1,1934 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1787982453132" clover="3.2.0">
+  <project timestamp="1787982453132" name="All files">
+    <metrics statements="1547" coveredstatements="342" conditionals="810" coveredconditionals="190" methods="257" coveredmethods="41" elements="2614" coveredelements="573" complexity="0" loc="1547" ncloc="1547" packages="36" files="91" classes="91"/>
+    <package name="src">
+      <metrics statements="61" coveredstatements="9" conditionals="8" coveredconditionals="3" methods="5" coveredmethods="3"/>
+      <file name="app.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\app.controller.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="3" methods="2" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+      </file>
+      <file name="app.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\app.module.ts">
+        <metrics statements="26" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+      </file>
+      <file name="app.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\app.service.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+      </file>
+      <file name="main.ts" path="C:\Coding\medcore-hms\apps\backend\src\main.ts">
+        <metrics statements="16" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
+      </file>
+      <file name="setup-app.ts" path="C:\Coding\medcore-hms\apps\backend\src\setup-app.ts">
+        <metrics statements="10" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.appointments">
+      <metrics statements="146" coveredstatements="113" conditionals="106" coveredconditionals="77" methods="19" coveredmethods="11"/>
+      <file name="appointments.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\appointments\appointments.controller.ts">
+        <metrics statements="24" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="55" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="63" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+      </file>
+      <file name="appointments.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\appointments\appointments.module.ts">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="appointments.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\appointments\appointments.service.ts">
+        <metrics statements="115" coveredstatements="113" conditionals="94" coveredconditionals="77" methods="11" coveredmethods="11"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="26" count="30" type="cond" truecount="6" falsecount="2"/>
+        <line num="27" count="30" type="cond" truecount="3" falsecount="1"/>
+        <line num="28" count="30" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="36" count="32" type="stmt"/>
+        <line num="38" count="32" type="stmt"/>
+        <line num="41" count="32" type="stmt"/>
+        <line num="45" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="49" count="3" type="stmt"/>
+        <line num="52" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
+        <line num="68" count="2" type="stmt"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
+        <line num="76" count="2" type="stmt"/>
+        <line num="80" count="16" type="stmt"/>
+        <line num="81" count="16" type="stmt"/>
+        <line num="85" count="32" type="stmt"/>
+        <line num="86" count="32" type="stmt"/>
+        <line num="88" count="32" type="stmt"/>
+        <line num="96" count="2" type="stmt"/>
+        <line num="105" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="109" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="110" count="1" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="116" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="121" count="5" type="stmt"/>
+        <line num="124" count="5" type="stmt"/>
+        <line num="130" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="131" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="132" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="133" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="135" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="136" count="4" type="stmt"/>
+        <line num="143" count="3" type="stmt"/>
+        <line num="145" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="146" count="1" type="stmt"/>
+        <line num="151" count="2" type="stmt"/>
+        <line num="153" count="2" type="stmt"/>
+        <line num="155" count="2" type="stmt"/>
+        <line num="165" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="166" count="1" type="stmt"/>
+        <line num="171" count="1" type="stmt"/>
+        <line num="186" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="187" count="2" type="stmt"/>
+        <line num="190" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="191" count="1" type="stmt"/>
+        <line num="196" count="1" type="stmt"/>
+        <line num="209" count="2" type="stmt"/>
+        <line num="212" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="213" count="1" type="stmt"/>
+        <line num="216" count="1" type="stmt"/>
+        <line num="233" count="2" type="stmt"/>
+        <line num="235" count="2" type="stmt"/>
+        <line num="252" count="1" type="stmt"/>
+        <line num="267" count="6" type="stmt"/>
+        <line num="270" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="271" count="1" type="stmt"/>
+        <line num="274" count="5" type="stmt"/>
+        <line num="280" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="281" count="1" type="stmt"/>
+        <line num="284" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="285" count="1" type="stmt"/>
+        <line num="292" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="293" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="294" count="1" type="stmt"/>
+        <line num="299" count="2" type="stmt"/>
+        <line num="304" count="2" type="stmt"/>
+        <line num="308" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="309" count="2" type="stmt"/>
+        <line num="318" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="319" count="1" type="stmt"/>
+        <line num="323" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="324" count="1" type="stmt"/>
+        <line num="337" count="2" type="stmt"/>
+        <line num="345" count="3" type="stmt"/>
+        <line num="346" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="347" count="1" type="stmt"/>
+        <line num="352" count="2" type="stmt"/>
+        <line num="355" count="2" type="stmt"/>
+        <line num="356" count="2" type="stmt"/>
+        <line num="357" count="2" type="stmt"/>
+        <line num="360" count="2" type="stmt"/>
+        <line num="372" count="2" type="stmt"/>
+        <line num="393" count="5" type="stmt"/>
+        <line num="406" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="407" count="1" type="stmt"/>
+        <line num="410" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="411" count="1" type="stmt"/>
+        <line num="414" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="415" count="1" type="stmt"/>
+        <line num="417" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="418" count="1" type="stmt"/>
+        <line num="421" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="422" count="1" type="stmt"/>
+        <line num="424" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="425" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="429" count="1" type="stmt"/>
+        <line num="435" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.appointments.dto">
+      <metrics statements="14" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="create-appointment.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\appointments\dto\create-appointment.dto.ts">
+        <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+      </file>
+      <file name="update-appointment-status.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\appointments\dto\update-appointment-status.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="4"/>
+      </file>
+    </package>
+    <package name="src.auth">
+      <metrics statements="178" coveredstatements="80" conditionals="92" coveredconditionals="29" methods="26" coveredmethods="9"/>
+      <file name="auth.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\auth.controller.ts">
+        <metrics statements="52" coveredstatements="0" conditionals="38" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="87" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="121" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="122" count="0" type="stmt"/>
+        <line num="129" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="137" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="143" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="149" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="150" count="0" type="stmt"/>
+      </file>
+      <file name="auth.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\auth.module.ts">
+        <metrics statements="10" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+      </file>
+      <file name="auth.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\auth.service.ts">
+        <metrics statements="116" coveredstatements="80" conditionals="54" coveredconditionals="29" methods="13" coveredmethods="9"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="13" type="stmt"/>
+        <line num="25" count="13" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="31" count="13" type="cond" truecount="6" falsecount="2"/>
+        <line num="32" count="13" type="cond" truecount="3" falsecount="1"/>
+        <line num="33" count="13" type="cond" truecount="3" falsecount="1"/>
+        <line num="34" count="13" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="41" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="81" count="3" type="stmt"/>
+        <line num="85" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="89" count="2" type="stmt"/>
+        <line num="91" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="107" count="1" type="stmt"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="123" count="1" type="stmt"/>
+        <line num="127" count="2" type="stmt"/>
+        <line num="130" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="131" count="1" type="stmt"/>
+        <line num="133" count="1" type="stmt"/>
+        <line num="135" count="1" type="stmt"/>
+        <line num="149" count="3" type="stmt"/>
+        <line num="150" count="3" type="stmt"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="157" count="2" type="stmt"/>
+        <line num="158" count="2" type="stmt"/>
+        <line num="160" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="161" count="1" type="stmt"/>
+        <line num="162" count="1" type="stmt"/>
+        <line num="167" count="1" type="stmt"/>
+        <line num="170" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="171" count="0" type="stmt"/>
+        <line num="174" count="1" type="stmt"/>
+        <line num="181" count="1" type="stmt"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="194" count="1" type="stmt"/>
+        <line num="200" count="1" type="stmt"/>
+        <line num="204" count="0" type="stmt"/>
+        <line num="205" count="0" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="215" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="216" count="0" type="stmt"/>
+        <line num="219" count="0" type="stmt"/>
+        <line num="220" count="0" type="stmt"/>
+        <line num="222" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="223" count="0" type="stmt"/>
+        <line num="226" count="0" type="stmt"/>
+        <line num="227" count="0" type="stmt"/>
+        <line num="232" count="0" type="stmt"/>
+        <line num="236" count="0" type="stmt"/>
+        <line num="237" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="238" count="0" type="stmt"/>
+        <line num="241" count="0" type="stmt"/>
+        <line num="243" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="245" count="0" type="stmt"/>
+        <line num="248" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="249" count="0" type="stmt"/>
+        <line num="251" count="0" type="stmt"/>
+        <line num="252" count="0" type="stmt"/>
+        <line num="258" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="259" count="0" type="stmt"/>
+        <line num="264" count="0" type="stmt"/>
+        <line num="265" count="0" type="stmt"/>
+        <line num="267" count="0" type="stmt"/>
+        <line num="271" count="0" type="stmt"/>
+        <line num="275" count="0" type="stmt"/>
+        <line num="276" count="0" type="stmt"/>
+        <line num="278" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="279" count="0" type="stmt"/>
+        <line num="282" count="0" type="stmt"/>
+        <line num="283" count="0" type="stmt"/>
+        <line num="288" count="0" type="stmt"/>
+        <line num="292" count="2" type="stmt"/>
+        <line num="299" count="2" type="stmt"/>
+        <line num="303" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="304" count="1" type="stmt"/>
+        <line num="310" count="1" type="stmt"/>
+        <line num="312" count="1" type="stmt"/>
+        <line num="318" count="1" type="stmt"/>
+        <line num="320" count="1" type="stmt"/>
+        <line num="325" count="1" type="stmt"/>
+        <line num="329" count="2" type="stmt"/>
+        <line num="330" count="2" type="stmt"/>
+        <line num="332" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="333" count="1" type="stmt"/>
+        <line num="336" count="1" type="stmt"/>
+        <line num="338" count="1" type="stmt"/>
+        <line num="343" count="1" type="stmt"/>
+        <line num="348" count="1" type="stmt"/>
+        <line num="350" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.auth.constants">
+      <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+      <file name="permissions.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\constants\permissions.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="73" count="1" type="cond" truecount="1" falsecount="1"/>
+      </file>
+    </package>
+    <package name="src.auth.decorators">
+      <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="roles.decorator.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\decorators\roles.decorator.ts">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.auth.dto">
+      <metrics statements="40" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="forgot-password.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\forgot-password.dto.ts">
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+      </file>
+      <file name="login.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\login.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+      </file>
+      <file name="refresh-token.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\refresh-token.dto.ts">
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+      <file name="register.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\register.dto.ts">
+        <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+      </file>
+      <file name="reset-password.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\reset-password.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="send-phone-otp.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\send-phone-otp.dto.ts">
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+      <file name="verify-email.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\verify-email.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="verify-phone.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\dto\verify-phone.dto.ts">
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.auth.guards">
+      <metrics statements="30" coveredstatements="0" conditionals="20" coveredconditionals="0" methods="5" coveredmethods="0"/>
+      <file name="jwt-auth.guard.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\guards\jwt-auth.guard.ts">
+        <metrics statements="17" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="2"/>
+      </file>
+      <file name="roles.guard.ts" path="C:\Coding\medcore-hms\apps\backend\src\auth\guards\roles.guard.ts">
+        <metrics statements="13" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.common.filters">
+      <metrics statements="15" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="http-exception.filter.ts" path="C:\Coding\medcore-hms\apps\backend\src\common\filters\http-exception.filter.ts">
+        <metrics statements="15" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="6"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.common.interceptors">
+      <metrics statements="30" coveredstatements="0" conditionals="26" coveredconditionals="0" methods="8" coveredmethods="0"/>
+      <file name="audit-log.interceptor.ts" path="C:\Coding\medcore-hms\apps\backend\src\common\interceptors\audit-log.interceptor.ts">
+        <metrics statements="25" coveredstatements="0" conditionals="26" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="32" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="50" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="55" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="56" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="60" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="77" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="82" count="0" type="stmt"/>
+      </file>
+      <file name="response.interceptor.ts" path="C:\Coding\medcore-hms\apps\backend\src\common\interceptors\response.interceptor.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.common.logger">
+      <metrics statements="30" coveredstatements="0" conditionals="22" coveredconditionals="0" methods="8" coveredmethods="0"/>
+      <file name="log-sanitizer.ts" path="C:\Coding\medcore-hms\apps\backend\src\common\logger\log-sanitizer.ts">
+        <metrics statements="30" coveredstatements="0" conditionals="22" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="40" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="59" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="62" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.common.utils">
+      <metrics statements="5" coveredstatements="5" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+      <file name="tenancy.util.ts" path="C:\Coding\medcore-hms\apps\backend\src\common\utils\tenancy.util.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="9" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="11" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.departments">
+      <metrics statements="36" coveredstatements="0" conditionals="24" coveredconditionals="0" methods="6" coveredmethods="0"/>
+      <file name="departments.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\departments\departments.controller.ts">
+        <metrics statements="14" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="0" type="stmt"/>
+      </file>
+      <file name="departments.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\departments\departments.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="departments.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\departments\departments.service.ts">
+        <metrics statements="16" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="32" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.departments.dto">
+      <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="create-department.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\departments\dto\create-department.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.doctors">
+      <metrics statements="46" coveredstatements="0" conditionals="40" coveredconditionals="0" methods="7" coveredmethods="0"/>
+      <file name="doctors.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\doctors\doctors.controller.ts">
+        <metrics statements="13" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+      </file>
+      <file name="doctors.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\doctors\doctors.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="doctors.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\doctors\doctors.service.ts">
+        <metrics statements="27" coveredstatements="0" conditionals="32" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="54" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="100" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="102" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="110" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="114" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.doctors.dto">
+      <metrics statements="12" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="create-doctor.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\doctors\dto\create-doctor.dto.ts">
+        <metrics statements="12" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.hospitals">
+      <metrics statements="73" coveredstatements="0" conditionals="28" coveredconditionals="0" methods="20" coveredmethods="0"/>
+      <file name="hospitals.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\hospitals\hospitals.controller.ts">
+        <metrics statements="22" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="54" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="55" count="0" type="stmt"/>
+      </file>
+      <file name="hospitals.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\hospitals\hospitals.module.ts">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="hospitals.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\hospitals\hospitals.service.ts">
+        <metrics statements="44" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="119" count="0" type="stmt"/>
+        <line num="121" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="148" count="0" type="stmt"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="176" count="0" type="stmt"/>
+        <line num="181" count="0" type="stmt"/>
+        <line num="182" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.hospitals.dto">
+      <metrics statements="12" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="create-hospital.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\hospitals\dto\create-hospital.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+      </file>
+      <file name="update-status.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\hospitals\dto\update-status.dto.ts">
+        <metrics statements="7" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.invoices">
+      <metrics statements="101" coveredstatements="67" conditionals="56" coveredconditionals="38" methods="20" coveredmethods="11"/>
+      <file name="invoices.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\invoices\invoices.controller.ts">
+        <metrics statements="26" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+      </file>
+      <file name="invoices.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\invoices\invoices.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="invoices.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\invoices\invoices.service.ts">
+        <metrics statements="69" coveredstatements="67" conditionals="44" coveredconditionals="38" methods="11" coveredmethods="11"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="23" type="cond" truecount="3" falsecount="1"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="24" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="28" count="3" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="37" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="57" count="3" type="stmt"/>
+        <line num="60" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+        <line num="70" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="87" count="2" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="101" count="2" type="stmt"/>
+        <line num="104" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="108" count="2" type="stmt"/>
+        <line num="114" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="119" count="1" type="stmt"/>
+        <line num="129" count="2" type="stmt"/>
+        <line num="132" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="136" count="2" type="stmt"/>
+        <line num="142" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="143" count="1" type="stmt"/>
+        <line num="148" count="1" type="stmt"/>
+        <line num="158" count="5" type="stmt"/>
+        <line num="162" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="163" count="1" type="stmt"/>
+        <line num="166" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="167" count="2" type="stmt"/>
+        <line num="170" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="171" count="1" type="stmt"/>
+        <line num="176" count="2" type="stmt"/>
+        <line num="183" count="2" type="stmt"/>
+        <line num="191" count="3" type="stmt"/>
+        <line num="192" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="193" count="1" type="stmt"/>
+        <line num="198" count="2" type="stmt"/>
+        <line num="216" count="2" type="stmt"/>
+        <line num="245" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="246" count="1" type="stmt"/>
+        <line num="249" count="1" type="stmt"/>
+        <line num="259" count="1" type="stmt"/>
+        <line num="262" count="1" type="stmt"/>
+        <line num="270" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="271" count="1" type="stmt"/>
+        <line num="272" count="1" type="stmt"/>
+        <line num="282" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="284" count="1" type="stmt"/>
+        <line num="285" count="2" type="stmt"/>
+        <line num="286" count="1" type="stmt"/>
+        <line num="295" count="1" type="stmt"/>
+        <line num="299" count="2" type="stmt"/>
+        <line num="302" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="303" count="1" type="stmt"/>
+        <line num="305" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.invoices.dto">
+      <metrics statements="11" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="add-invoice-item.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\invoices\dto\add-invoice-item.dto.ts">
+        <metrics statements="7" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="10" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="create-invoice.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\invoices\dto\create-invoice.dto.ts">
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.lab-orders">
+      <metrics statements="119" coveredstatements="0" conditionals="70" coveredconditionals="0" methods="33" coveredmethods="0"/>
+      <file name="lab-orders.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\lab-orders.controller.ts">
+        <metrics statements="27" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+      </file>
+      <file name="lab-orders.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\lab-orders.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="lab-orders.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\lab-orders.service.ts">
+        <metrics statements="86" coveredstatements="0" conditionals="54" coveredconditionals="0" methods="24" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="70" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="109" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="119" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="142" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="152" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="162" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="168" count="0" type="stmt"/>
+        <line num="170" count="0" type="stmt"/>
+        <line num="171" count="0" type="stmt"/>
+        <line num="172" count="0" type="stmt"/>
+        <line num="174" count="0" type="stmt"/>
+        <line num="176" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="179" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="190" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
+        <line num="207" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="208" count="0" type="stmt"/>
+        <line num="211" count="0" type="stmt"/>
+        <line num="217" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="218" count="0" type="stmt"/>
+        <line num="222" count="0" type="stmt"/>
+        <line num="233" count="0" type="stmt"/>
+        <line num="234" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="235" count="0" type="stmt"/>
+        <line num="240" count="0" type="stmt"/>
+        <line num="264" count="0" type="stmt"/>
+        <line num="270" count="0" type="stmt"/>
+        <line num="287" count="0" type="stmt"/>
+        <line num="288" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="289" count="0" type="stmt"/>
+        <line num="293" count="0" type="stmt"/>
+        <line num="305" count="0" type="stmt"/>
+        <line num="309" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="310" count="0" type="stmt"/>
+        <line num="313" count="0" type="stmt"/>
+        <line num="319" count="0" type="stmt"/>
+        <line num="325" count="0" type="stmt"/>
+        <line num="329" count="0" type="stmt"/>
+        <line num="346" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="347" count="0" type="stmt"/>
+        <line num="353" count="0" type="stmt"/>
+        <line num="359" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="360" count="0" type="stmt"/>
+        <line num="365" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.lab-orders.dto">
+      <metrics statements="32" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="create-lab-order-item.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\dto\create-lab-order-item.dto.ts">
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+      </file>
+      <file name="create-lab-order.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\dto\create-lab-order.dto.ts">
+        <metrics statements="8" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+      </file>
+      <file name="create-lab-test.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\dto\create-lab-test.dto.ts">
+        <metrics statements="8" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+      </file>
+      <file name="upload-lab-result-item.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\dto\upload-lab-result-item.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+      </file>
+      <file name="upload-lab-result.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\lab-orders\dto\upload-lab-result.dto.ts">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.medical-records">
+      <metrics statements="64" coveredstatements="0" conditionals="56" coveredconditionals="0" methods="8" coveredmethods="0"/>
+      <file name="medical-records.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\medical-records\medical-records.controller.ts">
+        <metrics statements="15" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+      </file>
+      <file name="medical-records.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\medical-records\medical-records.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="medical-records.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\medical-records\medical-records.service.ts">
+        <metrics statements="43" coveredstatements="0" conditionals="48" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="59" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="91" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="95" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="102" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="104" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="140" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="144" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="148" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="153" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="154" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="170" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.medical-records.dto">
+      <metrics statements="14" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="create-medical-record.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\medical-records\dto\create-medical-record.dto.ts">
+        <metrics statements="14" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.notifications">
+      <metrics statements="97" coveredstatements="10" conditionals="44" coveredconditionals="9" methods="17" coveredmethods="0"/>
+      <file name="notifications.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\notifications\notifications.controller.ts">
+        <metrics statements="14" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+      </file>
+      <file name="notifications.gateway.ts" path="C:\Coding\medcore-hms\apps\backend\src\notifications\notifications.gateway.ts">
+        <metrics statements="24" coveredstatements="6" conditionals="10" coveredconditionals="6" methods="4" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="18" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="3" falsecount="1"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+      </file>
+      <file name="notifications.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\notifications\notifications.module.ts">
+        <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+      </file>
+      <file name="notifications.processor.ts" path="C:\Coding\medcore-hms\apps\backend\src\notifications\notifications.processor.ts">
+        <metrics statements="43" coveredstatements="0" conditionals="26" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="5"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="53" count="0" type="cond" truecount="0" falsecount="8"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="87" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+      </file>
+      <file name="notifications.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\notifications\notifications.service.ts">
+        <metrics statements="7" coveredstatements="4" conditionals="4" coveredconditionals="3" methods="3" coveredmethods="0"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="7" count="0" type="cond" truecount="3" falsecount="1"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.patients">
+      <metrics statements="22" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="5" coveredmethods="0"/>
+      <file name="patients.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\patients\patients.controller.ts">
+        <metrics statements="10" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+      </file>
+      <file name="patients.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\patients\patients.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="patients.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\patients\patients.service.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.payments">
+      <metrics statements="69" coveredstatements="46" conditionals="44" coveredconditionals="29" methods="7" coveredmethods="4"/>
+      <file name="payments.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\payments\payments.controller.ts">
+        <metrics statements="14" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+      </file>
+      <file name="payments.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\payments\payments.module.ts">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="payments.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\payments\payments.service.ts">
+        <metrics statements="48" coveredstatements="46" conditionals="34" coveredconditionals="29" methods="4" coveredmethods="4"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="13" count="11" type="cond" truecount="6" falsecount="2"/>
+        <line num="14" count="11" type="stmt"/>
+        <line num="16" count="11" type="stmt"/>
+        <line num="17" count="11" type="stmt"/>
+        <line num="18" count="11" type="cond" truecount="3" falsecount="1"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="11" type="stmt"/>
+        <line num="28" count="5" type="stmt"/>
+        <line num="31" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="35" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="39" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="71" count="6" type="stmt"/>
+        <line num="72" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="76" count="12" type="stmt"/>
+        <line num="77" count="6" type="stmt"/>
+        <line num="82" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="86" count="5" type="stmt"/>
+        <line num="87" count="5" type="stmt"/>
+        <line num="89" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="93" count="4" type="stmt"/>
+        <line num="94" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="98" count="3" type="stmt"/>
+        <line num="101" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="105" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="109" count="1" type="stmt"/>
+        <line num="115" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="122" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.pharmacy">
+      <metrics statements="70" coveredstatements="0" conditionals="54" coveredconditionals="0" methods="12" coveredmethods="0"/>
+      <file name="pharmacy.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\pharmacy\pharmacy.controller.ts">
+        <metrics statements="19" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="72" count="0" type="stmt"/>
+      </file>
+      <file name="pharmacy.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\pharmacy\pharmacy.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="pharmacy.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\pharmacy\pharmacy.service.ts">
+        <metrics statements="45" coveredstatements="0" conditionals="38" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="74" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="75" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="110" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="114" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="150" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="164" count="0" type="stmt"/>
+        <line num="166" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="167" count="0" type="stmt"/>
+        <line num="173" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="186" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="192" count="0" type="stmt"/>
+        <line num="197" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.pharmacy.dto">
+      <metrics statements="23" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="create-medicine-batch.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\pharmacy\dto\create-medicine-batch.dto.ts">
+        <metrics statements="10" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+      </file>
+      <file name="create-medicine.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\pharmacy\dto\create-medicine.dto.ts">
+        <metrics statements="8" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+      </file>
+      <file name="dispense-medicine.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\pharmacy\dto\dispense-medicine.dto.ts">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.prescriptions">
+      <metrics statements="76" coveredstatements="0" conditionals="44" coveredconditionals="0" methods="21" coveredmethods="0"/>
+      <file name="prescriptions.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\prescriptions\prescriptions.controller.ts">
+        <metrics statements="15" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+      </file>
+      <file name="prescriptions.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\prescriptions\prescriptions.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="prescriptions.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\prescriptions\prescriptions.service.ts">
+        <metrics statements="55" coveredstatements="0" conditionals="36" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="103" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="108" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="136" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="164" count="0" type="stmt"/>
+        <line num="165" count="0" type="stmt"/>
+        <line num="167" count="0" type="stmt"/>
+        <line num="191" count="0" type="stmt"/>
+        <line num="195" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="199" count="0" type="stmt"/>
+        <line num="205" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.prescriptions.dto">
+      <metrics statements="21" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="create-prescription-item-dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\prescriptions\dto\create-prescription-item-dto.ts">
+        <metrics statements="11" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+      </file>
+      <file name="create-prescription.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\prescriptions\dto\create-prescription.dto.ts">
+        <metrics statements="10" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.prisma">
+      <metrics statements="11" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1"/>
+      <file name="prisma.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\prisma\prisma.module.ts">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+      <file name="prisma.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\prisma\prisma.service.ts">
+        <metrics statements="8" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="2" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="6" count="5" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.queue">
+      <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="bullmq.config.ts" path="C:\Coding\medcore-hms\apps\backend\src\queue\bullmq.config.ts">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.redis">
+      <metrics statements="30" coveredstatements="3" conditionals="8" coveredconditionals="0" methods="10" coveredmethods="0"/>
+      <file name="redis.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\redis\redis.module.ts">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+      </file>
+      <file name="redis.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\redis\redis.service.ts">
+        <metrics statements="27" coveredstatements="3" conditionals="8" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.staff">
+      <metrics statements="36" coveredstatements="0" conditionals="20" coveredconditionals="0" methods="6" coveredmethods="0"/>
+      <file name="staff.controller.ts" path="C:\Coding\medcore-hms\apps\backend\src\staff\staff.controller.ts">
+        <metrics statements="13" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+      </file>
+      <file name="staff.module.ts" path="C:\Coding\medcore-hms\apps\backend\src\staff\staff.module.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="staff.service.ts" path="C:\Coding\medcore-hms\apps\backend\src\staff\staff.service.ts">
+        <metrics statements="17" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="49" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.staff.dto">
+      <metrics statements="9" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="create-staff.dto.ts" path="C:\Coding\medcore-hms\apps\backend\src\staff\dto\create-staff.dto.ts">
+        <metrics statements="9" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="40" count="0" type="cond" truecount="0" falsecount="4"/>
+      </file>
+    </package>
+  </project>
+</coverage>
