@@ -6,6 +6,26 @@ A full-stack Hospital Management System — multi-tenant, role-based (super admi
 
 ---
 
+---
+
+## Live Deployment
+
+- **App:** https://medcore-hms-frontend.vercel.app
+- **API base URL:** https://medcore-backend-1796.onrender.com
+- **API docs (Swagger):** https://medcore-backend-1796.onrender.com/api/docs
+- **Demo credentials:** see [DEMO_CREDENTIALS.md](./DEMO_CREDENTIALS.md)
+- **Video walkthrough:** *(link here once recorded)*
+
+> **Note on deployment target:** production runs on Vercel (frontend), Render (backend, as a Docker container), Neon (managed PostgreSQL), and Upstash (managed Redis) rather than raw AWS EC2. This was a deliberate choice — see `docs/MedCore-HMS-Project-Report.docx` §3.2–3.3 for the full architecture and reasoning. The system architecture, multi-tenancy, and deployment topology are otherwise unchanged from the PRD's design.
+
+---
+
+## Architecture Overview
+
+MedCore HMS is a multi-tenant hospital management platform: every hospital is a tenant, scoped via `hospitalId` on all tenant-owned tables and enforced at the service layer on every request. Nine roles (Super Admin down to Patient) share one codebase with role-based access control rather than separate apps per role. See `docs/architecture-current.svg` (local/docker-compose topology) and `docs/architecture-live.svg` (production topology) for diagrams, and `docs/erd.svg` for the full 19-model database schema.
+
+---
+
 ## Quick start (Docker — recommended)
 
 This runs the entire stack — Postgres, Redis, backend, frontend, and an Nginx reverse proxy — with one command. No local Node/pnpm/Postgres install needed.
