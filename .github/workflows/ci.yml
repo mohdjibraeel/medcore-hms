@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-test:
+    name: Backend build + e2e tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: testpass123
+          POSTGRES_DB: medcore_test
+        ports:
+          # Mapped to match apps/backend/.env.test exactly — no config
+          # changes needed between local Docker testing and CI.
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7
+        ports:
+          - 6380:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env.test (dummy test-only values, matches local setup)
+        working-directory: apps/backend
+        run: |
+          cat > .env.test << 'EOF'
+          DATABASE_URL="postgresql://postgres:testpass123@localhost:5433/medcore_test"
+          JWT_ACCESS_SECRET="test-access-secret-abc123xyz-not-for-real-use-32chars"
+          JWT_REFRESH_SECRET="test-refresh-secret-def456uvw-not-for-real-use-32chars"
+          REDIS_URL="redis://localhost:6380"
+          EOF
+
+      - name: Enable Corepack (for pnpm)
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared-types
+        run: pnpm --filter @medcore/shared-types run build
+
+      - name: Generate Prisma client
+        working-directory: apps/backend
+        run: pnpm exec prisma generate
+
+      - name: Run database migrations
+        working-directory: apps/backend
+        run: npx dotenv -e .env.test -- pnpm exec prisma migrate deploy
+
+      - name: Build backend
+        working-directory: apps/backend
+        run: pnpm run build
+
+      - name: Run e2e test suite (6 mandatory scenarios + any others)
+        working-directory: apps/backend
+        run: npx dotenv -e .env.test -- pnpm run test:e2e
+
+  frontend-build:
+    name: Frontend build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack (for pnpm)
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared-types
+        run: pnpm --filter @medcore/shared-types run build
+
+      - name: Build frontend
+        run: pnpm --filter frontend run build
+        env:
+          NEXT_PUBLIC_API_URL: /api
