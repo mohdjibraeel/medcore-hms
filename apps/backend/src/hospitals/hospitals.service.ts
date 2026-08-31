@@ -2,10 +2,13 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { UpdateHospitalStatusDto } from './dto/update-status.dto';
+import { CreateHospitalAdminDto } from './dto/create-hospital-admin.dto';
 
 @Injectable()
 export class HospitalsService {
@@ -43,6 +46,47 @@ export class HospitalsService {
       where: { id },
       data: { status: dto.status },
     });
+  }
+
+  async createAdmin(hospitalId: string, dto: CreateHospitalAdminDto) {
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+
+    if (!hospital) {
+      throw new NotFoundException('Hospital not found');
+    }
+
+    // Only verified hospitals should get a working admin login — a
+    // PENDING or REJECTED hospital hasn't been approved to operate yet.
+    if (hospital.status !== 'VERIFIED') {
+      throw new ForbiddenException(
+        'Hospital must be VERIFIED before an admin can be assigned',
+      );
+    }
+
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+    if (existing) {
+      throw new ConflictException('Email already registered');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, 12);
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        password: hashedPassword,
+        role: 'HOSPITAL_ADMIN',
+        hospitalId: hospital.id,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+      },
+    });
+
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async findAll(currentUser: { role: string }) {
