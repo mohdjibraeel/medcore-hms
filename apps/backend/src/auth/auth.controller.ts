@@ -51,7 +51,7 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production', // HTTPS only in prod; allow http on localhost
       sameSite: 'lax',
       maxAge: this.REFRESH_COOKIE_MAX_AGE,
-      path: '/auth', // cookie only sent to /auth/* routes, not every request
+      path: '/api/auth', // cookie only sent to /auth/* routes, not every request
     });
 
     const { refreshToken, ...safeResult } = result; // strip it from the JSON body
@@ -95,7 +95,7 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: this.REFRESH_COOKIE_MAX_AGE,
-      path: '/auth',
+      path: '/api/auth',
     });
 
     const { refreshToken: _, ...safeResult } = result;
@@ -112,7 +112,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     await this.authService.logout(req.user.sub, dto.deviceId);
-    res.clearCookie(this.REFRESH_COOKIE_NAME, { path: '/auth' });
+    res.clearCookie(this.REFRESH_COOKIE_NAME, { path: '/api/auth' });
     return { message: 'Logged out successfully' };
   }
 
