@@ -108,3 +108,33 @@ export function useCreateHospitalAdmin() {
     },
   });
 }
+
+export function useUpdateHospitalAdmin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      hospitalId,
+      email,
+      password,
+      firstName,
+      lastName,
+    }: {
+      hospitalId: string;
+      email?: string;
+      password?: string;
+      firstName?: string;
+      lastName?: string;
+    }) => {
+      const { data } = await apiClient.patch(`/hospitals/${hospitalId}/admin`, {
+        email,
+        password,
+        firstName,
+        lastName,
+      });
+      return data;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["hospitals"] });
+    },
+  });
+}

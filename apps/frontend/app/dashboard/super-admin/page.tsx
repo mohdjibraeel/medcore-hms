@@ -7,6 +7,7 @@ import {
   useCreateHospital,
   useUpdateHospitalStatus,
   useCreateHospitalAdmin,
+  useUpdateHospitalAdmin,
 } from "@/services/hospitals.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,7 @@ export default function SuperAdminDashboardPage() {
   const createHospital = useCreateHospital();
   const updateStatus = useUpdateHospitalStatus();
   const createAdmin = useCreateHospitalAdmin();
+  const updateAdmin = useUpdateHospitalAdmin();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -77,19 +79,32 @@ export default function SuperAdminDashboardPage() {
     }
   };
 
-  const handleCreateAdmin = async (hospitalId: string) => {
-    if (!adminEmail || !adminPassword || !adminFirstName) return;
+  const handleSaveAdmin = async (hospitalId: string, isEditing: boolean) => {
+    if (!isEditing && (!adminEmail || !adminPassword || !adminFirstName))
+      return;
     setErrorMessage(null);
     setSuccessMessage(null);
     try {
-      const admin = await createAdmin.mutateAsync({
-        hospitalId,
-        email: adminEmail,
-        password: adminPassword,
-        firstName: adminFirstName,
-        lastName: adminLastName || undefined,
-      });
-      setSuccessMessage(`Admin account created for ${admin.email}.`);
+      const admin = isEditing
+        ? await updateAdmin.mutateAsync({
+            hospitalId,
+            email: adminEmail || undefined,
+            password: adminPassword || undefined,
+            firstName: adminFirstName || undefined,
+            lastName: adminLastName || undefined,
+          })
+        : await createAdmin.mutateAsync({
+            hospitalId,
+            email: adminEmail,
+            password: adminPassword,
+            firstName: adminFirstName,
+            lastName: adminLastName || undefined,
+          });
+      setSuccessMessage(
+        isEditing
+          ? `Admin account updated for ${admin.email}.`
+          : `Admin account created for ${admin.email}.`,
+      );
       setAdminFormHospitalId(null);
       setAdminEmail("");
       setAdminPassword("");
@@ -100,6 +115,21 @@ export default function SuperAdminDashboardPage() {
         err instanceof ApiError ? err.message : "Something went wrong.",
       );
     }
+  };
+
+  const openAdminForm = (
+    hospitalId: string,
+    admin: { email: string; firstName: string; lastName: string | null } | null,
+  ) => {
+    if (adminFormHospitalId === hospitalId) {
+      setAdminFormHospitalId(null);
+      return;
+    }
+    setAdminFormHospitalId(hospitalId);
+    setAdminEmail(admin?.email ?? "");
+    setAdminPassword("");
+    setAdminFirstName(admin?.firstName ?? "");
+    setAdminLastName(admin?.lastName ?? "");
   };
 
   return (
@@ -219,20 +249,27 @@ export default function SuperAdminDashboardPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() =>
-                        setAdminFormHospitalId(
-                          adminFormHospitalId === h.id ? null : h.id,
-                        )
-                      }
+                      onClick={() => openAdminForm(h.id, h.admin)}
                     >
-                      {adminFormHospitalId === h.id ? "Cancel" : "Create Admin"}
+                      {adminFormHospitalId === h.id
+                        ? "Cancel"
+                        : h.admin
+                          ? "Update Admin"
+                          : "Create Admin"}
                     </Button>
                   )}
                 </div>
               </div>
 
+              {h.admin && (
+                <div className="mt-2 text-sm text-zinc-500">
+                  Admin: {h.admin.firstName} {h.admin.lastName ?? ""} (
+                  {h.admin.email})
+                </div>
+              )}
+
               {adminFormHospitalId === h.id && (
-                <div className="mt-3 space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+                <div className="mt-2 space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
                       <Label htmlFor={`adminEmail-${h.id}`}>Email</Label>
@@ -243,7 +280,10 @@ export default function SuperAdminDashboardPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label htmlFor={`adminPassword-${h.id}`}>Password</Label>
+                      <Label htmlFor={`adminPassword-${h.id}`}>
+                        Password{" "}
+                        {h.admin ? "(leave blank to keep current)" : ""}
+                      </Label>
                       <Input
                         id={`adminPassword-${h.id}`}
                         type="password"
@@ -274,13 +314,15 @@ export default function SuperAdminDashboardPage() {
                     size="sm"
                     disabled={
                       createAdmin.isPending ||
-                      !adminEmail ||
-                      !adminPassword ||
-                      !adminFirstName
+                      updateAdmin.isPending ||
+                      (!h.admin &&
+                        (!adminEmail || !adminPassword || !adminFirstName))
                     }
-                    onClick={() => handleCreateAdmin(h.id)}
+                    onClick={() => handleSaveAdmin(h.id, !!h.admin)}
                   >
-                    {createAdmin.isPending ? "Creating..." : "Save Admin"}
+                    {createAdmin.isPending || updateAdmin.isPending
+                      ? "Saving..."
+                      : "Save Admin"}
                   </Button>
                 </div>
               )}

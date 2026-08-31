@@ -1,3 +1,10 @@
+export interface HospitalAdmin {
+  id: string;
+  firstName: string;
+  lastName: string | null;
+  email: string;
+}
+
 export interface Hospital {
   id: string;
   name: string;
@@ -5,6 +12,7 @@ export interface Hospital {
   status: string;
   addressId: string | null;
   createdAt: string;
+  admin: HospitalAdmin | null;
 }
 
 export interface HospitalStats {

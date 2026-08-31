@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { UpdateHospitalStatusDto } from './dto/update-status.dto';
 import { CreateHospitalAdminDto } from './dto/create-hospital-admin.dto';
+import { UpdateHospitalAdminDto } from './dto/update-hospital-admin.dto';
 
 @Injectable()
 export class HospitalsService {
@@ -89,16 +90,67 @@ export class HospitalsService {
     return userWithoutPassword;
   }
 
+  async updateAdmin(hospitalId: string, dto: UpdateHospitalAdminDto) {
+    const hospital = await this.prisma.hospital.findUnique({
+      where: { id: hospitalId },
+    });
+    if (!hospital) {
+      throw new NotFoundException('Hospital not found');
+    }
+
+    const admin = await this.prisma.user.findFirst({
+      where: { hospitalId, role: 'HOSPITAL_ADMIN' },
+      orderBy: { createdAt: 'asc' },
+    });
+    if (!admin) {
+      throw new NotFoundException('This hospital has no admin to update yet');
+    }
+
+    // If the email is being changed, make sure nobody else already has it.
+    if (dto.email && dto.email !== admin.email) {
+      const existing = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+      if (existing) {
+        throw new ConflictException('Email already registered');
+      }
+    }
+
+    const data: Record<string, unknown> = {};
+    if (dto.email) data.email = dto.email;
+    if (dto.firstName) data.firstName = dto.firstName;
+    if (dto.lastName !== undefined) data.lastName = dto.lastName;
+    if (dto.password) data.password = await bcrypt.hash(dto.password, 12);
+
+    const updated = await this.prisma.user.update({
+      where: { id: admin.id },
+      data,
+    });
+
+    const { password, ...adminWithoutPassword } = updated;
+    return adminWithoutPassword;
+  }
   async findAll(currentUser: { role: string }) {
-    // Only the platform-level Super Admin should see hospitals that are
-    // still pending review or have been rejected — everyone else (patients
-    // browsing to book, hospital staff, etc.) should only ever see hospitals
-    // that have actually been verified.
     const isPlatformAdmin = currentUser.role === 'SUPER_ADMIN';
-    return this.prisma.hospital.findMany({
+    const hospitals = await this.prisma.hospital.findMany({
       where: isPlatformAdmin ? undefined : { status: 'VERIFIED' },
       orderBy: { createdAt: 'desc' },
+      include: {
+        users: {
+          where: { role: 'HOSPITAL_ADMIN' },
+          select: { id: true, firstName: true, lastName: true, email: true },
+          orderBy: { createdAt: 'asc' },
+          take: 1,
+        },
+      },
     });
+
+    // Flatten `users` (an array, since Prisma's `include` always returns one)
+    // into a single `admin` field — a hospital only ever has one admin today.
+    return hospitals.map(({ users, ...hospital }) => ({
+      ...hospital,
+      admin: users[0] ?? null,
+    }));
   }
 
   // Converts a calendar date (as seen in IST) into the UTC instant range that

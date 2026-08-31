@@ -17,6 +17,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UpdateHospitalStatusDto } from './dto/update-status.dto';
 import { CreateHospitalAdminDto } from './dto/create-hospital-admin.dto';
+import { UpdateHospitalAdminDto } from './dto/update-hospital-admin.dto';
 
 @ApiTags('Hospitals')
 @ApiBearerAuth()
@@ -78,5 +79,13 @@ export class HospitalsController {
   @Post(':id/admin')
   createAdmin(@Param('id') id: string, @Body() dto: CreateHospitalAdminDto) {
     return this.hospitalsService.createAdmin(id, dto);
+  }
+
+  @ApiOperation({ summary: "Update a hospital's admin details" })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN')
+  @Patch(':id/admin')
+  updateAdmin(@Param('id') id: string, @Body() dto: UpdateHospitalAdminDto) {
+    return this.hospitalsService.updateAdmin(id, dto);
   }
 }
