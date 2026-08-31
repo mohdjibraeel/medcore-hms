@@ -67,6 +67,8 @@ COPY --from=builder /repo/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /repo/apps/backend/generated ./apps/backend/generated
 COPY --from=builder /repo/apps/backend/package.json ./apps/backend/package.json
 COPY --from=builder /repo/apps/backend/prisma ./apps/backend/prisma
+COPY --from=builder /repo/apps/backend/prisma.config.ts ./apps/backend/prisma.config.ts4
+COPY --from=builder /repo/apps/backend/tsconfig.json ./apps/backend/tsconfig.json
 
 WORKDIR /repo/apps/backend
 
