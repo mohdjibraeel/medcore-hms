@@ -49,10 +49,7 @@ export class AuthController {
     res.cookie(this.REFRESH_COOKIE_NAME, result.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // HTTPS only in prod; allow http on localhost
-      // 'none' is required for cross-site cookies (Vercel frontend calling a
-      // Render backend on a different domain) — browsers only accept 'none'
-      // when 'secure' is also true, which is why these two are tied together.
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: 'lax',
       maxAge: this.REFRESH_COOKIE_MAX_AGE,
       path: '/auth', // cookie only sent to /auth/* routes, not every request
     });
@@ -96,7 +93,7 @@ export class AuthController {
     res.cookie(this.REFRESH_COOKIE_NAME, result.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: 'lax',
       maxAge: this.REFRESH_COOKIE_MAX_AGE,
       path: '/auth',
     });
@@ -107,7 +104,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Revoke the refresh token and log out' })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard) 
   @Post('logout')
   async logout(
     @Req() req: any,
