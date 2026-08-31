@@ -1,12 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
-import type { Hospital, HospitalStats, PlatformStats } from '@medcore/shared-types';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/lib/api-client";
+import type {
+  Hospital,
+  HospitalStats,
+  PlatformStats,
+} from "@medcore/shared-types";
 
 export function useHospitals() {
   return useQuery({
-    queryKey: ['hospitals'],
+    queryKey: ["hospitals"],
     queryFn: async () => {
-      const { data } = await apiClient.get<Hospital[]>('/hospitals');
+      const { data } = await apiClient.get<Hospital[]>("/hospitals");
       return data;
     },
   });
@@ -14,9 +18,9 @@ export function useHospitals() {
 
 export function useHospitalStats() {
   return useQuery({
-    queryKey: ['hospitals', 'stats'],
+    queryKey: ["hospitals", "stats"],
     queryFn: async () => {
-      const { data } = await apiClient.get<HospitalStats>('/hospitals/stats');
+      const { data } = await apiClient.get<HospitalStats>("/hospitals/stats");
       return data;
     },
   });
@@ -24,9 +28,11 @@ export function useHospitalStats() {
 
 export function usePlatformStats() {
   return useQuery({
-    queryKey: ['hospitals', 'platform-stats'],
+    queryKey: ["hospitals", "platform-stats"],
     queryFn: async () => {
-      const { data } = await apiClient.get<PlatformStats>('/hospitals/platform-stats');
+      const { data } = await apiClient.get<PlatformStats>(
+        "/hospitals/platform-stats",
+      );
       return data;
     },
   });
@@ -36,12 +42,14 @@ export function useCreateHospital() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { name: string; slug: string }) => {
-      const { data } = await apiClient.post<Hospital>('/hospitals', payload);
+      const { data } = await apiClient.post<Hospital>("/hospitals", payload);
       return data;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['hospitals'] });
-      queryClient.invalidateQueries({ queryKey: ['hospitals', 'platform-stats'] });
+      queryClient.invalidateQueries({ queryKey: ["hospitals"] });
+      queryClient.invalidateQueries({
+        queryKey: ["hospitals", "platform-stats"],
+      });
     },
   });
 }
@@ -49,13 +57,54 @@ export function useCreateHospital() {
 export function useUpdateHospitalStatus() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: 'VERIFIED' | 'REJECTED' }) => {
-      const { data } = await apiClient.patch<Hospital>(`/hospitals/${id}/status`, { status });
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: "VERIFIED" | "REJECTED";
+    }) => {
+      const { data } = await apiClient.patch<Hospital>(
+        `/hospitals/${id}/status`,
+        { status },
+      );
       return data;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['hospitals'] });
-      queryClient.invalidateQueries({ queryKey: ['hospitals', 'platform-stats'] });
+      queryClient.invalidateQueries({ queryKey: ["hospitals"] });
+      queryClient.invalidateQueries({
+        queryKey: ["hospitals", "platform-stats"],
+      });
+    },
+  });
+}
+
+export function useCreateHospitalAdmin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      hospitalId,
+      email,
+      password,
+      firstName,
+      lastName,
+    }: {
+      hospitalId: string;
+      email: string;
+      password: string;
+      firstName: string;
+      lastName?: string;
+    }) => {
+      const { data } = await apiClient.post(`/hospitals/${hospitalId}/admin`, {
+        email,
+        password,
+        firstName,
+        lastName,
+      });
+      return data;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["hospitals"] });
     },
   });
 }
