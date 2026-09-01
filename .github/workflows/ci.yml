@@ -50,7 +50,7 @@ jobs:
           JWT_REFRESH_SECRET="test-refresh-secret-def456uvw-not-for-real-use-32chars"
           REDIS_URL="redis://localhost:6380"
           RESEND_API_KEY="test-resend-key-not-for-real-use"
-          TWILIO_ACCOUNT_SID="test-twilio-sid-not-for-real-use"
+          TWILIO_ACCOUNT_SID="ACtest00000000000000000000000000"
           TWILIO_AUTH_TOKEN="test-twilio-token-not-for-real-use"
           TWILIO_PHONE_NUMBER="+15005550006"
           EOF
