@@ -182,6 +182,7 @@ export class AppointmentsService {
       { maxWait: 10000, timeout: 15000 },
     );
   }
+  
   async findMine(currentUser: { sub: string; role: string }) {
     if (currentUser.role === 'DOCTOR') {
       const doctor = await this.prisma.doctor.findUnique({

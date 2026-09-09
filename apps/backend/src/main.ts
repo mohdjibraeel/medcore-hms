@@ -1,11 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { patchConsoleForSensitiveData } from './common/logger/log-sanitizer';
-import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { configureApp } from './setup-app';
 
